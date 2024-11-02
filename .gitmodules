@@ -1,0 +1,9 @@
+[submodule "uti"]
+	path = uti
+	url = git@github.com:TheBitDrifter/util.git
+[submodule "table"]
+	path = table
+	url = git@github.com:TheBitDrifter/table.git
+[submodule "docs"]
+	path = docs
+	url = git@github.com:TheBitDrifter/bappa_docs.git
