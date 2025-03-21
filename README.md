@@ -1,12 +1,43 @@
-# Bappa Framework Collection
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/ba2ca552-dcb4-4379-8a8d-2e9a460fa452" width="120" height="120" alt="Bappa Framework Logo">
+  <h1>The Bappa Framework</h1>
+</div>
 
-## Overview
+A code-first game engine for Go, providing an Entity Component System (ECS) architecture to enable developers to build captivating 2D games.
 
-The Bappa Framework is a comprehensive 2D game development ecosystem for Go, providing a lightweight Entity Component System (ECS) framework with a focus on clean architecture, performance, and developer experience.
+## Installation
 
-[Main Documentation](https://dl43t3h5ccph3.cloudfront.net)
+Bappa is a cohesive collection of packages, with the main entrypoint being coldbrew:
+```bash
+go get github.com/TheBitDrifter/coldbrew@latest
+```
+
+## Examples
+The best way to learn how to use Bappa is to read the examples and docs, or use a starter template!
+
+<table>
+  <tr>
+    <td align="center"><img src="https://github.com/user-attachments/assets/35bc153f-fd00-4833-9970-a51108ada8e8" width="100%"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/2b8962d6-6315-4e8e-84ac-31e50f713977" width="100%"></td>
+  </tr>
+  <tr>
+    <td align="center">LDTK Split Screen Platformer Template</td>
+    <td align="center">Topdown Split Screen Template</td>
+  </tr>
+</table>
+
+
+[Homepage](https://dl43t3h5ccph3.cloudfront.net) | [Examples](https://dl43t3h5ccph3.cloudfront.net/examples) |  [docs](https://dl43t3h5ccph3.cloudfront.net/docs)
+
 
 ## Core Repositories
+These are the packages/libraries that form the Bappa Framework. With the exception of coldbrew, they can be used independently if desired.
+
+### Coldbrew
+
+- [GitHub Repository](https://github.com/TheBitDrifter/coldbrew)
+- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/coldbrew)
+- **Description**: Main package for client-side game operations, handling rendering, input, scene management and cameras
 
 ### Blueprint
 
@@ -14,11 +45,6 @@ The Bappa Framework is a comprehensive 2D game development ecosystem for Go, pro
 - [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/blueprint)
 - **Description**: Core component definitions and scene planning functionality
 
-### Coldbrew
-
-- [GitHub Repository](https://github.com/TheBitDrifter/coldbrew)
-- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/coldbrew)
-- **Description**: Main package for client-side game operations, handling rendering, input, scene management and cameras
 
 ### Warehouse
 
