@@ -8,11 +8,13 @@ A code-first game engine for Go, providing an Entity Component System (ECS) arch
 ## Installation
 
 Bappa is a cohesive collection of packages, with the main entrypoint being coldbrew:
+
 ```bash
 go get github.com/TheBitDrifter/coldbrew@latest
 ```
 
 ## Examples
+
 The best way to learn how to use Bappa is to read the examples and docs, or use a starter template!
 
 <table>
@@ -26,11 +28,10 @@ The best way to learn how to use Bappa is to read the examples and docs, or use 
   </tr>
 </table>
 
-
 [Homepage](https://dl43t3h5ccph3.cloudfront.net) | [Examples](https://dl43t3h5ccph3.cloudfront.net/examples) |  [docs](https://dl43t3h5ccph3.cloudfront.net/docs)
 
-
 ## Core Repositories
+
 These are the packages/libraries that form the Bappa Framework. With the exception of coldbrew, they can be used independently if desired.
 
 ### Coldbrew
@@ -44,7 +45,6 @@ These are the packages/libraries that form the Bappa Framework. With the excepti
 - [GitHub Repository](https://github.com/TheBitDrifter/blueprint)
 - [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/blueprint)
 - **Description**: Core component definitions and scene planning functionality
-
 
 ### Warehouse
 
@@ -82,3 +82,13 @@ These are the packages/libraries that form the Bappa Framework. With the excepti
   - [Platformer](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/platformer)
   - [Platformer Split-Screen](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/platformer-split)
   - [Sandbox](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/sandbox)
+
+## License
+
+The Bappa Framework is licensed under the [MIT License](LICENSE)
+
+### Acknowledgments
+
+Bappa is built on top of [Ebiten](https://ebiten.org/), a dead simple 2D game library for Go. Ebiten is also licensed under the [Apache License 2.0](https://github.com/hajimehoshi/ebiten/blob/main/LICENSE).
+
+This project wouldn't be possible without the incredible work of Hajime Hoshi and all the Ebiten contributors.
