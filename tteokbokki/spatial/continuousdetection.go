@@ -1,8 +1,7 @@
 package spatial
 
 import (
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // ContinuousCollisionDetector is the global continuous collision detector instance
@@ -17,7 +16,7 @@ type continuousDetector struct{}
 // Note: This implementation uses simple step-based interpolation which can be
 // computationally expensive with high step counts. Use sparingly.
 func (continuousDetector) Check(
-	shapeA, shapeB blueprintspatial.Shape,
+	shapeA, shapeB Shape,
 	posA, posB vector.TwoReader,
 	prevPosA, prevPosB vector.TwoReader,
 	steps int,

@@ -1,8 +1,6 @@
 package spatial
 
-import (
-	"github.com/TheBitDrifter/warehouse"
-)
+import "github.com/TheBitDrifter/bappa/warehouse"
 
 type components struct {
 	Position         warehouse.AccessibleComponent[Position]

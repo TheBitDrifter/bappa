@@ -1,9 +1,8 @@
 package motion
 
 import (
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
-	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
-	"github.com/TheBitDrifter/blueprint/vector"
 )
 
 // Resolver is the global collision resolver instance
@@ -13,7 +12,7 @@ var Resolver resolver
 type resolver struct{}
 
 // Resolve splits the separation equally between both objects
-func (r resolver) Resolve(posA, posB *vector.Two, dynA, dynB *blueprintmotion.Dynamics, collision spatial.Collision) {
+func (r resolver) Resolve(posA, posB *vector.Two, dynA, dynB *Dynamics, collision spatial.Collision) {
 	if dynA.InverseMass == 0 && dynB.InverseMass == 0 {
 		return
 	}
@@ -22,7 +21,7 @@ func (r resolver) Resolve(posA, posB *vector.Two, dynA, dynB *blueprintmotion.Dy
 }
 
 // resolvePositions corrects object positions based on collision depth and mass
-func (resolver) resolvePositions(dynA, dynB *blueprintmotion.Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
+func (resolver) resolvePositions(dynA, dynB *Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
 	correctionA := collision.Depth / (dynA.InverseMass + dynB.InverseMass) * dynA.InverseMass
 	correctionB := collision.Depth / (dynA.InverseMass + dynB.InverseMass) * dynB.InverseMass
 	*posA = posA.Sub(collision.Normal.Scale(correctionA))
@@ -30,7 +29,7 @@ func (resolver) resolvePositions(dynA, dynB *blueprintmotion.Dynamics, posA, pos
 }
 
 // applyResolutionImpulses calculates and applies impulses to both objects
-func (resolver) applyResolutionImpulses(dynA, dynB *blueprintmotion.Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
+func (resolver) applyResolutionImpulses(dynA, dynB *Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
 	combinedElasticity := (dynA.Elasticity + dynB.Elasticity) / 2
 	combinedFriction := (dynA.Friction + dynB.Friction) / 2
 	centerToImpactA := collision.End.Sub(*posA)

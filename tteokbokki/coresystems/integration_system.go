@@ -1,11 +1,10 @@
 package coresystems
 
 import (
+	"github.com/TheBitDrifter/bappa/blueprint"
 	"github.com/TheBitDrifter/bappa/tteokbokki/motion"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // IntegrationSystem handles position and rotation integration based on dynamics
@@ -15,29 +14,29 @@ type IntegrationSystem struct{}
 func (IntegrationSystem) Run(scene blueprint.Scene, dt float64) error {
 	// Query for entities with position, rotation, and dynamics components
 	withRotation := warehouse.Factory.NewQuery().And(
-		blueprintspatial.Components.Position,
-		blueprintspatial.Components.Rotation,
-		blueprintmotion.Components.Dynamics,
+		spatial.Components.Position,
+		spatial.Components.Rotation,
+		motion.Components.Dynamics,
 	)
 
 	// Query for entities with position and dynamics but without rotation
 	onlyLinear := warehouse.Factory.NewQuery().And(
-		blueprintspatial.Components.Position,
-		blueprintmotion.Components.Dynamics,
-		warehouse.Factory.NewQuery().Not(blueprintspatial.Components.Rotation),
+		spatial.Components.Position,
+		motion.Components.Dynamics,
+		warehouse.Factory.NewQuery().Not(spatial.Components.Rotation),
 	)
 
 	// Helper function to integrate positions and rotations
 	integrate := func(query warehouse.QueryNode, hasRot bool) {
 		cursor := scene.NewCursor(query)
 		for range cursor.Next() {
-			dyn := blueprintmotion.Components.Dynamics.GetFromCursor(cursor)
-			position := blueprintspatial.Components.Position.GetFromCursor(cursor)
+			dyn := motion.Components.Dynamics.GetFromCursor(cursor)
+			position := spatial.Components.Position.GetFromCursor(cursor)
 
-			rotV := blueprintspatial.Rotation(0)
+			rotV := spatial.Rotation(0)
 			rotation := &rotV
 			if hasRot {
-				rotation = blueprintspatial.Components.Rotation.GetFromCursor(cursor)
+				rotation = spatial.Components.Rotation.GetFromCursor(cursor)
 			}
 
 			// Compute new position and rotation values
@@ -48,7 +47,7 @@ func (IntegrationSystem) Run(scene blueprint.Scene, dt float64) error {
 			// Update position and rotation with new values
 			position.X = newPos.X
 			position.Y = newPos.Y
-			*rotation = blueprintspatial.Rotation(newRot)
+			*rotation = spatial.Rotation(newRot)
 		}
 	}
 

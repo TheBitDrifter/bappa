@@ -1,4 +1,4 @@
-module github.com/TheBitDrifter/table
+module github.com/TheBitDrifter/bappa/table
 
 go 1.23.1
 

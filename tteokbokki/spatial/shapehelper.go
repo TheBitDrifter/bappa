@@ -1,8 +1,7 @@
 package spatial
 
 import (
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // UpdateWorldVerticesSimple transforms local vertices to world space by applying translation only
@@ -38,13 +37,13 @@ func UpdateWorldVertices(localVerts []vector.Two, pos, scale vector.TwoReader, r
 
 // UpdateSkinAndAAB updates a shape's skin and axis-aligned bounding box based on scale and rotation
 // Uses optimized path for non-rotated shapes
-func UpdateSkinAndAAB(shape *blueprintspatial.Shape, scale vector.TwoReader, rot float64) {
+func UpdateSkinAndAAB(shape *Shape, scale vector.TwoReader, rot float64) {
 	if rot != 0 {
 		if shape.LocalAAB.Width != 0 {
-			shape.Skin = blueprintspatial.CalcSkin(shape.Polygon, blueprintspatial.AAB{}, blueprintspatial.NewScale(scale.GetX(), scale.GetY()))
+			shape.Skin = CalcSkin(shape.Polygon, AAB{}, NewScale(scale.GetX(), scale.GetY()))
 		}
-		shape.LocalAAB = blueprintspatial.AAB{}
-		shape.WorldAAB = blueprintspatial.AAB{}
+		shape.LocalAAB = AAB{}
+		shape.WorldAAB = AAB{}
 		return
 	}
 	// Calculate new world AAB dimensions
@@ -55,6 +54,6 @@ func UpdateSkinAndAAB(shape *blueprintspatial.Shape, scale vector.TwoReader, rot
 		shape.WorldAAB.Width = newWidth
 		shape.WorldAAB.Height = newHeight
 		// Only update skin if AAB dimensions changed
-		shape.Skin = blueprintspatial.CalcSkin(shape.Polygon, shape.LocalAAB, scale)
+		shape.Skin = CalcSkin(shape.Polygon, shape.LocalAAB, scale)
 	}
 }

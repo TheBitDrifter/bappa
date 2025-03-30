@@ -13,17 +13,17 @@ Core Concepts:
 Basic Usage:
 
 	// Set up player and block positions and shapes
-	playerPos := blueprintspatial.NewPosition(100, 95)
-	blockPos := blueprintspatial.NewPosition(100, 150)
-	playerShape := blueprintspatial.NewRectangle(50, 50)
-	blockShape := blueprintspatial.NewRectangle(200, 20)
+	playerPos := spatial.NewPosition(100, 95)
+	blockPos := spatial.NewPosition(100, 150)
+	playerShape := spatial.NewRectangle(50, 50)
+	blockShape := spatial.NewRectangle(200, 20)
 	
 	// Set up dynamics (player is dynamic, block is static)
-	playerDyn := blueprintmotion.NewDynamics(1.0)
+	playerDyn := motion.NewDynamics(1.0)
 	playerDyn.Vel = vector.Two{Y: 50.0}
 	playerDyn.Elasticity = 0.5
 	
-	blockDyn := blueprintmotion.NewDynamics(0.0) // Static object
+	blockDyn := motion.NewDynamics(0.0) // Static object
 	
 	// Check for collision
 	if ok, collision := spatial.Detector.Check(

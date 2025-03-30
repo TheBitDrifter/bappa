@@ -3,7 +3,7 @@ package table_test
 import (
 	"testing"
 
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 func TestTableBuilder(t *testing.T) {

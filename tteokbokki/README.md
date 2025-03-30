@@ -14,7 +14,7 @@ work standalone.
 ## Installation
 
 ```bash
-go get github.com/TheBitDrifter/tteokbokki
+go get github.com/TheBitDrifter/bappa/tteokbokki
 ```
 
 ## Quick Start
@@ -23,21 +23,21 @@ go get github.com/TheBitDrifter/tteokbokki
 package main
 
 import (
-    blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
-    blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-    "github.com/TheBitDrifter/blueprint/vector"
-    "github.com/TheBitDrifter/tteokbokki/motion"
-    "github.com/TheBitDrifter/tteokbokki/spatial"
+    "github.com/TheBitDrifter/bappa/blueprint/motion"
+    "github.com/TheBitDrifter/bappa/blueprint/spatial"
+    "github.com/TheBitDrifter/bappa/blueprint/vector"
+    "github.com/TheBitDrifter/bappa/tteokbokki/motion"
+    "github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 )
 
 func main() {
     // Create two objects with positions
-    posA := blueprintspatial.NewPosition(100, 100)
-    posB := blueprintspatial.NewPosition(120, 110)
+    posA := spatial.NewPosition(100, 100)
+    posB := spatial.NewPosition(120, 110)
     
     // Create shapes for collision
-    shapeA := blueprintspatial.NewRectangle(50, 50)
-    shapeB := blueprintspatial.NewRectangle(40, 40)
+    shapeA := spatial.NewRectangle(50, 50)
+    shapeB := spatial.NewRectangle(40, 40)
     
     // Update world vertices for collision detection
     shapeA.Polygon.WorldVertices = spatial.UpdateWorldVerticesSimple(
@@ -46,13 +46,13 @@ func main() {
         shapeB.Polygon.LocalVertices, posB.Two)
     
     // Create dynamics objects
-    dynA := blueprintmotion.NewDynamics(1.0)
+    dynA := motion.NewDynamics(1.0)
     dynA.Vel = vector.Two{X: 10.0, Y: 5.0}
     dynA.Elasticity = 0.5
     dynA.SetDefaultAngularMass(shapeA)
     
     // Create a heavier object
-    dynB := blueprintmotion.NewDynamics(2.0)
+    dynB := motion.NewDynamics(2.0)
     dynB.Elasticity = 0.3
     dynB.SetDefaultAngularMass(shapeB)
     

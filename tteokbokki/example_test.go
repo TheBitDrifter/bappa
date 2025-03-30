@@ -3,22 +3,20 @@ package tteokbokki_test
 import (
 	"fmt"
 
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/tteokbokki/motion"
 	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
-	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/blueprint/vector"
 )
 
 // Example_basicCollision demonstrates detecting and resolving a basic collision between two objects
 func Example_basicCollision() {
 	// Create box shapes
-	playerShape := blueprintspatial.NewRectangle(40, 80)  // Player box (40x80)
-	groundShape := blueprintspatial.NewRectangle(200, 20) // Ground platform (200x20)
+	playerShape := spatial.NewRectangle(40, 80)  // Player box (40x80)
+	groundShape := spatial.NewRectangle(200, 20) // Ground platform (200x20)
 
 	// Create positions - player slightly overlapping with ground
-	playerPos := blueprintspatial.NewPosition(100, 110)
-	groundPos := blueprintspatial.NewPosition(100, 150)
+	playerPos := spatial.NewPosition(100, 110)
+	groundPos := spatial.NewPosition(100, 150)
 
 	// Update world vertices for collision detection
 	playerShape.Polygon.WorldVertices = spatial.UpdateWorldVerticesSimple(
@@ -27,13 +25,13 @@ func Example_basicCollision() {
 		groundShape.Polygon.LocalVertices, groundPos.Two)
 
 	// Setup dynamics
-	playerDyn := blueprintmotion.NewDynamics(1.0)
+	playerDyn := motion.NewDynamics(1.0)
 	playerDyn.Vel = vector.Two{X: 0, Y: 40.0} // Moving down
 	playerDyn.Elasticity = 0.3
 	playerDyn.SetDefaultAngularMass(playerShape)
 
 	// Ground is static (infinite mass)
-	groundDyn := blueprintmotion.NewDynamics(0.0) // Zero mass = static
+	groundDyn := motion.NewDynamics(0.0) // Zero mass = static
 	groundDyn.Elasticity = 0.5
 
 	fmt.Printf("Initial: Player at (%.1f, %.1f) with velocity (%.1f, %.1f)\n",

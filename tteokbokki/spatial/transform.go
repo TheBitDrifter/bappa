@@ -1,6 +1,6 @@
 package spatial
 
-import vector "github.com/TheBitDrifter/bappa/blueprint/vector"
+import "github.com/TheBitDrifter/bappa/blueprint/vector"
 
 // Position represents a 2D point in space
 type Position struct{ vector.Two }

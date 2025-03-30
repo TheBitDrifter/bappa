@@ -3,7 +3,7 @@ package table_benchmarks
 import (
 	"testing"
 
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 type vec2 struct{ X, Y int }

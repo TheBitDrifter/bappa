@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 	numbers_util "github.com/TheBitDrifter/util/numbers"
 	testing_util "github.com/TheBitDrifter/util/testing"
 )

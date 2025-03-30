@@ -1,9 +1,8 @@
 package motion
 
 import (
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
-	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
-	"github.com/TheBitDrifter/blueprint/vector"
 )
 
 // VerticalResolver is the Global vertical collision resolver instance
@@ -13,13 +12,13 @@ var VerticalResolver verticalResolver
 type verticalResolver struct{}
 
 // Resolve handles collision resolution for vertical-only movement
-func (r verticalResolver) Resolve(posA, posB *vector.Two, dynA, dynB *blueprintmotion.Dynamics, collision spatial.Collision) {
+func (r verticalResolver) Resolve(posA, posB *vector.Two, dynA, dynB *Dynamics, collision spatial.Collision) {
 	r.resolvePositions(dynA, dynB, posA, posB, collision)
 	r.applyResolutionImpulses(dynA, dynB, posA, posB, collision)
 }
 
 // resolvePositions corrects object positions considering only vertical (Y) components
-func (verticalResolver) resolvePositions(dynA, dynB *blueprintmotion.Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
+func (verticalResolver) resolvePositions(dynA, dynB *Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
 	// Only consider Y component of the normal
 	yOnlyNormal := vector.Two{X: 0, Y: collision.Normal.Y}
 	if yOnlyNormal.Y != 0 {
@@ -32,7 +31,7 @@ func (verticalResolver) resolvePositions(dynA, dynB *blueprintmotion.Dynamics, p
 }
 
 // applyResolutionImpulses calculates and applies impulses considering only Y-axis components
-func (verticalResolver) applyResolutionImpulses(dynA, dynB *blueprintmotion.Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
+func (verticalResolver) applyResolutionImpulses(dynA, dynB *Dynamics, posA, posB *vector.Two, collision spatial.Collision) {
 	combinedElasticity := (dynA.Elasticity + dynB.Elasticity) / 2
 	centerToImpactA := collision.End.Sub(*posA)
 	centerToImpactB := collision.Start.Sub(*posB)

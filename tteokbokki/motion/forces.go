@@ -3,8 +3,7 @@ package motion
 import (
 	"math"
 
-	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // Forces is the global forces handler instance
@@ -16,7 +15,7 @@ type forcesHandler struct {
 }
 
 // AddForce applies a force vector to the dynamics object
-func (forcesHandler) AddForce(dyn *blueprintmotion.Dynamics, force vector.TwoReader) {
+func (forcesHandler) AddForce(dyn *Dynamics, force vector.TwoReader) {
 	forceConc := vector.Two{
 		X: force.GetX(),
 		Y: force.GetY(),
@@ -25,17 +24,17 @@ func (forcesHandler) AddForce(dyn *blueprintmotion.Dynamics, force vector.TwoRea
 }
 
 // ClearForces resets the accumulated forces to zero
-func (forcesHandler) ClearForces(dyn *blueprintmotion.Dynamics) {
+func (forcesHandler) ClearForces(dyn *Dynamics) {
 	dyn.SumForces = vector.Two{}
 }
 
 // AddTorque applies rotational force to the dynamics object
-func (forcesHandler) AddTorque(dyn *blueprintmotion.Dynamics, torque float64) {
+func (forcesHandler) AddTorque(dyn *Dynamics, torque float64) {
 	dyn.SumTorque = dyn.SumTorque + torque
 }
 
 // ClearTorque resets the accumulated torque to zero
-func (forcesHandler) ClearTorque(dyn *blueprintmotion.Dynamics) {
+func (forcesHandler) ClearTorque(dyn *Dynamics) {
 	dyn.SumTorque = 0
 }
 
@@ -72,7 +71,7 @@ func (forcesGenerator) NewFrictionForce(velocity vector.Two, frictionCoefficient
 }
 
 // When friction isn't enough (0.9 for example will reduce vel 10% per frame)
-func (forcesGenerator) ApplyVelocityDamping(dyn *blueprintmotion.Dynamics, dampingFactor float64) {
+func (forcesGenerator) ApplyVelocityDamping(dyn *Dynamics, dampingFactor float64) {
 	// Apply a strong damping factor to slow down quickly
 
 	// Apply damping
@@ -113,7 +112,7 @@ func (forcesGenerator) NewHorizontalFrictionForce(velocity vector.Two, frictionC
 }
 
 // ApplyHorizontalDamping reduces only the horizontal velocity component
-func (forcesGenerator) ApplyHorizontalDamping(dyn *blueprintmotion.Dynamics, dampingFactor float64) {
+func (forcesGenerator) ApplyHorizontalDamping(dyn *Dynamics, dampingFactor float64) {
 	// Apply damping to X component only
 	dyn.Vel.X = dyn.Vel.X * dampingFactor
 

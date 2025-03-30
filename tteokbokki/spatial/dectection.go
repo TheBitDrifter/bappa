@@ -3,8 +3,7 @@ package spatial
 import (
 	"math"
 
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // Detector is the global collision detector instance
@@ -14,7 +13,7 @@ var Detector detector
 type detector struct{}
 
 // Check determines if two shapes are colliding and returns collision details
-func (detector) Check(shapeA, shapeB blueprintspatial.Shape, posA, posB vector.TwoReader) (bool, Collision) {
+func (detector) Check(shapeA, shapeB Shape, posA, posB vector.TwoReader) (bool, Collision) {
 	posAConc := vector.Two{
 		X: posA.GetX(),
 		Y: posA.GetY(),
@@ -37,7 +36,7 @@ func (detector) Check(shapeA, shapeB blueprintspatial.Shape, posA, posB vector.T
 
 // inspectCircleCollision checks for collision between two circles and returns collision data
 func inspectCircleCollision(
-	circleA, circleB blueprintspatial.Circle,
+	circleA, circleB Circle,
 	posA, posB vector.Two,
 ) (bool, Collision) {
 	distanceBetween := posB.Sub(posA)
@@ -66,7 +65,7 @@ func inspectCircleCollision(
 }
 
 // inspectAABCollision checks for collision between two axis-aligned bounding boxes
-func inspectAABCollision(aabA, aabB blueprintspatial.AAB,
+func inspectAABCollision(aabA, aabB AAB,
 	posA, posB vector.Two,
 ) (bool, Collision) {
 	halfWidthA := aabA.Width / 2
@@ -200,7 +199,7 @@ func inspectAABCollision(aabA, aabB blueprintspatial.AAB,
 }
 
 // broadFilter performs initial collision detection using bounding volumes
-func broadFilter(shapeA, shapeB blueprintspatial.Shape, posA, posB vector.Two) bool {
+func broadFilter(shapeA, shapeB Shape, posA, posB vector.Two) bool {
 	isAABCheck := shapeA.Skin.AAB.Height != 0 && shapeB.Skin.AAB.Height != 0
 	if isAABCheck {
 		check, _ := inspectAABCollision(shapeA.Skin.AAB, shapeB.Skin.AAB, posA, posB)
@@ -211,7 +210,7 @@ func broadFilter(shapeA, shapeB blueprintspatial.Shape, posA, posB vector.Two) b
 }
 
 // inspectPolygonCollision performs detailed collision detection between two polygons
-func inspectPolygonCollision(polygonA, polygonB blueprintspatial.Polygon) (bool, Collision) {
+func inspectPolygonCollision(polygonA, polygonB Polygon) (bool, Collision) {
 	var collision Collision
 	minSepA, incidentEdgeIndexA, penPointA := findMinSep(polygonA, polygonB)
 
@@ -258,7 +257,7 @@ func inspectPolygonCollision(polygonA, polygonB blueprintspatial.Polygon) (bool,
 
 // findMinSep finds the minimum separation between two polygons
 // Returns separation distance, reference edge index, and penetration point
-func findMinSep(polygonA, polygonB blueprintspatial.Polygon) (float64, int, vector.Two) {
+func findMinSep(polygonA, polygonB Polygon) (float64, int, vector.Two) {
 	sep := -math.MaxFloat64
 	var indexReferenceEdge int
 	var penPoint vector.Two
@@ -289,7 +288,7 @@ func findMinSep(polygonA, polygonB blueprintspatial.Polygon) (float64, int, vect
 }
 
 // edge returns the edge vector and vertices for a given edge index in a polygon
-func edge(index int, polygon blueprintspatial.Polygon) (edge, v1, v2 vector.Two) {
+func edge(index int, polygon Polygon) (edge, v1, v2 vector.Two) {
 	vertCount := len(polygon.WorldVertices)
 	if vertCount == 0 {
 		return vector.Two{}, vector.Two{}, vector.Two{}

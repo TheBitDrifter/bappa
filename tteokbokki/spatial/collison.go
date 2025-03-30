@@ -1,7 +1,7 @@
 package spatial
 
 import (
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // Collision represents information about a collision between two objects
