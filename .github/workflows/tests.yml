@@ -1,0 +1,122 @@
+name: Bappa Framework Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  table-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run table tests with different build tag combinations
+      - name: Test table (no tags)
+        run: cd table && go test ./... -tags=""
+
+      - name: Test table (unsafe tag)
+        run: cd table && go test ./... -tags="unsafe"
+
+      - name: Test table (schema_enabled tag)
+        run: cd table && go test ./... -tags="schema_enabled"
+
+      - name: Test table (unsafe and schema_enabled tags)
+        run: cd table && go test ./... -tags="unsafe schema_enabled"
+
+      # Run benchmarks
+      - name: Benchmarks table (no tags)
+        run: cd table && go test -bench=. ./table_benchmarks -tags=""
+
+      - name: Benchmarks table (unsafe tag)
+        run: cd table && go test -bench=. ./table_benchmarks -tags="unsafe"
+
+      - name: Benchmarks table (schema_enabled tag)
+        run: cd table && go test -bench=. ./table_benchmarks -tags="schema_enabled"
+
+      - name: Benchmarks table (unsafe and schema_enabled tags)
+        run: cd table && go test -bench=. ./table_benchmarks -tags="unsafe schema_enabled"
+
+  warehouse-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run warehouse tests
+      - name: Test warehouse
+        run: cd warehouse && go test ./...
+
+      # Run warehouse benchmarks with different tag combinations
+      - name: Benchmarks warehouse (no tags)
+        run: cd warehouse/bench && go test -bench=. . -tags=""
+
+      - name: Benchmarks warehouse (unsafe tag)
+        run: cd warehouse/bench && go test -bench=. . -tags="unsafe"
+
+      - name: Benchmarks warehouse (schema_enabled tag)
+        run: cd warehouse/bench && go test -bench=. . -tags="schema_enabled"
+
+      - name: Benchmarks warehouse (unsafe and schema_enabled tags)
+        run: cd warehouse/bench && go test -bench=. . -tags="unsafe schema_enabled"
+
+  blueprint-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run blueprint tests
+      - name: Test blueprint
+        run: cd blueprint && go test ./...
+
+  tteokbokki-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run tteokbokki tests
+      - name: Test tteokbokki
+        run: cd tteokbokki && go test ./...
+
+  coldbrew-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Install Ebiten's GLFW dependencies
+      - name: Install GLFW dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev
+
+      # Set up virtual framebuffer for headless UI tests
+      - name: Set up Xvfb
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
+
+      # Run coldbrew tests
+      - name: Test coldbrew
+        run: cd coldbrew && go test ./...

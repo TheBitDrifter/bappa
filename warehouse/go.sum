@@ -1,0 +1,6 @@
+github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9 h1:FKJtdY3t0/gSgQQrawCrUCs8io53Mq6mSKyovNdd4ig=
+github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9/go.mod h1:DfUHSN9ypqQX6IRhwzRdzp7TKoCm1pLFUteZgfWt168=
+github.com/TheBitDrifter/mask v0.0.1-early-alpha.1 h1:OtOctrw0eBkIlHKhzEMmsHt0+xgb3RSDsfNkpd2hiiM=
+github.com/TheBitDrifter/mask v0.0.1-early-alpha.1/go.mod h1:2Gumixx/FRZwxlwMNCpSr38UTbS5gUSSGdntrSmivGk=
+github.com/TheBitDrifter/util v0.0.0-20241102212109-342f4c0a810e h1:GichypQhTVgS3J1TpSs2nuij+L2EtxBSv70vjk03KAg=
+github.com/TheBitDrifter/util v0.0.0-20241102212109-342f4c0a810e/go.mod h1:k3LfyqK/t6Tm1vP1jqGvmIgc05BTEI6rbOEhkXS1uH4=
