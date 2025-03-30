@@ -104,6 +104,12 @@ jobs:
         with:
           go-version: "stable"
 
+      # Install Ebiten's GLFW dependencies
+      - name: Install GLFW dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev
+
       # Run coldbrew tests
       - name: Test coldbrew
         run: cd coldbrew && go test ./...
