@@ -1,6 +1,6 @@
 module github.com/TheBitDrifter/bappa/table
 
-go 1.23.1
+go 1.24.1
 
 require (
 	github.com/TheBitDrifter/mask v0.0.0-20241104160006-d17f4de74b8e
