@@ -1,0 +1,56 @@
+name: Table Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      - name: Test ./table_test (no tags)
+        run: go test ./table_test -tags=""
+
+      - name: Test ./table_test (unsafe tag)
+        run: go test ./table_test -tags="unsafe"
+
+      - name: Test ./table_test (schema_enabled tag)
+        run: go test ./table_test -tags="schema_enabled"
+
+      - name: Test ./table_test (unsafe and schema_enabled tags)
+        run: go test ./table_test -tags="unsafe schema_enabled"
+
+      - name: Test . (no tags)
+        run: go test . -tags=""
+
+      - name: Test . (unsafe tag)
+        run: go test . -tags="unsafe"
+
+      - name: Test . (schema_enabled tag)
+        run: go test . -tags="schema_enabled"
+
+      - name: Test . (unsafe and schema_enabled tags)
+        run: go test . -tags="unsafe schema_enabled"
+
+      - name: Test ./table_benchmarks (no tags)
+        run: go test -bench=. ./table_benchmarks -tags=""
+
+      - name: Test ./table_benchmarks (unsafe tag)
+        run: go test -bench=. ./table_benchmarks -tags="unsafe"
+
+      - name: Test ./table_benchmarks (schema_enabled tag)
+        run: go test -bench=. ./table_benchmarks -tags="schema_enabled"
+
+      - name: Test ./table_benchmarks (unsafe and schema_enabled tags)
+        run: go test -bench=. ./table_benchmarks -tags="unsafe schema_enabled"
