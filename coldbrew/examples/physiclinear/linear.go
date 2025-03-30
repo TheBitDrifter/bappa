@@ -5,14 +5,13 @@ import (
 	"log"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintmotion "github.com/TheBitDrifter/bappa/blueprint/motion"
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
 	"github.com/TheBitDrifter/bappa/warehouse"
 
-	tteo_coresystems "github.com/TheBitDrifter/tteokbokki/coresystems"
-	"github.com/TheBitDrifter/tteokbokki/motion"
-	"github.com/TheBitDrifter/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/tteokbokki/motion"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/tteokbokki/tteo_coresystems"
 )
 
 var assets embed.FS
@@ -63,19 +62,19 @@ func main() {
 
 func exampleScenePlan(height, width int, sto warehouse.Storage) error {
 	boxArchetype, err := sto.NewOrExistingArchetype(
-		blueprintspatial.Components.Position,
-		blueprintspatial.Components.Rotation,
-		blueprintspatial.Components.Shape,
-		blueprintmotion.Components.Dynamics,
+		spatial.Components.Position,
+		spatial.Components.Rotation,
+		spatial.Components.Shape,
+		motion.Components.Dynamics,
 	)
 	if err != nil {
 		return err
 	}
 	for i := 0; i < 10; i++ {
 		err = boxArchetype.Generate(1,
-			blueprintspatial.NewPosition(float64(i*100), float64(20*i)),
-			blueprintmotion.NewDynamics(10),
-			blueprintspatial.NewRectangle(30, 40),
+			spatial.NewPosition(float64(i*100), float64(20*i)),
+			motion.NewDynamics(10),
+			spatial.NewRectangle(30, 40),
 		)
 		if err != nil {
 			return err
@@ -84,19 +83,19 @@ func exampleScenePlan(height, width int, sto warehouse.Storage) error {
 
 	floorArchetype, err := sto.NewOrExistingArchetype(
 		floorTag,
-		blueprintspatial.Components.Position,
-		blueprintspatial.Components.Rotation,
-		blueprintspatial.Components.Shape,
-		blueprintmotion.Components.Dynamics,
+		spatial.Components.Position,
+		spatial.Components.Rotation,
+		spatial.Components.Shape,
+		motion.Components.Dynamics,
 	)
 	if err != nil {
 		return err
 	}
 
 	err = floorArchetype.Generate(1,
-		blueprintspatial.NewPosition(320, 300),
-		blueprintmotion.NewDynamics(0),
-		blueprintspatial.NewRectangle(800, 40),
+		spatial.NewPosition(320, 300),
+		motion.NewDynamics(0),
+		spatial.NewRectangle(800, 40),
 	)
 
 	return nil
@@ -112,7 +111,7 @@ func (gravitySystem) Run(scene blueprint.Scene, _ float64) error {
 
 	cursor := scene.NewCursor(blueprint.Queries.Dynamics)
 	for range cursor.Next() {
-		dyn := blueprintmotion.Components.Dynamics.GetFromCursor(cursor)
+		dyn := motion.Components.Dynamics.GetFromCursor(cursor)
 		mass := 1 / dyn.InverseMass
 		gravity := motion.Forces.Generator.NewGravityForce(mass, DEFAULT_GRAVITY, PIXELS_PER_METER)
 		motion.Forces.AddForce(dyn, gravity)
@@ -124,11 +123,11 @@ type collisionBounceSystem struct{}
 
 func (collisionBounceSystem) Run(scene blueprint.Scene, _ float64) error {
 	boxQuery := warehouse.Factory.NewQuery().And(
-		blueprintspatial.Components.Shape,
+		spatial.Components.Shape,
 		warehouse.Factory.NewQuery().Not(floorTag),
 	)
 	floorQuery := warehouse.Factory.NewQuery().And(
-		blueprintspatial.Components.Shape,
+		spatial.Components.Shape,
 		floorTag,
 	)
 
@@ -137,14 +136,14 @@ func (collisionBounceSystem) Run(scene blueprint.Scene, _ float64) error {
 
 	for range boxCursor.Next() {
 		for range floorCursor.Next() {
-			boxPos := blueprintspatial.Components.Position.GetFromCursor(boxCursor)
-			boxShape := blueprintspatial.Components.Shape.GetFromCursor(boxCursor)
-			boxDyn := blueprintmotion.Components.Dynamics.GetFromCursor(boxCursor)
+			boxPos := spatial.Components.Position.GetFromCursor(boxCursor)
+			boxShape := spatial.Components.Shape.GetFromCursor(boxCursor)
+			boxDyn := motion.Components.Dynamics.GetFromCursor(boxCursor)
 
 			// Get the block pos, shape, and dynamics
-			floorPos := blueprintspatial.Components.Position.GetFromCursor(floorCursor)
-			floorShape := blueprintspatial.Components.Shape.GetFromCursor(floorCursor)
-			floorDyn := blueprintmotion.Components.Dynamics.GetFromCursor(floorCursor)
+			floorPos := spatial.Components.Position.GetFromCursor(floorCursor)
+			floorShape := spatial.Components.Shape.GetFromCursor(floorCursor)
+			floorDyn := motion.Components.Dynamics.GetFromCursor(floorCursor)
 
 			// Check for a collision
 			if ok, collisionResult := spatial.Detector.Check(

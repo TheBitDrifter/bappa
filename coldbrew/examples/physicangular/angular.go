@@ -7,15 +7,14 @@ import (
 	"math/rand"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintmotion "github.com/TheBitDrifter/bappa/blueprint/motion"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
 	"github.com/TheBitDrifter/bappa/warehouse"
 
-	tteo_coresystems "github.com/TheBitDrifter/tteokbokki/coresystems"
-	"github.com/TheBitDrifter/tteokbokki/motion"
-	"github.com/TheBitDrifter/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/tteokbokki/motion"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/tteokbokki/tteo_coresystems"
 )
 
 // Embedded assets
@@ -90,9 +89,9 @@ func playgroundScenePlan(height, width int, sto warehouse.Storage) error {
 func createBoundaries(width, height int, sto warehouse.Storage) error {
 	boundaryArchetype, err := sto.NewOrExistingArchetype(
 		boundaryTag,
-		blueprintspatial.Components.Position,
-		blueprintspatial.Components.Shape,
-		blueprintmotion.Components.Dynamics,
+		spatial.Components.Position,
+		spatial.Components.Shape,
+		motion.Components.Dynamics,
 	)
 	if err != nil {
 		return err
@@ -102,11 +101,11 @@ func createBoundaries(width, height int, sto warehouse.Storage) error {
 	gap := 1.0
 
 	// Bottom wall (floor)
-	floorDyn := blueprintmotion.NewDynamics(0)
+	floorDyn := motion.NewDynamics(0)
 	floorWidth := float64(width) - (2 * wallThickness) - (2 * gap)
-	floorShape := blueprintspatial.NewRectangle(floorWidth, wallThickness)
+	floorShape := spatial.NewRectangle(floorWidth, wallThickness)
 	err = boundaryArchetype.Generate(1,
-		blueprintspatial.NewPosition(float64(width)/2, float64(height)-(wallThickness/2)),
+		spatial.NewPosition(float64(width)/2, float64(height)-(wallThickness/2)),
 		floorShape,
 		floorDyn,
 	)
@@ -115,11 +114,11 @@ func createBoundaries(width, height int, sto warehouse.Storage) error {
 	}
 
 	// Top wall (ceiling)
-	ceilingDyn := blueprintmotion.NewDynamics(0)
+	ceilingDyn := motion.NewDynamics(0)
 	ceilingWidth := float64(width) - (2 * wallThickness) - (2 * gap)
-	ceilingShape := blueprintspatial.NewRectangle(ceilingWidth, wallThickness)
+	ceilingShape := spatial.NewRectangle(ceilingWidth, wallThickness)
 	err = boundaryArchetype.Generate(1,
-		blueprintspatial.NewPosition(float64(width)/2, wallThickness/2),
+		spatial.NewPosition(float64(width)/2, wallThickness/2),
 		ceilingShape,
 		ceilingDyn,
 	)
@@ -128,11 +127,11 @@ func createBoundaries(width, height int, sto warehouse.Storage) error {
 	}
 
 	// Left wall
-	leftWallDyn := blueprintmotion.NewDynamics(0)
+	leftWallDyn := motion.NewDynamics(0)
 	wallHeight := float64(height*2) - (2 * wallThickness) - (2 * gap)
-	leftWallShape := blueprintspatial.NewRectangle(wallThickness, wallHeight)
+	leftWallShape := spatial.NewRectangle(wallThickness, wallHeight)
 	err = boundaryArchetype.Generate(1,
-		blueprintspatial.NewPosition(wallThickness/2, float64(height)/2),
+		spatial.NewPosition(wallThickness/2, float64(height)/2),
 		leftWallShape,
 		leftWallDyn,
 	)
@@ -141,11 +140,11 @@ func createBoundaries(width, height int, sto warehouse.Storage) error {
 	}
 
 	// Right wall
-	rightWallDyn := blueprintmotion.NewDynamics(0)
-	rightWallShape := blueprintspatial.NewRectangle(wallThickness, wallHeight)
+	rightWallDyn := motion.NewDynamics(0)
+	rightWallShape := spatial.NewRectangle(wallThickness, wallHeight)
 	rightWallDyn.SetDefaultAngularMass(rightWallShape)
 	err = boundaryArchetype.Generate(1,
-		blueprintspatial.NewPosition(float64(width)-(wallThickness/2), float64(height)/2),
+		spatial.NewPosition(float64(width)-(wallThickness/2), float64(height)/2),
 		rightWallShape,
 		rightWallDyn,
 	)
@@ -168,10 +167,10 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 	if shapeCount < maxShapes {
 		rectArchetype, err := sto.NewOrExistingArchetype(
 			rectangleTag,
-			blueprintspatial.Components.Position,
-			blueprintspatial.Components.Rotation,
-			blueprintspatial.Components.Shape,
-			blueprintmotion.Components.Dynamics,
+			spatial.Components.Position,
+			spatial.Components.Rotation,
+			spatial.Components.Shape,
+			motion.Components.Dynamics,
 		)
 		if err != nil {
 			return err
@@ -179,8 +178,8 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 
 		rectWidth := 30.0 + rand.Float64()*40
 		rectHeight := 30.0 + rand.Float64()*40
-		rect := blueprintspatial.NewRectangle(rectWidth, rectHeight)
-		dyn := blueprintmotion.NewDynamics(8 + rand.Float64()*3)
+		rect := spatial.NewRectangle(rectWidth, rectHeight)
+		dyn := motion.NewDynamics(8 + rand.Float64()*3)
 		dyn.SetDefaultAngularMass(rect)
 		dyn.Elasticity = 0.2 + rand.Float64()*0.1
 		dyn.Friction = 0.2 + rand.Float64()*0.1
@@ -192,7 +191,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		yPos := 150 + rand.Float64()*50
 
 		err = rectArchetype.Generate(1,
-			blueprintspatial.NewPosition(xPos, yPos),
+			spatial.NewPosition(xPos, yPos),
 			rect,
 			dyn,
 		)
@@ -206,10 +205,10 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 	if shapeCount < maxShapes {
 		triangleArchetype, err := sto.NewOrExistingArchetype(
 			triangleTag,
-			blueprintspatial.Components.Position,
-			blueprintspatial.Components.Rotation,
-			blueprintspatial.Components.Shape,
-			blueprintmotion.Components.Dynamics,
+			spatial.Components.Position,
+			spatial.Components.Rotation,
+			spatial.Components.Shape,
+			motion.Components.Dynamics,
 		)
 		if err != nil {
 			return err
@@ -217,8 +216,8 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 
 		triWidth := 40.0 + rand.Float64()*40
 		triHeight := 40.0 + rand.Float64()*40
-		tri := blueprintspatial.NewTriangularPlatform(triWidth, triHeight)
-		dyn := blueprintmotion.NewDynamics(6 + rand.Float64()*2)
+		tri := spatial.NewTriangularPlatform(triWidth, triHeight)
+		dyn := motion.NewDynamics(6 + rand.Float64()*2)
 		dyn.SetDefaultAngularMass(tri)
 		dyn.Elasticity = 0.2 + rand.Float64()*0.1
 		dyn.Friction = 0.2 + rand.Float64()*0.1
@@ -230,7 +229,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		yPos := 220 + rand.Float64()*50
 
 		err = triangleArchetype.Generate(1,
-			blueprintspatial.NewPosition(xPos, yPos),
+			spatial.NewPosition(xPos, yPos),
 			tri,
 			dyn,
 		)
@@ -244,10 +243,10 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 	if shapeCount < maxShapes {
 		trapezoidArchetype, err := sto.NewOrExistingArchetype(
 			trapezoidTag,
-			blueprintspatial.Components.Position,
-			blueprintspatial.Components.Rotation,
-			blueprintspatial.Components.Shape,
-			blueprintmotion.Components.Dynamics,
+			spatial.Components.Position,
+			spatial.Components.Rotation,
+			spatial.Components.Shape,
+			motion.Components.Dynamics,
 		)
 		if err != nil {
 			return err
@@ -256,8 +255,8 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		trapWidth := 50.0 + rand.Float64()*40
 		trapHeight := 30.0 + rand.Float64()*30
 		slopeRatio := 0.4 + rand.Float64()*0.3
-		trap := blueprintspatial.NewTrapezoidPlatform(trapWidth, trapHeight, slopeRatio)
-		dyn := blueprintmotion.NewDynamics(9 + rand.Float64()*3)
+		trap := spatial.NewTrapezoidPlatform(trapWidth, trapHeight, slopeRatio)
+		dyn := motion.NewDynamics(9 + rand.Float64()*3)
 		dyn.SetDefaultAngularMass(trap)
 		dyn.Elasticity = 0.2 + rand.Float64()*0.1
 		dyn.Friction = 0.2 + rand.Float64()*0.1
@@ -269,7 +268,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		yPos := 290 + rand.Float64()*50
 
 		err = trapezoidArchetype.Generate(1,
-			blueprintspatial.NewPosition(xPos, yPos),
+			spatial.NewPosition(xPos, yPos),
 			trap,
 			dyn,
 		)
@@ -283,10 +282,10 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 	if shapeCount < maxShapes {
 		rampArchetype, err := sto.NewOrExistingArchetype(
 			triangleTag,
-			blueprintspatial.Components.Position,
-			blueprintspatial.Components.Rotation,
-			blueprintspatial.Components.Shape,
-			blueprintmotion.Components.Dynamics,
+			spatial.Components.Position,
+			spatial.Components.Rotation,
+			spatial.Components.Shape,
+			motion.Components.Dynamics,
 		)
 		if err != nil {
 			return err
@@ -295,8 +294,8 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		rampWidth := 60.0 + rand.Float64()*30
 		rampHeight := 40.0 + rand.Float64()*20
 		leftToRight := rand.Float64() > 0.5
-		ramp := blueprintspatial.NewSingleRamp(rampWidth, rampHeight, leftToRight)
-		dyn := blueprintmotion.NewDynamics(7 + rand.Float64()*3)
+		ramp := spatial.NewSingleRamp(rampWidth, rampHeight, leftToRight)
+		dyn := motion.NewDynamics(7 + rand.Float64()*3)
 		dyn.SetDefaultAngularMass(ramp)
 		dyn.Elasticity = 0.2 + rand.Float64()*0.1
 		dyn.Friction = 0.2 + rand.Float64()*0.1
@@ -308,7 +307,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		yPos := 150 + rand.Float64()*50
 
 		err = rampArchetype.Generate(1,
-			blueprintspatial.NewPosition(xPos, yPos),
+			spatial.NewPosition(xPos, yPos),
 			ramp,
 			dyn,
 		)
@@ -322,10 +321,10 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 	if shapeCount < maxShapes {
 		hexagonArchetype, err := sto.NewOrExistingArchetype(
 			hexagonTag,
-			blueprintspatial.Components.Position,
-			blueprintspatial.Components.Rotation,
-			blueprintspatial.Components.Shape,
-			blueprintmotion.Components.Dynamics,
+			spatial.Components.Position,
+			spatial.Components.Rotation,
+			spatial.Components.Shape,
+			motion.Components.Dynamics,
 		)
 		if err != nil {
 			return err
@@ -333,7 +332,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 
 		hexSize := 30.0 + rand.Float64()*15
 		hexagon := newHexagon(hexSize)
-		dyn := blueprintmotion.NewDynamics(9 + rand.Float64()*3)
+		dyn := motion.NewDynamics(9 + rand.Float64()*3)
 		dyn.SetDefaultAngularMass(hexagon)
 		dyn.Elasticity = 0.2 + rand.Float64()*0.1
 		dyn.Friction = 0.2 + rand.Float64()*0.1
@@ -345,7 +344,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		yPos := 220 + rand.Float64()*50
 
 		err = hexagonArchetype.Generate(1,
-			blueprintspatial.NewPosition(xPos, yPos),
+			spatial.NewPosition(xPos, yPos),
 			hexagon,
 			dyn,
 		)
@@ -359,10 +358,10 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 	if shapeCount < maxShapes {
 		rhombusArchetype, err := sto.NewOrExistingArchetype(
 			rhombusTag,
-			blueprintspatial.Components.Position,
-			blueprintspatial.Components.Rotation,
-			blueprintspatial.Components.Shape,
-			blueprintmotion.Components.Dynamics,
+			spatial.Components.Position,
+			spatial.Components.Rotation,
+			spatial.Components.Shape,
+			motion.Components.Dynamics,
 		)
 		if err != nil {
 			return err
@@ -371,7 +370,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		rhombusWidth := 60.0 + rand.Float64()*20
 		rhombusHeight := 30.0 + rand.Float64()*20
 		rhombus := newRhombus(rhombusWidth, rhombusHeight)
-		dyn := blueprintmotion.NewDynamics(8 + rand.Float64()*2)
+		dyn := motion.NewDynamics(8 + rand.Float64()*2)
 		dyn.SetDefaultAngularMass(rhombus)
 		dyn.Elasticity = 0.2 + rand.Float64()*0.1
 		dyn.Friction = 0.2 + rand.Float64()*0.1
@@ -383,7 +382,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 		yPos := 290 + rand.Float64()*50
 
 		err = rhombusArchetype.Generate(1,
-			blueprintspatial.NewPosition(xPos, yPos),
+			spatial.NewPosition(xPos, yPos),
 			rhombus,
 			dyn,
 		)
@@ -397,7 +396,7 @@ func createShapes(width, height int, sto warehouse.Storage) error {
 }
 
 // Helper function to create a regular hexagon shape
-func newHexagon(size float64) blueprintspatial.Shape {
+func newHexagon(size float64) spatial.Shape {
 	vertices := make([]vector.Two, 6)
 
 	// Generate vertices in a circle
@@ -409,11 +408,11 @@ func newHexagon(size float64) blueprintspatial.Shape {
 		}
 	}
 
-	return blueprintspatial.NewPolygon(vertices)
+	return spatial.NewPolygon(vertices)
 }
 
 // Helper function to create a rhombus (diamond) shape
-func newRhombus(width, height float64) blueprintspatial.Shape {
+func newRhombus(width, height float64) spatial.Shape {
 	vertices := make([]vector.Two, 4)
 	halfWidth := width / 2
 	halfHeight := height / 2
@@ -424,7 +423,7 @@ func newRhombus(width, height float64) blueprintspatial.Shape {
 	vertices[2] = vector.Two{X: 0, Y: halfHeight}  // Bottom point
 	vertices[3] = vector.Two{X: -halfWidth, Y: 0}  // Left point
 
-	return blueprintspatial.NewPolygon(vertices)
+	return spatial.NewPolygon(vertices)
 }
 
 // System that applies gravity and horizontal movement forces
@@ -474,7 +473,7 @@ func (m *movementSystem) Run(scene blueprint.Scene, _ float64) error {
 	// Apply forces to all dynamic objects
 	cursor := scene.NewCursor(blueprint.Queries.Dynamics)
 	for range cursor.Next() {
-		dyn := blueprintmotion.Components.Dynamics.GetFromCursor(cursor)
+		dyn := motion.Components.Dynamics.GetFromCursor(cursor)
 
 		// Skip static objects (walls)
 		if dyn.InverseMass <= 0 {
@@ -509,14 +508,14 @@ type boundaryCollisionSystem struct{}
 func (boundaryCollisionSystem) Run(scene blueprint.Scene, _ float64) error {
 	// Query for movable shapes (non-boundary objects)
 	movableQuery := warehouse.Factory.NewQuery().And(
-		blueprintspatial.Components.Shape,
-		blueprintmotion.Components.Dynamics,
+		spatial.Components.Shape,
+		motion.Components.Dynamics,
 		warehouse.Factory.NewQuery().Not(boundaryTag),
 	)
 
 	// Query for boundary objects (walls)
 	boundaryQuery := warehouse.Factory.NewQuery().And(
-		blueprintspatial.Components.Shape,
+		spatial.Components.Shape,
 		boundaryTag,
 	)
 
@@ -525,14 +524,14 @@ func (boundaryCollisionSystem) Run(scene blueprint.Scene, _ float64) error {
 
 	// Check each movable shape against each boundary
 	for range movableCursor.Next() {
-		shapePos := blueprintspatial.Components.Position.GetFromCursor(movableCursor)
-		shapeShape := blueprintspatial.Components.Shape.GetFromCursor(movableCursor)
-		shapeDyn := blueprintmotion.Components.Dynamics.GetFromCursor(movableCursor)
+		shapePos := spatial.Components.Position.GetFromCursor(movableCursor)
+		shapeShape := spatial.Components.Shape.GetFromCursor(movableCursor)
+		shapeDyn := motion.Components.Dynamics.GetFromCursor(movableCursor)
 
 		for range boundaryCursor.Next() {
-			boundaryPos := blueprintspatial.Components.Position.GetFromCursor(boundaryCursor)
-			boundaryShape := blueprintspatial.Components.Shape.GetFromCursor(boundaryCursor)
-			boundaryDyn := blueprintmotion.Components.Dynamics.GetFromCursor(boundaryCursor)
+			boundaryPos := spatial.Components.Position.GetFromCursor(boundaryCursor)
+			boundaryShape := spatial.Components.Shape.GetFromCursor(boundaryCursor)
+			boundaryDyn := motion.Components.Dynamics.GetFromCursor(boundaryCursor)
 
 			// Check for collision and resolve it if detected
 			if ok, collisionResult := spatial.Detector.Check(
@@ -557,9 +556,9 @@ type shapeCollisionSystem struct{}
 
 // Entity data for collision processing
 type ShapeEntity struct {
-	Position *blueprintspatial.Position
-	Shape    *blueprintspatial.Shape
-	Dynamics *blueprintmotion.Dynamics
+	Position *spatial.Position
+	Shape    *spatial.Shape
+	Dynamics *motion.Dynamics
 	ID       int
 }
 
@@ -567,9 +566,9 @@ type ShapeEntity struct {
 func (shapeCollisionSystem) Run(scene blueprint.Scene, _ float64) error {
 	// Query for all movable shapes
 	movableQuery := warehouse.Factory.NewQuery().And(
-		blueprintspatial.Components.Position,
-		blueprintspatial.Components.Shape,
-		blueprintmotion.Components.Dynamics,
+		spatial.Components.Position,
+		spatial.Components.Shape,
+		motion.Components.Dynamics,
 		warehouse.Factory.NewQuery().Not(boundaryTag),
 	)
 
@@ -580,9 +579,9 @@ func (shapeCollisionSystem) Run(scene blueprint.Scene, _ float64) error {
 
 	for range movableCursor.Next() {
 		shapes = append(shapes, ShapeEntity{
-			Position: blueprintspatial.Components.Position.GetFromCursor(movableCursor),
-			Shape:    blueprintspatial.Components.Shape.GetFromCursor(movableCursor),
-			Dynamics: blueprintmotion.Components.Dynamics.GetFromCursor(movableCursor),
+			Position: spatial.Components.Position.GetFromCursor(movableCursor),
+			Shape:    spatial.Components.Shape.GetFromCursor(movableCursor),
+			Dynamics: motion.Components.Dynamics.GetFromCursor(movableCursor),
 			ID:       entityID,
 		})
 		entityID++

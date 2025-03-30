@@ -9,11 +9,13 @@ import (
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_clientsystems"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 
 	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
 )
 
@@ -75,9 +77,9 @@ func main() {
 
 func sceneOnePlan(height, width int, sto warehouse.Storage) error {
 	spriteArchetype, err := sto.NewOrExistingArchetype(
-		blueprintspatial.Components.Position,
-		blueprintclient.Components.SpriteBundle,
-		blueprintclient.Components.CameraIndex,
+		spatial.Components.Position,
+		client.Components.SpriteBundle,
+		client.Components.CameraIndex,
 	)
 	if err != nil {
 		return err
@@ -86,11 +88,11 @@ func sceneOnePlan(height, width int, sto warehouse.Storage) error {
 	err = spriteArchetype.Generate(1,
 		blueprintinput.Components.InputBuffer,
 
-		blueprintspatial.NewPosition(255, 20),
-		blueprintclient.NewSpriteBundle().
+		spatial.NewPosition(255, 20),
+		client.NewSpriteBundle().
 			AddSprite("sprite.png", true),
 
-		blueprintclient.CameraIndex(0),
+		client.CameraIndex(0),
 	)
 	err = blueprint.NewParallaxBackgroundBuilder(sto).
 		AddLayer("sky.png", 0.1, 0.1).
