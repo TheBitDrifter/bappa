@@ -1,0 +1,121 @@
+name: Bappa Framework Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  table-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run table tests with different build tag combinations
+      - name: Test table (no tags)
+        run: cd table && go test ./... -tags=""
+
+      - name: Test table (unsafe tag)
+        run: cd table && go test ./... -tags="unsafe"
+
+      - name: Test table (schema_enabled tag)
+        run: cd table && go test ./... -tags="schema_enabled"
+
+      - name: Test table (unsafe and schema_enabled tags)
+        run: cd table && go test ./... -tags="unsafe schema_enabled"
+
+      # Run benchmarks
+      - name: Benchmarks table (no tags)
+        run: cd table && go test -bench=. ./table_benchmarks -tags=""
+
+      - name: Benchmarks table (unsafe tag)
+        run: cd table && go test -bench=. ./table_benchmarks -tags="unsafe"
+
+      - name: Benchmarks table (schema_enabled tag)
+        run: cd table && go test -bench=. ./table_benchmarks -tags="schema_enabled"
+
+      - name: Benchmarks table (unsafe and schema_enabled tags)
+        run: cd table && go test -bench=. ./table_benchmarks -tags="unsafe schema_enabled"
+
+  warehouse-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run warehouse tests
+      - name: Test warehouse
+        run: cd warehouse && go test ./...
+
+      # Run warehouse benchmarks
+      - name: Benchmarks warehouse
+        run: cd warehouse && go test -bench=. ./bench
+
+  blueprint-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run blueprint tests
+      - name: Test blueprint
+        run: cd blueprint && go test ./...
+
+  tteokbokki-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run tteokbokki tests
+      - name: Test tteokbokki
+        run: cd tteokbokki && go test ./...
+
+  coldbrew-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run coldbrew tests
+      - name: Test coldbrew
+        run: cd coldbrew && go test ./...
+
+  integration-tests:
+    runs-on: ubuntu-latest
+    needs:
+      [
+        table-tests,
+        warehouse-tests,
+        blueprint-tests,
+        tteokbokki-tests,
+        coldbrew-tests,
+      ]
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: "stable"
+
+      # Run root project tests (integration tests)
+      - name: Run integration tests
+        run: go test ./...
