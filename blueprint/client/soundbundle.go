@@ -1,6 +1,6 @@
 package client
 
-import "github.com/TheBitDrifter/warehouse"
+import "github.com/TheBitDrifter/bappa/warehouse"
 
 // SoundBundle stores a collection of sound blueprints up to a predefined limit
 type SoundBundle struct {

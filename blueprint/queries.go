@@ -1,11 +1,11 @@
 package blueprint
 
 import (
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
-	blueprintmotion "github.com/TheBitDrifter/bappa/blueprint/motion"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bappa/tteokbokki/motion"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 type defaultQueries struct {
@@ -23,27 +23,27 @@ var Queries defaultQueries = defaultQueries{}
 
 var _ = func() error {
 	Queries.ParallaxBackground = warehouse.Factory.NewQuery()
-	Queries.ParallaxBackground.And(blueprintclient.Components.ParallaxBackground)
+	Queries.ParallaxBackground.And(client.Components.ParallaxBackground)
 
 	Queries.CameraIndex = warehouse.Factory.NewQuery()
-	Queries.CameraIndex.And(blueprintclient.Components.CameraIndex)
+	Queries.CameraIndex.And(client.Components.CameraIndex)
 
 	Queries.InputBuffer = warehouse.Factory.NewQuery()
-	Queries.InputBuffer.And(blueprintinput.Components.InputBuffer)
+	Queries.InputBuffer.And(input.Components.InputBuffer)
 
 	Queries.Position = warehouse.Factory.NewQuery()
-	Queries.Position.And(blueprintspatial.Components.Position)
+	Queries.Position.And(spatial.Components.Position)
 
 	Queries.Dynamics = warehouse.Factory.NewQuery()
-	Queries.Dynamics.And(blueprintmotion.Components.Dynamics)
+	Queries.Dynamics.And(motion.Components.Dynamics)
 
 	Queries.Shape = warehouse.Factory.NewQuery()
-	Queries.Shape.And(blueprintspatial.Components.Shape)
+	Queries.Shape.And(spatial.Components.Shape)
 
 	Queries.SpriteBundle = warehouse.Factory.NewQuery()
-	Queries.SpriteBundle.And(blueprintclient.Components.SpriteBundle)
+	Queries.SpriteBundle.And(client.Components.SpriteBundle)
 
 	Queries.SoundBundle = warehouse.Factory.NewQuery()
-	Queries.SoundBundle.And(blueprintclient.Components.SoundBundle)
+	Queries.SoundBundle.And(client.Components.SoundBundle)
 	return nil
 }()

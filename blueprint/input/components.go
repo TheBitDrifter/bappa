@@ -1,6 +1,6 @@
 package input
 
-import "github.com/TheBitDrifter/warehouse"
+import "github.com/TheBitDrifter/bappa/warehouse"
 
 type defaultComponents struct {
 	InputBuffer warehouse.AccessibleComponent[InputBuffer]

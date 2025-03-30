@@ -33,16 +33,8 @@ Blueprint organizes components by domain:
 - **blueprint/input**: User interaction components
   - `InputBuffer`: Collection and management of user inputs
   - `StampedInput`: Inputs with timing and position information
-
-- **blueprint/motion**: Physics components
-  - `Dynamics`: Physical properties for movement and forces
-
-- **blueprint/spatial**: Positioning and geometry components
-  - `Position`, `Rotation`, `Scale`: Basic spatial properties
-  - `Shape`: Collision geometry with various factory methods
-  - `Direction`: Directional orientation
-
 - **blueprint/vector**: 2D vector mathematics
+
   - `Two`: Vector with extensive operations (add, subtract, rotate, etc.)
   - Vector interfaces for flexible implementation
 
@@ -56,7 +48,7 @@ cursor := scene.NewCursor(blueprint.Queries.Position)
 
 // Process matching entities
 for range cursor.Next() {
-    pos := blueprintspatial.Components.Position.GetFromCursor(cursor)
+    pos := spatial.Components.Position.GetFromCursor(cursor)
     // Process entity...
 }
 ```
@@ -73,19 +65,6 @@ builder.Build()
 
 // Create a static background
 blueprint.CreateStillBackground(storage, "backgrounds/scene.png")
-```
-
-### Creating and Using Shapes
-
-```go
-// Create a rectangle
-rect := blueprintspatial.NewRectangle(50, 30)
-
-// Create a ramp
-ramp := blueprintspatial.NewSingleRamp(100, 40, true) // ascending left-to-right
-
-// Create a platform
-platform := blueprintspatial.NewTrapezoidPlatform(80, 20, 0.7) // 0.7 = bottom width ratio
 ```
 
 ## License

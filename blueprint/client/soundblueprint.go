@@ -1,6 +1,6 @@
 package client
 
-import "github.com/TheBitDrifter/warehouse"
+import "github.com/TheBitDrifter/bappa/warehouse"
 
 // SoundBlueprint defines sound resources that can be loaded conditionally
 // It allows for entity creation without direct sound dependencies, enabling

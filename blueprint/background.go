@@ -1,10 +1,10 @@
 package blueprint
 
 import (
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // ParallaxLayer defines a single layer in a parallax background
@@ -61,9 +61,9 @@ func (b *ParallaxBackgroundBuilder) AddLayer(spritePath string, speedX, speedY f
 func (b *ParallaxBackgroundBuilder) Build() error {
 	// Create the backgroundArchetype
 	backgroundArchetype, err := b.storage.NewOrExistingArchetype(
-		blueprintclient.Components.SpriteBundle,
-		blueprintclient.Components.ParallaxBackground,
-		blueprintspatial.Components.Position,
+		client.Components.SpriteBundle,
+		client.Components.ParallaxBackground,
+		spatial.Components.Position,
 	)
 	if err != nil {
 		return err
@@ -74,7 +74,7 @@ func (b *ParallaxBackgroundBuilder) Build() error {
 	}
 	// Generate each layer from the provided slice
 	for _, layer := range b.layers {
-		sprite := blueprintclient.NewSpriteBundle().AddSprite(layer.SpritePath, true)
+		sprite := client.NewSpriteBundle().AddSprite(layer.SpritePath, true)
 		// Apply offset if specified
 		if b.offset.X != 0 || b.offset.Y != 0 {
 			// Backgrounds only use first index
@@ -83,7 +83,7 @@ func (b *ParallaxBackgroundBuilder) Build() error {
 		err = backgroundArchetype.Generate(
 			1,
 			sprite,
-			blueprintclient.ParallaxBackground{
+			client.ParallaxBackground{
 				SpeedX:         layer.SpeedX,
 				SpeedY:         layer.SpeedY,
 				DisableLooping: b.disableLooping,
@@ -100,15 +100,15 @@ func (b *ParallaxBackgroundBuilder) Build() error {
 // Optional position parameters can be provided to offset the background
 func CreateStillBackground(sto warehouse.Storage, spritePath string, pos ...vector.Two) error {
 	backgroundArchetype, err := sto.NewOrExistingArchetype(
-		blueprintclient.Components.SpriteBundle,
-		blueprintclient.Components.ParallaxBackground,
-		blueprintspatial.Components.Position,
+		client.Components.SpriteBundle,
+		client.Components.ParallaxBackground,
+		spatial.Components.Position,
 	)
 	if err != nil {
 		return err
 	}
 
-	spriteBundle := blueprintclient.NewSpriteBundle().AddSprite(spritePath, true)
+	spriteBundle := client.NewSpriteBundle().AddSprite(spritePath, true)
 
 	// Apply position offset if provided
 	setPos := vector.Two{}
@@ -120,12 +120,12 @@ func CreateStillBackground(sto warehouse.Storage, spritePath string, pos ...vect
 	return backgroundArchetype.Generate(
 		1,
 		spriteBundle,
-		blueprintclient.ParallaxBackground{
+		client.ParallaxBackground{
 			SpeedX: 0,
 			SpeedY: 0,
 			// Static backgrounds typically should not loop
 			DisableLooping: true,
 		},
-		blueprintspatial.NewPosition(setPos.X, setPos.Y),
+		spatial.NewPosition(setPos.X, setPos.Y),
 	)
 }

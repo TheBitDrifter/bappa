@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // SpriteBundle stores a collection of sprite blueprints up to a predefined limit

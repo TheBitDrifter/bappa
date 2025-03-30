@@ -21,8 +21,6 @@ Blueprint organizes components by domain into several subpackages:
 
   - blueprint/client: Visual and audio components (sprites, animations, sounds)
   - blueprint/input: User interaction components (input buffers)
-  - blueprint/motion: Physical movement components (dynamics)
-  - blueprint/spatial: Positioning and geometry components (position, rotation, shapes)
   - blueprint/vector: 2D vector mathematics utilities
 
 # Working with Queries

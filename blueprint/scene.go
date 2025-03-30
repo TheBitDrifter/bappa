@@ -1,7 +1,7 @@
 package blueprint
 
 import (
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 type Scene interface {

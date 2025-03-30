@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // SpriteBlueprint defines visual representation of entities with optional animations

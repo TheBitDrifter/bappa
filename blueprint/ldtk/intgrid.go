@@ -3,8 +3,9 @@ package ldtk
 import (
 	"log"
 
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
+
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // Rectangle represents a merged rectangular area for IntGrid optimization
@@ -59,8 +60,8 @@ func (p *LDtkProject) LoadIntGrid(levelName string, sto warehouse.Storage, arche
 				centerY := rect.Y + rect.Height/2
 
 				err := archetype.Generate(1,
-					blueprintspatial.NewPosition(centerX, centerY),
-					blueprintspatial.NewRectangle(rect.Width, rect.Height),
+					spatial.NewPosition(centerX, centerY),
+					spatial.NewRectangle(rect.Width, rect.Height),
 				)
 				if err != nil {
 					return err

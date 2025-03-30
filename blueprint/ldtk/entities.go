@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // EntityHandler defines how to process an entity from the LDtk file

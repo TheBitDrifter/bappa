@@ -4,10 +4,10 @@ import (
 	"log"
 	"strings"
 
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // LoadTiles loads tiles for the specified level into the storage
@@ -48,15 +48,15 @@ func (p *LDtkProject) LoadTiles(levelName string, sto warehouse.Storage) error {
 
 		// Create a single entity with a sprite bundle for this layer
 		archetype, err := sto.NewOrExistingArchetype(
-			blueprintclient.Components.SpriteBundle,
-			blueprintspatial.Components.Position,
+			client.Components.SpriteBundle,
+			spatial.Components.Position,
 		)
 		if err != nil {
 			return err
 		}
 
 		// Create a sprite bundle for the whole layer
-		blueprint := blueprintclient.NewSpriteBundle().
+		blueprint := client.NewSpriteBundle().
 			AddSprite(tilesetPath, true).
 			WithPriority(10 + layerIndex). // Higher layers get higher priority
 			WithOffset(vector.Two{X: 0, Y: 0})
@@ -72,7 +72,7 @@ func (p *LDtkProject) LoadTiles(levelName string, sto warehouse.Storage) error {
 			flippedY := (tile.F & 2) != 0
 
 			// Add the tile to the tileset
-			blueprint.Blueprints[0].TileSet = append(blueprint.Blueprints[0].TileSet, blueprintclient.Tile{
+			blueprint.Blueprints[0].TileSet = append(blueprint.Blueprints[0].TileSet, client.Tile{
 				SourceX:  sourceX,
 				SourceY:  sourceY,
 				TileID:   tile.T,
@@ -85,7 +85,7 @@ func (p *LDtkProject) LoadTiles(levelName string, sto warehouse.Storage) error {
 
 		// Create a single entity for the entire layer
 		err = archetype.Generate(1,
-			blueprintspatial.NewPosition(0, 0), // Origin position
+			spatial.NewPosition(0, 0), // Origin position
 			blueprint,
 		)
 		if err != nil {

@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 type defaultComponents struct {
