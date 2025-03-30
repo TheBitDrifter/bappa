@@ -1,10 +1,10 @@
 package coresystems
 
 import (
+	"github.com/TheBitDrifter/bappa/tteokbokki/motion"
 	"github.com/TheBitDrifter/blueprint"
 	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
 	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/tteokbokki/motion"
 	"github.com/TheBitDrifter/warehouse"
 )
 

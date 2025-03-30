@@ -1,9 +1,8 @@
-module github.com/TheBitDrifter/tteokbokki
+module github.com/TheBitDrifter/bappa/tteokbokki
 
 go 1.24.1
 
 require (
-	github.com/TheBitDrifter/blueprint v0.0.0-20250312181352-30002bd4eec6
 	github.com/TheBitDrifter/warehouse v0.0.0-20250314130927-1476ce6b114f
 )
 
@@ -13,3 +12,7 @@ require (
 	github.com/TheBitDrifter/table v0.0.0-20250302173100-264081644811 // indirect
 	github.com/TheBitDrifter/util v0.0.0-20241102212109-342f4c0a810e // indirect
 )
+
+replace github.com/TheBitDrifter/blueprint => ../blueprint/
+
+replace github.com/TheBitDrifter/warehouse => ../warehouse/

@@ -3,11 +3,11 @@ package tteokbokki_test
 import (
 	"fmt"
 
+	"github.com/TheBitDrifter/bappa/tteokbokki/motion"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
 	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
 	"github.com/TheBitDrifter/blueprint/vector"
-	"github.com/TheBitDrifter/tteokbokki/motion"
-	"github.com/TheBitDrifter/tteokbokki/spatial"
 )
 
 // Example_basicCollision demonstrates detecting and resolving a basic collision between two objects

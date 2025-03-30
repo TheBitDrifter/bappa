@@ -1,10 +1,10 @@
 package coresystems
 
 import (
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 	"github.com/TheBitDrifter/blueprint"
 	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
 	"github.com/TheBitDrifter/blueprint/vector"
-	"github.com/TheBitDrifter/tteokbokki/spatial"
 )
 
 // TransformSystem updates world coordinates for shapes based on position, rotation, and scale

@@ -1,4 +1,4 @@
-package blueprintspatial
+package spatial
 
 import vector "github.com/TheBitDrifter/bappa/blueprint/vector"
 

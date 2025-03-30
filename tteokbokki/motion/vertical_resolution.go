@@ -1,9 +1,9 @@
 package motion
 
 import (
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
 	"github.com/TheBitDrifter/blueprint/vector"
-	"github.com/TheBitDrifter/tteokbokki/spatial"
 )
 
 // VerticalResolver is the Global vertical collision resolver instance

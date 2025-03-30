@@ -1,4 +1,4 @@
-package blueprintspatial
+package spatial
 
 import (
 	"slices"
