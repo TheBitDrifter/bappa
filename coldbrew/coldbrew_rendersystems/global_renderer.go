@@ -1,15 +1,15 @@
-package rendersystems
+package coldbrew_rendersystems
 
 import (
 	"log/slog"
 	"math"
 
+	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bark"
 	"github.com/TheBitDrifter/blueprint"
 	blueprintclient "github.com/TheBitDrifter/blueprint/client"
 	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
 	"github.com/TheBitDrifter/blueprint/vector"
-	"github.com/TheBitDrifter/coldbrew"
 	"github.com/TheBitDrifter/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 )

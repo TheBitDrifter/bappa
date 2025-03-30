@@ -1,4 +1,4 @@
-module github.com/TheBitDrifter/coldbrew
+module github.com/TheBitDrifter/bappa/coldbrew
 
 go 1.24.1
 

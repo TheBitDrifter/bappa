@@ -1,7 +1,7 @@
-package clientsystems
+package coldbrew_clientsystems
 
 import (
-	"github.com/TheBitDrifter/coldbrew"
+	"github.com/TheBitDrifter/bappa/coldbrew"
 )
 
 // CameraBorderLockSystem ensures cameras stay within scene boundaries

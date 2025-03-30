@@ -4,11 +4,11 @@ import (
 	"embed"
 	"log"
 
+	"github.com/TheBitDrifter/bappa/coldbrew"
+	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
 	"github.com/TheBitDrifter/blueprint"
 	blueprintclient "github.com/TheBitDrifter/blueprint/client"
 	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/coldbrew"
-	coldbrew_rendersystems "github.com/TheBitDrifter/coldbrew/rendersystems"
 	"github.com/TheBitDrifter/warehouse"
 )
 

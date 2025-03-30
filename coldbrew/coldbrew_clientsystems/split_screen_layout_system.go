@@ -1,7 +1,7 @@
-package clientsystems
+package coldbrew_clientsystems
 
 import (
-	"github.com/TheBitDrifter/coldbrew"
+	"github.com/TheBitDrifter/bappa/coldbrew"
 )
 
 // SplitScreenLayoutSystem manages camera layouts based on resolution, window size and active camera count

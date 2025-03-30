@@ -22,7 +22,7 @@ Basic Usage:
 		"log"
 
 		"github.com/TheBitDrifter/blueprint"
-		"github.com/TheBitDrifter/coldbrew"
+		"github.com/TheBitDrifter/bappa/coldbrew"
 	)
 
 	//go:embed assets/*

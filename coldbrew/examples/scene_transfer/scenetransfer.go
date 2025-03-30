@@ -4,10 +4,11 @@ import (
 	"embed"
 	"log"
 
+	"github.com/TheBitDrifter/bappa/coldbrew"
+	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_clientsystems"
+	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
 	"github.com/TheBitDrifter/blueprint"
-	"github.com/TheBitDrifter/coldbrew"
-	coldbrew_clientsystems "github.com/TheBitDrifter/coldbrew/clientsystems"
-	coldbrew_rendersystems "github.com/TheBitDrifter/coldbrew/rendersystems"
+
 	"github.com/TheBitDrifter/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
