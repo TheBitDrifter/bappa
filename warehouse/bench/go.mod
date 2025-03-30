@@ -1,9 +1,9 @@
 module github.com/TheBitDrifter/bappa/warehouse/bench
 
-go 1.23.3
+go 1.24.1
 
 require (
-	github.com/TheBitDrifter/bappa/table v0.0.0-20250315162738-9d26b0df5cd1
+	github.com/TheBitDrifter/bappa/table v0.0.0
 	github.com/TheBitDrifter/bappa/warehouse v0.0.0-00010101000000-000000000000
 	github.com/mlange-42/arche v0.13.2
 )
