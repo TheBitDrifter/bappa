@@ -5,7 +5,7 @@ package table_test
 import (
 	"testing"
 
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 type overrideID struct {
