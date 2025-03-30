@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // TestSuccessfulCacheBust tests a successful cache bust scenario
@@ -231,9 +232,9 @@ func createScenePlan(assets []string) func(width, height int, storage warehouse.
 			return err
 		}
 
-		spriteBundle := blueprintclient.SpriteBundle{}
+		spriteBundle := client.SpriteBundle{}
 		for i, assetName := range assets[:2] {
-			spriteBundle.Blueprints[i] = blueprintclient.SpriteBlueprint{
+			spriteBundle.Blueprints[i] = client.SpriteBlueprint{
 				Location: warehouse.CacheLocation{
 					Key: assetName,
 				},
@@ -241,8 +242,8 @@ func createScenePlan(assets []string) func(width, height int, storage warehouse.
 			spriteBundle.Blueprints[i].Config.Active = true
 		}
 
-		soundBundle := blueprintclient.SoundBundle{}
-		soundBundle.Blueprints[0] = blueprintclient.SoundBlueprint{
+		soundBundle := client.SoundBundle{}
+		soundBundle.Blueprints[0] = client.SoundBlueprint{
 			Location: warehouse.CacheLocation{
 				Key: assets[2],
 			},

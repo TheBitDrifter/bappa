@@ -11,8 +11,8 @@ import (
 	"github.com/TheBitDrifter/bappa/blueprint"
 	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/table"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/table"
+	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	_    Client = &client{}
+	_    Client = &clientImpl{}
 	tick        = 0
 )
 
@@ -44,7 +44,7 @@ type LocalClient interface {
 	ebiten.Game
 }
 
-type client struct {
+type clientImpl struct {
 	*tickManager
 	*inputManager
 	*cameraUtility
@@ -56,7 +56,7 @@ type client struct {
 
 // NewClient creates a new client with specified resolution and cache settings
 func NewClient(baseResX, baseResY, maxSpritesCached, maxSoundsCached, maxScenesCached int, embeddedFS fs.FS) Client {
-	cli := &client{
+	cli := &clientImpl{
 		tickManager:   newTickManager(),
 		cameraUtility: newCameraUtility(),
 		systemManager: &systemManager{},
@@ -78,7 +78,7 @@ func NewClient(baseResX, baseResY, maxSpritesCached, maxSoundsCached, maxScenesC
 }
 
 // Start initializes and runs the game loop.
-func (cli *client) Start() error {
+func (cli *clientImpl) Start() error {
 	if len(cli.loadingScenes) == 0 {
 		cli.loadingScenes = append(cli.loadingScenes, defaultLoadingScene)
 	}
@@ -90,7 +90,7 @@ func (cli *client) Start() error {
 	return nil
 }
 
-func (cli *client) Update() error {
+func (cli *clientImpl) Update() error {
 	cli.toggleDebugView()
 
 	err := cli.processNonExecutedPlansForActiveScenes()
@@ -111,7 +111,7 @@ func (cli *client) Update() error {
 		return err
 	}
 
-	err = cli.foo()
+	err = cli.run()
 	if err != nil {
 		return err
 	}
@@ -120,7 +120,7 @@ func (cli *client) Update() error {
 	return nil
 }
 
-func (cli *client) foo() error {
+func (cli *clientImpl) run() error {
 	loadingScenes := cli.loadingScenes
 	for activeScene := range cli.ActiveScenes() {
 		cameraReady := true
@@ -165,13 +165,13 @@ func (cli *client) foo() error {
 	return nil
 }
 
-func (cli *client) toggleDebugView() {
+func (cli *clientImpl) toggleDebugView() {
 	if inpututil.IsKeyJustReleased(ClientConfig.DebugKey()) && !isProd {
 		ClientConfig.DebugVisual = !ClientConfig.DebugVisual
 	}
 }
 
-func (cli *client) processNonExecutedPlansForActiveScenes() error {
+func (cli *clientImpl) processNonExecutedPlansForActiveScenes() error {
 	for s := range cli.ActiveScenes() {
 		_, err := s.ExecutePlan()
 		if err != nil {
@@ -181,7 +181,7 @@ func (cli *client) processNonExecutedPlansForActiveScenes() error {
 	return nil
 }
 
-func (cli *client) findAndLoadMissingAssetsForActiveScenesAsync() {
+func (cli *clientImpl) findAndLoadMissingAssetsForActiveScenesAsync() {
 	for scene := range cli.ActiveScenes() {
 		if !scene.IsLoaded() && !scene.IsLoading() {
 			if scene.TryStartLoading() {
@@ -200,7 +200,7 @@ func (cli *client) findAndLoadMissingAssetsForActiveScenesAsync() {
 	}
 }
 
-func (cli *client) loadAssetsForScene(scene Scene, spriteCache warehouse.Cache[Sprite], soundCache warehouse.Cache[Sound]) error {
+func (cli *clientImpl) loadAssetsForScene(scene Scene, spriteCache warehouse.Cache[Sprite], soundCache warehouse.Cache[Sound]) error {
 	sto := scene.Storage()
 	cursor := warehouse.Factory.NewCursor(blueprint.Queries.SpriteBundle, sto)
 	for range cursor.Next() {
@@ -224,7 +224,7 @@ func (cli *client) loadAssetsForScene(scene Scene, spriteCache warehouse.Cache[S
 	return nil
 }
 
-func (cli *client) resolveCacheForActiveScenes() {
+func (cli *clientImpl) resolveCacheForActiveScenes() {
 	if isResolvingCache.CompareAndSwap(false, true) {
 		swapCacheSpr := warehouse.FactoryNewCache[Sprite](int(ClientConfig.maxSpritesCached.Load()))
 		swapCacheSnd := warehouse.FactoryNewCache[Sound](int(ClientConfig.maxSoundsCached.Load()))
@@ -277,7 +277,7 @@ func (cli *client) resolveCacheForActiveScenes() {
 	}
 }
 
-func (cli *client) onCacheResolveComplete(spriteCache warehouse.Cache[Sprite], soundCache warehouse.Cache[Sound], err error) {
+func (cli *clientImpl) onCacheResolveComplete(spriteCache warehouse.Cache[Sprite], soundCache warehouse.Cache[Sound], err error) {
 	if err != nil {
 		handler := GetCacheResolveErrorHandler()
 		log.Println(err)
@@ -292,14 +292,14 @@ func (cli *client) onCacheResolveComplete(spriteCache warehouse.Cache[Sprite], s
 	globalSoundCache = soundCache
 }
 
-func (cli *client) captureInputs() {
+func (cli *clientImpl) captureInputs() {
 	cli.capturers.keyboard.Capture()
 	cli.capturers.mouse.Capture()
 	cli.capturers.gamepad.Capture()
 	cli.capturers.touch.Capture()
 }
 
-func (cli *client) runGlobalClientSystems() error {
+func (cli *clientImpl) runGlobalClientSystems() error {
 	for _, globalClientSystem := range cli.globalClientSystems {
 		err := globalClientSystem.Run(cli)
 		if err != nil {
@@ -309,11 +309,11 @@ func (cli *client) runGlobalClientSystems() error {
 	return nil
 }
 
-func (cli *client) Layout(int, int) (int, int) {
+func (cli *clientImpl) Layout(int, int) (int, int) {
 	return ClientConfig.resolution.x, ClientConfig.resolution.y
 }
 
-func (cli *client) Draw(image *ebiten.Image) {
+func (cli *clientImpl) Draw(image *ebiten.Image) {
 	for i := range cli.cameras {
 		c := cli.cameras[i]
 		c.Surface().Clear()
@@ -359,15 +359,15 @@ func (cli *client) Draw(image *ebiten.Image) {
 	}
 }
 
-func (cli client) CameraSceneTracker() CameraSceneTracker {
+func (cli clientImpl) CameraSceneTracker() CameraSceneTracker {
 	return cli.cameraSceneTracker
 }
 
-func (cli client) Cameras() [MaxSplit]Camera {
+func (cli clientImpl) Cameras() [MaxSplit]Camera {
 	return cli.cameras
 }
 
-func (cli client) ActivateCamera() (Camera, error) {
+func (cli clientImpl) ActivateCamera() (Camera, error) {
 	for _, cam := range cli.cameras {
 		if !cam.Active() {
 			cam.Activate()

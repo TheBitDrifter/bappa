@@ -3,18 +3,18 @@ package coldbrew
 import (
 	"log/slog"
 
-	"github.com/TheBitDrifter/bark"
 	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // touchCapturer handles touch input detection and processing
 type touchCapturer struct {
-	client *client
+	client *clientImpl
 	logger *slog.Logger
 }
 
-func newTouchCapturer(client *client) *touchCapturer {
+func newTouchCapturer(client *clientImpl) *touchCapturer {
 	return &touchCapturer{
 		client: client,
 		logger: bark.For("touch"),

@@ -5,8 +5,8 @@ import (
 	"sync/atomic"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
-	"github.com/TheBitDrifter/table"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/table"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 var _ blueprint.Scene = &scene{} // Ensure scene implements blueprint.Scene

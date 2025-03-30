@@ -5,12 +5,11 @@ import (
 	"log"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	"github.com/hajimehoshi/ebiten/v2/text/v2"

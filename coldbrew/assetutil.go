@@ -3,12 +3,12 @@ package coldbrew
 import (
 	"fmt"
 
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 )
 
 // MaterializeSprites converts a bundle of sprite blueprints into concrete Sprite objects
 // It skips any blueprint with an empty location key
-func MaterializeSprites(spriteBundle *blueprintclient.SpriteBundle) []Sprite {
+func MaterializeSprites(spriteBundle *client.SpriteBundle) []Sprite {
 	cacheSwapMutex.RLock()
 	defer cacheSwapMutex.RUnlock()
 
@@ -34,7 +34,7 @@ func MaterializeSprites(spriteBundle *blueprintclient.SpriteBundle) []Sprite {
 
 // MaterializeSounds converts a collection of sound blueprints into concrete Sound objects
 // It skips any blueprint with an empty location key
-func MaterializeSounds(soundBundle *blueprintclient.SoundBundle) []Sound {
+func MaterializeSounds(soundBundle *client.SoundBundle) []Sound {
 	cacheSwapMutex.RLock()
 	defer cacheSwapMutex.RUnlock()
 
@@ -60,7 +60,7 @@ func MaterializeSounds(soundBundle *blueprintclient.SoundBundle) []Sound {
 
 // MaterializeSound finds and returns a specific Sound object from a bundle based on the provided SoundConfig
 // Returns an error if the sound is not found
-func MaterializeSound(soundBundle *blueprintclient.SoundBundle, sc blueprintclient.SoundConfig) (Sound, error) {
+func MaterializeSound(soundBundle *client.SoundBundle, sc client.SoundConfig) (Sound, error) {
 	cacheSwapMutex.RLock()
 	defer cacheSwapMutex.RUnlock()
 

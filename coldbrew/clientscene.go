@@ -5,11 +5,11 @@ import (
 	"iter"
 	"sync"
 
-	"github.com/TheBitDrifter/bark"
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	"github.com/TheBitDrifter/table"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/table"
+	"github.com/TheBitDrifter/bappa/warehouse"
+	"github.com/TheBitDrifter/bark"
 )
 
 var _ SceneManager = &sceneManager{}
@@ -156,14 +156,14 @@ func (m *sceneManager) DeactivateScene(target Scene) {
 			// We must fall back on keys
 			cursor := scene.NewCursor(blueprint.Queries.SpriteBundle)
 			for range cursor.Next() {
-				bundle := blueprintclient.Components.SpriteBundle.GetFromCursor(cursor)
+				bundle := client.Components.SpriteBundle.GetFromCursor(cursor)
 				for i := range bundle.Blueprints {
 					bundle.Blueprints[i].Location.Index.Store(0)
 				}
 			}
 			cursor = scene.NewCursor(blueprint.Queries.SoundBundle)
 			for range cursor.Next() {
-				bundle := blueprintclient.Components.SoundBundle.GetFromCursor(cursor)
+				bundle := client.Components.SoundBundle.GetFromCursor(cursor)
 				for i := range bundle.Blueprints {
 					bundle.Blueprints[i].Location.Index.Store(0)
 				}

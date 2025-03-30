@@ -3,8 +3,8 @@ package coldbrew
 import (
 	"errors"
 
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -17,7 +17,7 @@ func NewMockSpriteLoader() *MockSpriteLoader {
 }
 
 // Load implements the sprite loading for tests
-func (m *MockSpriteLoader) Load(spriteBundle *blueprintclient.SpriteBundle, cache warehouse.Cache[Sprite]) error {
+func (m *MockSpriteLoader) Load(spriteBundle *client.SpriteBundle, cache warehouse.Cache[Sprite]) error {
 	for i := range spriteBundle.Blueprints {
 		spriteBlueprint := &spriteBundle.Blueprints[i]
 		if spriteBlueprint.Location.Key == "" {
@@ -64,7 +64,7 @@ func NewMockSoundLoader() *MockSoundLoader {
 }
 
 // Load implements the sound loading for tests
-func (m *MockSoundLoader) Load(soundBundle *blueprintclient.SoundBundle, cache warehouse.Cache[Sound]) error {
+func (m *MockSoundLoader) Load(soundBundle *client.SoundBundle, cache warehouse.Cache[Sound]) error {
 	for i := range soundBundle.Blueprints {
 		soundBlueprint := &soundBundle.Blueprints[i]
 		if soundBlueprint.Location.Key == "" {
@@ -103,7 +103,7 @@ func (m *MockSoundLoader) Load(soundBundle *blueprintclient.SoundBundle, cache w
 // NewTestClient creates a client specifically for testing purposes
 // with mock asset loaders that don't require real files
 func NewTestClient(baseResX, baseResY, maxSpritesCached, maxSoundsCached, maxScenesCached int) Client {
-	cli := &client{
+	cli := &clientImpl{
 		tickManager:   newTickManager(),
 		cameraUtility: newCameraUtility(),
 		systemManager: &systemManager{},

@@ -3,18 +3,18 @@ package coldbrew
 import (
 	"log/slog"
 
-	"github.com/TheBitDrifter/bark"
 	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // mouseCapturer handles mouse input detection and processing
 type mouseCapturer struct {
-	client *client
+	client *clientImpl
 	logger *slog.Logger
 }
 
-func newMouseCapturer(client *client) *mouseCapturer {
+func newMouseCapturer(client *clientImpl) *mouseCapturer {
 	return &mouseCapturer{
 		client: client,
 		logger: bark.For("mouse"),

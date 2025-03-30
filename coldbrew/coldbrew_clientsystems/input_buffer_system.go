@@ -1,11 +1,11 @@
 package coldbrew_clientsystems
 
 import (
-	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bappa/coldbrew"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // InputBufferSystem extracts client inputs and passes them to the core system components as StampedInputs
@@ -16,7 +16,7 @@ func (InputBufferSystem) Run(cli coldbrew.Client) error {
 	for scene := range cli.ActiveScenes() {
 		inputBufferCursor := warehouse.Factory.NewCursor(blueprint.Queries.InputBuffer, scene.Storage())
 		for range inputBufferCursor.Next() {
-			buffer := blueprintinput.Components.InputBuffer.GetFromCursor(inputBufferCursor)
+			buffer := input.Components.InputBuffer.GetFromCursor(inputBufferCursor)
 			receiver := cli.Receiver(buffer.ReceiverIndex)
 			if !receiver.Active() {
 				continue
@@ -24,9 +24,9 @@ func (InputBufferSystem) Run(cli coldbrew.Client) error {
 			poppedInputs := receiver.PopInputs()
 
 			// Transform input coordinates if camera component exists
-			hasCam := blueprintclient.Components.CameraIndex.CheckCursor(inputBufferCursor)
+			hasCam := client.Components.CameraIndex.CheckCursor(inputBufferCursor)
 			if hasCam {
-				camIndex := *blueprintclient.Components.CameraIndex.GetFromCursor(inputBufferCursor)
+				camIndex := *client.Components.CameraIndex.GetFromCursor(inputBufferCursor)
 				cam := cli.Cameras()[camIndex]
 				if cam.Active() {
 					globalPos, localPos := cam.Positions()

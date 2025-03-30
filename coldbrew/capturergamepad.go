@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"math"
 
+	"github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/bark"
-	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
@@ -14,7 +14,7 @@ var _ InputCapturer = &gamepadCapturer{}
 
 // gamepadCapturer handles gamepad input detection and processing
 type gamepadCapturer struct {
-	client  *client
+	client  *clientImpl
 	logger  *slog.Logger
 	buttons map[ebiten.GamepadID][]ebiten.GamepadButton
 	axes    map[ebiten.GamepadID][]float64
@@ -39,7 +39,7 @@ type stickState struct {
 }
 
 // newGamepadCapturer creates a new gamepad input capturer
-func newGamepadCapturer(client *client) *gamepadCapturer {
+func newGamepadCapturer(client *clientImpl) *gamepadCapturer {
 	return &gamepadCapturer{
 		client:             client,
 		logger:             bark.For("gamepad"),
@@ -267,14 +267,14 @@ func (h *gamepadCapturer) processButtonInputsForGamepad(receiverIndex int, recei
 			continue
 		}
 
-		input := receiver.padLayout.buttons[btn]
+		curInput := receiver.padLayout.buttons[btn]
 		h.client.receivers[receiverIndex].inputs.pad = append(
 			h.client.receivers[receiverIndex].inputs.pad,
-			blueprintinput.StampedInput{
+			input.StampedInput{
 				Tick: tick,
 				X:    x,
 				Y:    y,
-				Val:  input,
+				Val:  curInput,
 			},
 		)
 
@@ -296,7 +296,7 @@ func (h *gamepadCapturer) processStickInputsForGamepad(receiverIndex int, receiv
 	if (stickState.Left.X != 0 || stickState.Left.Y != 0) && h.client.receivers[receiverIndex].leftAxes {
 		h.client.receivers[receiverIndex].inputs.pad = append(
 			h.client.receivers[receiverIndex].inputs.pad,
-			blueprintinput.StampedInput{
+			input.StampedInput{
 				Tick: tick,
 				// Use stick X/Y values directly as the vector components
 				X:   int(stickState.Left.X * 100),  // Scale to a reasonable range if needed
@@ -317,7 +317,7 @@ func (h *gamepadCapturer) processStickInputsForGamepad(receiverIndex int, receiv
 	if (stickState.Right.X != 0 || stickState.Right.Y != 0) && h.client.receivers[receiverIndex].rightAxes {
 		h.client.receivers[receiverIndex].inputs.pad = append(
 			h.client.receivers[receiverIndex].inputs.pad,
-			blueprintinput.StampedInput{
+			input.StampedInput{
 				Tick: tick,
 				// Use stick X/Y values directly as the vector components
 				X:   int(stickState.Right.X * 100),  // Scale to a reasonable range if needed

@@ -10,7 +10,7 @@ import (
 	"sync"
 
 	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
 

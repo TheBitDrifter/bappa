@@ -4,14 +4,15 @@ import (
 	"log/slog"
 	"math"
 
-	"github.com/TheBitDrifter/bappa/coldbrew"
-	"github.com/TheBitDrifter/bark"
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/coldbrew"
+	"github.com/TheBitDrifter/bappa/warehouse"
+	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
+
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 )
 
 // GlobalRenderer is the default render system for the coldbrew package
@@ -24,11 +25,11 @@ type GlobalRenderer struct {
 // RenderItem contains all state needed for rendering an entity
 type RenderItem struct {
 	sprite    coldbrew.Sprite
-	blueprint *blueprintclient.SpriteBlueprint
-	pos       blueprintspatial.Position
-	rot       blueprintspatial.Rotation
-	scale     blueprintspatial.Scale
-	direction blueprintspatial.Direction
+	blueprint *client.SpriteBlueprint
+	pos       spatial.Position
+	rot       spatial.Rotation
+	scale     spatial.Scale
+	direction spatial.Direction
 }
 
 // Render processes all renderable entities within a scene and presents them to screen
@@ -66,9 +67,9 @@ func (sys GlobalRenderer) Render(cli coldbrew.Client, screen coldbrew.Screen) {
 		// Render backgrounds
 		cursor := scene.NewCursor(blueprint.Queries.ParallaxBackground)
 		for range cursor.Next() {
-			if ok, bgConfig := blueprintclient.Components.ParallaxBackground.GetFromCursorSafe(cursor); ok {
-				position := blueprintspatial.Components.Position.GetFromCursor(cursor)
-				sprBundle := blueprintclient.Components.SpriteBundle.GetFromCursor(cursor)
+			if ok, bgConfig := client.Components.ParallaxBackground.GetFromCursorSafe(cursor); ok {
+				position := spatial.Components.Position.GetFromCursor(cursor)
+				sprBundle := client.Components.SpriteBundle.GetFromCursor(cursor)
 
 				backgroundSprite := coldbrew.MaterializeSprites(sprBundle)[0]
 				if sprBundle.Blueprints[0].Config.Active {
@@ -79,28 +80,28 @@ func (sys GlobalRenderer) Render(cli coldbrew.Client, screen coldbrew.Screen) {
 
 		cursor = scene.NewCursor(blueprint.Queries.SpriteBundle)
 		for range cursor.Next() {
-			if blueprintclient.Components.ParallaxBackground.CheckCursor(cursor) {
+			if client.Components.ParallaxBackground.CheckCursor(cursor) {
 				continue
 			}
 
-			sprBundle := blueprintclient.Components.SpriteBundle.GetFromCursor(cursor)
+			sprBundle := client.Components.SpriteBundle.GetFromCursor(cursor)
 			sprites := coldbrew.MaterializeSprites(sprBundle)
 			for i, sprite := range sprites {
 				bp := &sprBundle.Blueprints[i]
-				pos := blueprintspatial.Components.Position.GetFromCursor(cursor)
-				hasDirection, direction := blueprintspatial.Components.Direction.GetFromCursorSafe(cursor)
+				pos := spatial.Components.Position.GetFromCursor(cursor)
+				hasDirection, direction := spatial.Components.Direction.GetFromCursorSafe(cursor)
 				if !hasDirection {
-					directionV := blueprintspatial.NewDirectionRight()
+					directionV := spatial.NewDirectionRight()
 					direction = &directionV
 				}
-				hasRot, rot := blueprintspatial.Components.Rotation.GetFromCursorSafe(cursor)
+				hasRot, rot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
 				if !hasRot {
-					rotV := blueprintspatial.Rotation(0)
+					rotV := spatial.Rotation(0)
 					rot = &rotV
 				}
-				hasScale, scale := blueprintspatial.Components.Scale.GetFromCursorSafe(cursor)
+				hasScale, scale := spatial.Components.Scale.GetFromCursorSafe(cursor)
 				if !hasScale {
-					scaleV := blueprintspatial.NewScale(1, 1)
+					scaleV := spatial.NewScale(1, 1)
 					scale = &scaleV
 				}
 
@@ -144,10 +145,10 @@ func (sys GlobalRenderer) Render(cli coldbrew.Client, screen coldbrew.Screen) {
 // RenderTiles draws tiles from a tileset
 func RenderTiles(
 	sprite coldbrew.Sprite,
-	blueprint *blueprintclient.SpriteBlueprint,
+	blueprint *client.SpriteBlueprint,
 	entityPosition vector.Two,
-	direction blueprintspatial.Direction,
-	rotation blueprintspatial.Rotation,
+	direction spatial.Direction,
+	rotation spatial.Rotation,
 	scale vector.Two,
 	cam coldbrew.Camera,
 ) {
@@ -234,7 +235,7 @@ func RenderTiles(
 func RenderBackground(
 	backgroundSprite coldbrew.Sprite,
 	position vector.Two,
-	bgConfig *blueprintclient.ParallaxBackground,
+	bgConfig *client.ParallaxBackground,
 	cam coldbrew.Camera,
 	sceneWidth int,
 ) {
@@ -262,9 +263,9 @@ func RenderEntity(
 	position vector.Two,
 	rotation float64,
 	scale vector.Two,
-	direction blueprintspatial.Direction,
+	direction spatial.Direction,
 	spr coldbrew.Sprite,
-	blueprint *blueprintclient.SpriteBlueprint,
+	blueprint *client.SpriteBlueprint,
 	cam coldbrew.Camera,
 	currentTick int,
 ) {
@@ -295,24 +296,24 @@ func RenderEntity(
 
 // RenderEntityFromCursor renders an entity directly from a warehouse cursor
 func RenderEntityFromCursor(cursor *warehouse.Cursor, cam coldbrew.Camera, currentTick int) {
-	sprBundle := blueprintclient.Components.SpriteBundle.GetFromCursor(cursor)
+	sprBundle := client.Components.SpriteBundle.GetFromCursor(cursor)
 	sprites := coldbrew.MaterializeSprites(sprBundle)
 	for i, sprite := range sprites {
 		bp := &sprBundle.Blueprints[i]
-		pos := blueprintspatial.Components.Position.GetFromCursor(cursor)
-		hasDirection, direction := blueprintspatial.Components.Direction.GetFromCursorSafe(cursor)
+		pos := spatial.Components.Position.GetFromCursor(cursor)
+		hasDirection, direction := spatial.Components.Direction.GetFromCursorSafe(cursor)
 		if !hasDirection {
-			directionV := blueprintspatial.NewDirectionRight()
+			directionV := spatial.NewDirectionRight()
 			direction = &directionV
 		}
-		hasRot, rot := blueprintspatial.Components.Rotation.GetFromCursorSafe(cursor)
+		hasRot, rot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
 		if !hasRot {
-			rotV := blueprintspatial.Rotation(0)
+			rotV := spatial.Rotation(0)
 			rot = &rotV
 		}
-		hasScale, scale := blueprintspatial.Components.Scale.GetFromCursorSafe(cursor)
+		hasScale, scale := spatial.Components.Scale.GetFromCursorSafe(cursor)
 		if !hasScale {
-			scaleV := blueprintspatial.NewScale(0, 0)
+			scaleV := spatial.NewScale(0, 0)
 			scale = &scaleV
 		}
 
@@ -350,7 +351,7 @@ func RenderSprite(
 	rotation float64,
 	scale vector.Two,
 	offset vector.Two,
-	direction blueprintspatial.Direction,
+	direction spatial.Direction,
 	static bool,
 	cam coldbrew.Camera,
 ) {
@@ -381,12 +382,12 @@ func RenderSprite(
 // RenderSpriteSheetAnimation draws an animated sprite with proper frame selection
 func RenderSpriteSheetAnimation(
 	sheet coldbrew.Sprite,
-	spriteBlueprint *blueprintclient.SpriteBlueprint,
+	spriteBlueprint *client.SpriteBlueprint,
 	index int,
 	position vector.Two,
 	rotation float64,
 	scale vector.Two,
-	direction blueprintspatial.Direction,
+	direction spatial.Direction,
 	offset vector.Two,
 	static bool,
 	cam coldbrew.Camera,
@@ -437,6 +438,6 @@ func RenderSpriteSheetAnimation(
 }
 
 // GetAnimationFrame extracts a single frame from a sprite sheet based on animation data
-func GetAnimationFrame(sheet coldbrew.Sprite, anim blueprintclient.AnimationData, frameIndex int, logger *slog.Logger) *ebiten.Image {
+func GetAnimationFrame(sheet coldbrew.Sprite, anim client.AnimationData, frameIndex int, logger *slog.Logger) *ebiten.Image {
 	return sheet.GetFrame(anim.RowIndex, frameIndex, anim.FrameWidth, anim.FrameHeight)
 }

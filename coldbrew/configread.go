@@ -3,12 +3,12 @@ package coldbrew
 import (
 	"sync/atomic"
 
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
 // MaxSplit is the maximum number of splits allowed by the blueprint client
-const MaxSplit = blueprintclient.MaxSplit
+const MaxSplit = client.MaxSplit
 
 // ClientConfig contains default configuration settings for the game client
 

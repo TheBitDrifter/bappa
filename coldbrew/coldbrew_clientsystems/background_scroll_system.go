@@ -3,9 +3,9 @@ package coldbrew_clientsystems
 import (
 	"math"
 
-	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/coldbrew"
 )
 
 // BackgroundScrollSystem handles parallax scrolling effects for backgrounds based on camera movement
@@ -21,7 +21,7 @@ func (BackgroundScrollSystem) Run(cli coldbrew.LocalClient, scene coldbrew.Scene
 		_, worldPosition := cam.Positions()
 
 		for range cursor.Next() {
-			config := blueprintclient.Components.ParallaxBackground.GetFromCursor(cursor)
+			config := client.Components.ParallaxBackground.GetFromCursor(cursor)
 
 			// Calculate raw new translations
 			rawX := worldPosition.X * config.SpeedX * -1

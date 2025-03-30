@@ -3,7 +3,7 @@ package coldbrew
 import (
 	"fmt"
 
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 type LocalClientSceneManager interface {
@@ -14,7 +14,7 @@ type LocalClientSceneManager interface {
 	ChangeSceneByIndex(int, ...warehouse.Entity) error
 }
 
-func (c *client) ActivateSceneByName(sceneName string, entities ...warehouse.Entity) (uint32, error) {
+func (c *clientImpl) ActivateSceneByName(sceneName string, entities ...warehouse.Entity) (uint32, error) {
 	cache := c.sceneManager.cache
 
 	idx, ok := cache.GetIndex(sceneName)
@@ -27,13 +27,13 @@ func (c *client) ActivateSceneByName(sceneName string, entities ...warehouse.Ent
 	return uint32(idx), c.sceneManager.ActivateScene(scene, entities...)
 }
 
-func (c *client) ActivateSceneByIndex(idx int, entities ...warehouse.Entity) error {
+func (c *clientImpl) ActivateSceneByIndex(idx int, entities ...warehouse.Entity) error {
 	cache := c.sceneManager.cache
 	scene := cache.GetItem(idx)
 	return c.sceneManager.ActivateScene(scene, entities...)
 }
 
-func (c *client) ChangeSceneByName(sceneName string, entities ...warehouse.Entity) (uint32, error) {
+func (c *clientImpl) ChangeSceneByName(sceneName string, entities ...warehouse.Entity) (uint32, error) {
 	cache := c.sceneManager.cache
 
 	idx, ok := cache.GetIndex(sceneName)
@@ -46,7 +46,7 @@ func (c *client) ChangeSceneByName(sceneName string, entities ...warehouse.Entit
 	return uint32(idx), c.sceneManager.ChangeScene(scene, entities...)
 }
 
-func (c *client) ChangeSceneByIndex(idx int, entities ...warehouse.Entity) error {
+func (c *clientImpl) ChangeSceneByIndex(idx int, entities ...warehouse.Entity) error {
 	cache := c.sceneManager.cache
 	scene := cache.GetItem(idx)
 	return c.sceneManager.ChangeScene(scene, entities...)

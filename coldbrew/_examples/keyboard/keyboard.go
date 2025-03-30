@@ -3,30 +3,27 @@ package main
 import (
 	"embed"
 	"log"
-	"math"
 
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_clientsystems"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
+	"github.com/hajimehoshi/ebiten/v2"
 )
 
 //go:embed assets/*
 var assets embed.FS
 
 var actions = struct {
-	Movement blueprintinput.Input
+	Up, Down, Left, Right blueprintinput.Input
 }{
-	Movement: blueprintinput.NewInput(),
-}
-
-func lerp(start, end, t float64) float64 {
-	return start + t*(end-start)
+	Up:    blueprintinput.NewInput(),
+	Down:  blueprintinput.NewInput(),
+	Left:  blueprintinput.NewInput(),
+	Right: blueprintinput.NewInput(),
 }
 
 func main() {
@@ -38,7 +35,9 @@ func main() {
 		10,
 		assets,
 	)
-	client.SetTitle("Capturing Touch Inputs")
+
+	client.SetTitle("Capturing Keyboard Inputs")
+
 	err := client.RegisterScene(
 		"Example Scene",
 		640,
@@ -47,19 +46,31 @@ func main() {
 		[]coldbrew.RenderSystem{},
 		[]coldbrew.ClientSystem{},
 		[]blueprint.CoreSystem{
-			&inputSystem{},
+			inputSystem{},
 		},
 	)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	client.RegisterGlobalRenderSystem(coldbrew_rendersystems.GlobalRenderer{})
 	client.RegisterGlobalClientSystem(coldbrew_clientsystems.InputBufferSystem{})
-
 	client.ActivateCamera()
 
 	receiver, _ := client.ActivateReceiver()
-	receiver.RegisterTouch(actions.Movement)
+
+	receiver.RegisterKey(ebiten.KeyUp, actions.Up)
+	receiver.RegisterKey(ebiten.KeyW, actions.Up)
+
+	receiver.RegisterKey(ebiten.KeyDown, actions.Down)
+	receiver.RegisterKey(ebiten.KeyS, actions.Down)
+
+	receiver.RegisterKey(ebiten.KeyLeft, actions.Left)
+	receiver.RegisterKey(ebiten.KeyA, actions.Left)
+
+	receiver.RegisterKey(ebiten.KeyRight, actions.Right)
+	receiver.RegisterKey(ebiten.KeyD, actions.Right)
+
 	if err := client.Start(); err != nil {
 		log.Fatal(err)
 	}
@@ -74,8 +85,10 @@ func exampleScenePlan(height, width int, sto warehouse.Storage) error {
 	if err != nil {
 		return err
 	}
+
 	err = spriteArchetype.Generate(1,
 		blueprintinput.Components.InputBuffer,
+
 		blueprintspatial.NewPosition(255, 20),
 		blueprintclient.NewSpriteBundle().
 			AddSprite("sprite.png", true),
@@ -86,41 +99,35 @@ func exampleScenePlan(height, width int, sto warehouse.Storage) error {
 	return nil
 }
 
-type inputSystem struct {
-	LastMovementX float64
-	LastMovementY float64
-	HasTarget     bool
-}
+type inputSystem struct{}
 
-func (sys *inputSystem) Run(scene blueprint.Scene, dt float64) error {
+func (inputSystem) Run(scene blueprint.Scene, _ float64) error {
 	query := warehouse.Factory.NewQuery().
 		And(blueprintinput.Components.InputBuffer, blueprintspatial.Components.Position)
+
 	cursor := scene.NewCursor(query)
 
 	for range cursor.Next() {
 		pos := blueprintspatial.Components.Position.GetFromCursor(cursor)
 		inputBuffer := blueprintinput.Components.InputBuffer.GetFromCursor(cursor)
 
-		if stampedMovement, ok := inputBuffer.ConsumeInput(actions.Movement); ok {
-			sys.LastMovementX = float64(stampedMovement.X)
-			sys.LastMovementY = float64(stampedMovement.Y)
-			sys.HasTarget = true
+		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Up); ok {
+			log.Println("Tick", stampedAction.Tick)
+			pos.Y -= 2
+		}
+		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Down); ok {
+			log.Println("Tick", stampedAction.Tick)
+			pos.Y += 2
+		}
+		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Left); ok {
+			log.Println("Tick", stampedAction.Tick)
+			pos.X -= 2
+		}
+		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Right); ok {
+			log.Println("Tick", stampedAction.Tick)
+			pos.X += 2
 		}
 
-		if sys.HasTarget {
-			dx := sys.LastMovementX - pos.X
-			dy := sys.LastMovementY - pos.Y
-			distance := math.Sqrt(dx*dx + dy*dy)
-
-			if distance < 5 {
-				sys.HasTarget = false
-			} else {
-				lerpFactor := 0.05
-				pos.X = lerp(pos.X, sys.LastMovementX, lerpFactor)
-				pos.Y = lerp(pos.Y, sys.LastMovementY, lerpFactor)
-			}
-		}
 	}
-
 	return nil
 }

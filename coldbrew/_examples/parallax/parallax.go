@@ -4,12 +4,12 @@ import (
 	"embed"
 	"log"
 
+	"github.com/TheBitDrifter/bappa/blueprint"
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_clientsystems"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/bappa/blueprint"
 
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 //go:embed assets/*

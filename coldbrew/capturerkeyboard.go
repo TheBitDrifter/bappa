@@ -3,20 +3,20 @@ package coldbrew
 import (
 	"log/slog"
 
-	"github.com/TheBitDrifter/bark"
 	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
 
 // keyboardCapturer handles keyboard input detection and processing
 type keyboardCapturer struct {
-	client *client
+	client *clientImpl
 	logger *slog.Logger
 }
 
 // newKeyboardCapturer creates a new keyboard input handler for the given client
-func newKeyboardCapturer(client *client) *keyboardCapturer {
+func newKeyboardCapturer(client *clientImpl) *keyboardCapturer {
 	return &keyboardCapturer{
 		client: client,
 		logger: bark.For("keyboard"),

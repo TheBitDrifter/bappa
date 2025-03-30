@@ -29,7 +29,7 @@ type capturers struct {
 }
 
 // newInputManager creates and initializes a new input manager for the given client.
-func newInputManager(cli *client) *inputManager {
+func newInputManager(cli *clientImpl) *inputManager {
 	m := &inputManager{
 		capturers: &capturers{
 			keyboard: newKeyboardCapturer(cli),

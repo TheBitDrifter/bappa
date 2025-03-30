@@ -26,7 +26,7 @@ type configWrite struct {
 }
 
 // Ensure client implements ConfigManager
-var _ ConfigManager = &client{}
+var _ ConfigManager = &clientImpl{}
 
 // configManager implements the ConfigManager interface
 type configManager struct{}

@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/TheBitDrifter/bappa/blueprint"
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_clientsystems"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/bappa/blueprint"
 
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 )
 
 //go:embed assets/*

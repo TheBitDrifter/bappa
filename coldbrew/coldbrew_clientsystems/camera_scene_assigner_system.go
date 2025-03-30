@@ -3,10 +3,10 @@ package coldbrew_clientsystems
 import (
 	"maps"
 
-	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/coldbrew"
 )
 
 // CameraSceneAssignerSystem manages cameras across scenes.
@@ -71,7 +71,7 @@ func (sys *CameraSceneAssignerSystem) processCamerasForActiveScenes(cli coldbrew
 		// Assign cameras to this scene
 		cameraIndexCursor := scene.NewCursor(blueprint.Queries.CameraIndex)
 		for range cameraIndexCursor.Next() {
-			camIndex := *blueprintclient.Components.CameraIndex.GetFromCursor(cameraIndexCursor)
+			camIndex := *client.Components.CameraIndex.GetFromCursor(cameraIndexCursor)
 			cam := cameras[camIndex]
 			entry := cli.CameraSceneTracker()[cam]
 			entry.Scene = scene

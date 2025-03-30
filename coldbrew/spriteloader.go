@@ -8,14 +8,14 @@ import (
 	"path/filepath"
 	"sync"
 
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 type SpriteLoader interface {
-	Load(spriteBundle *blueprintclient.SpriteBundle, cache warehouse.Cache[Sprite]) error
+	Load(spriteBundle *client.SpriteBundle, cache warehouse.Cache[Sprite]) error
 }
 
 // spriteLoader handles loading and caching of sprite images
@@ -34,7 +34,7 @@ func NewSpriteLoader(embeddedFS fs.FS) *spriteLoader {
 // Load processes sprite bundles and caches their contents
 // It uses the provided cache for lookups and registration
 // which enables cache busting when a new cache is provided
-func (loader *spriteLoader) Load(spriteBundle *blueprintclient.SpriteBundle, cache warehouse.Cache[Sprite]) error {
+func (loader *spriteLoader) Load(spriteBundle *client.SpriteBundle, cache warehouse.Cache[Sprite]) error {
 	// loader.mu.Lock()
 	// defer loader.mu.Unlock()
 

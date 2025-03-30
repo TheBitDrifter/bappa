@@ -5,10 +5,9 @@ import (
 	"math"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/coldbrew"
-	"github.com/TheBitDrifter/tteokbokki/spatial"
+	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
@@ -20,7 +19,7 @@ type DebugRenderer struct{}
 
 // ShapeInfo stores the shape and position data for rendering
 type ShapeInfo struct {
-	Shape    blueprintspatial.Shape
+	Shape    spatial.Shape
 	Position vector.Two
 }
 
@@ -52,8 +51,8 @@ func (sys *DebugRenderer) Render(cli coldbrew.Client, screen coldbrew.Screen) {
 		shapes := make([]ShapeInfo, 0)
 		shapeCursor := scene.NewCursor(blueprint.Queries.Shape)
 		for range shapeCursor.Next() {
-			shape := blueprintspatial.Components.Shape.GetFromCursor(shapeCursor)
-			pos := blueprintspatial.Components.Position.GetFromCursor(shapeCursor)
+			shape := spatial.Components.Shape.GetFromCursor(shapeCursor)
+			pos := spatial.Components.Position.GetFromCursor(shapeCursor)
 			if shape != nil && pos != nil {
 				shapes = append(shapes, ShapeInfo{
 					Shape:    *shape,

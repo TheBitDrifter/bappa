@@ -6,13 +6,12 @@ import (
 	"math"
 	"math/rand"
 
-	"github.com/TheBitDrifter/bappa/coldbrew"
-	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
 	"github.com/TheBitDrifter/bappa/blueprint"
 	blueprintmotion "github.com/TheBitDrifter/bappa/blueprint/motion"
-	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/coldbrew"
+	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
+	"github.com/TheBitDrifter/bappa/warehouse"
 
 	tteo_coresystems "github.com/TheBitDrifter/tteokbokki/coresystems"
 	"github.com/TheBitDrifter/tteokbokki/motion"
