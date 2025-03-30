@@ -56,9 +56,18 @@ jobs:
       - name: Test warehouse
         run: cd warehouse && go test ./...
 
-      # Run warehouse benchmarks
-      - name: Benchmarks warehouse
-        run: cd warehouse && go test -bench=. ./bench
+      # Run warehouse benchmarks with different tag combinations
+      - name: Benchmarks warehouse (no tags)
+        run: cd warehouse/bench && go test -bench=. . -tags=""
+
+      - name: Benchmarks warehouse (unsafe tag)
+        run: cd warehouse/bench && go test -bench=. . -tags="unsafe"
+
+      - name: Benchmarks warehouse (schema_enabled tag)
+        run: cd warehouse/bench && go test -bench=. . -tags="schema_enabled"
+
+      - name: Benchmarks warehouse (unsafe and schema_enabled tags)
+        run: cd warehouse/bench && go test -bench=. . -tags="unsafe schema_enabled"
 
   blueprint-tests:
     runs-on: ubuntu-latest
