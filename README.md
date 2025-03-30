@@ -42,8 +42,8 @@ These are the packages/libraries that form the Bappa Framework. With the excepti
 
 ### Blueprint
 
-- [GitHub Repository](https://github.com/TheBitDrifter/blueprint)
-- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/blueprint)
+- [GitHub Repository](https://github.com/TheBitDrifter/bappa/blueprint)
+- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/blueprint)
 - **Description**: Core component definitions and scene planning functionality
 
 ### Warehouse

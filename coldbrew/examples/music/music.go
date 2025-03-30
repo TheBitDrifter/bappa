@@ -4,12 +4,12 @@ import (
 	"embed"
 	"log"
 
-	"github.com/TheBitDrifter/blueprint"
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"

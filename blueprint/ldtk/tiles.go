@@ -4,9 +4,9 @@ import (
 	"log"
 	"strings"
 
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/blueprint/vector"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/warehouse"
 )
 

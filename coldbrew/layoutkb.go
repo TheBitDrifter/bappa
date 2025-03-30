@@ -1,7 +1,7 @@
 package coldbrew
 
 import (
-	blueprint_input "github.com/TheBitDrifter/blueprint/input"
+	blueprint_input "github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/mask"
 	"github.com/hajimehoshi/ebiten/v2"
 )

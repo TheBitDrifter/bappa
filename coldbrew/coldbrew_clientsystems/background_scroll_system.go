@@ -4,8 +4,8 @@ import (
 	"math"
 
 	"github.com/TheBitDrifter/bappa/coldbrew"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 )
 
 // BackgroundScrollSystem handles parallax scrolling effects for backgrounds based on camera movement

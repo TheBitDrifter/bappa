@@ -4,10 +4,10 @@ import (
 	"image/color"
 	"math"
 
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/coldbrew"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/blueprint/vector"
 	"github.com/TheBitDrifter/tteokbokki/spatial"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"

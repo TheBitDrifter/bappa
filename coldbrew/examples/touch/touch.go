@@ -8,10 +8,10 @@ import (
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_clientsystems"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/blueprint/input"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 
 	"github.com/TheBitDrifter/warehouse"
 )

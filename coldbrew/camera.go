@@ -3,7 +3,7 @@ package coldbrew
 import (
 	"image/color"
 
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/hajimehoshi/ebiten/v2"
 	text "github.com/hajimehoshi/ebiten/v2/text/v2"
 )

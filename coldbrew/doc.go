@@ -21,7 +21,7 @@ Basic Usage:
 		"embed"
 		"log"
 
-		"github.com/TheBitDrifter/blueprint"
+		"github.com/TheBitDrifter/bappa/blueprint"
 		"github.com/TheBitDrifter/bappa/coldbrew"
 	)
 

@@ -6,9 +6,9 @@ import (
 
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 	"github.com/TheBitDrifter/warehouse"
 )
 

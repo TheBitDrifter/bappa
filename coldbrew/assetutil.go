@@ -3,7 +3,7 @@ package coldbrew
 import (
 	"fmt"
 
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 )
 
 // MaterializeSprites converts a bundle of sprite blueprints into concrete Sprite objects

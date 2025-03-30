@@ -1,6 +1,6 @@
 package coldbrew
 
-import blueprintinput "github.com/TheBitDrifter/blueprint/input"
+import blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
 
 // TouchLayout maps touch input to game actions
 type TouchLayout interface {

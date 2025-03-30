@@ -5,7 +5,7 @@ import (
 	"math"
 
 	"github.com/TheBitDrifter/bark"
-	blueprintinput "github.com/TheBitDrifter/blueprint/input"
+	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )

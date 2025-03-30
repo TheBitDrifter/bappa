@@ -3,7 +3,7 @@ package client
 import (
 	"errors"
 
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/warehouse"
 )
 

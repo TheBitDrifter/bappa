@@ -4,9 +4,9 @@ import (
 	"maps"
 
 	"github.com/TheBitDrifter/bappa/coldbrew"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // CameraSceneAssignerSystem manages cameras across scenes.

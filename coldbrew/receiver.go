@@ -1,7 +1,7 @@
 package coldbrew
 
 import (
-	blueprint_input "github.com/TheBitDrifter/blueprint/input"
+	blueprint_input "github.com/TheBitDrifter/bappa/blueprint/input"
 )
 
 // Receiver combines multiple input layouts and manages input state

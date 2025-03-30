@@ -1,4 +1,4 @@
-module github.com/TheBitDrifter/blueprint
+module github.com/TheBitDrifter/bappa/blueprint
 
 go 1.24.1
 

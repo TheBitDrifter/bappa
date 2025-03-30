@@ -3,7 +3,7 @@ package blueprintspatial
 import (
 	"slices"
 
-	vector "github.com/TheBitDrifter/blueprint/vector"
+	vector "github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // Shape represents a geometric shape with local and world bounds, polygon definition, and skin

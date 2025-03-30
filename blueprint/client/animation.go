@@ -1,6 +1,6 @@
 package client
 
-import "github.com/TheBitDrifter/blueprint/vector"
+import "github.com/TheBitDrifter/bappa/blueprint/vector"
 
 // AnimationData contains configuration for sprite-based animations
 type AnimationData struct {

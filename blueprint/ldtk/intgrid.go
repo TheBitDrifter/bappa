@@ -3,7 +3,7 @@ package ldtk
 import (
 	"log"
 
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 	"github.com/TheBitDrifter/warehouse"
 )
 

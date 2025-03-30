@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"sync"
 
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"

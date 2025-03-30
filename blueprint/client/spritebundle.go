@@ -3,7 +3,7 @@ package client
 import (
 	"fmt"
 
-	"github.com/TheBitDrifter/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/warehouse"
 )
 

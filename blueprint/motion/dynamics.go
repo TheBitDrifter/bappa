@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"math"
 
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
-	"github.com/TheBitDrifter/blueprint/vector"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
+	"github.com/TheBitDrifter/bappa/blueprint/vector"
 )
 
 // Dynamics represents the physical properties and state of a movable entity

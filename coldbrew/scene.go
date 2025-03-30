@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync/atomic"
 
-	"github.com/TheBitDrifter/blueprint"
+	"github.com/TheBitDrifter/bappa/blueprint"
 	"github.com/TheBitDrifter/table"
 	"github.com/TheBitDrifter/warehouse"
 )

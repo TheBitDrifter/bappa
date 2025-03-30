@@ -3,7 +3,7 @@ package coldbrew
 import (
 	"sync/atomic"
 
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/hajimehoshi/ebiten/v2"
 )
 

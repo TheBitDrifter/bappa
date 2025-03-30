@@ -18,7 +18,7 @@ Blueprint serves as the base layer of the Bappa Framework, defining standard com
 ## Installation
 
 ```bash
-go get github.com/TheBitDrifter/blueprint
+go get github.com/TheBitDrifter/bappa/blueprint
 ```
 
 ## Component Subpackages

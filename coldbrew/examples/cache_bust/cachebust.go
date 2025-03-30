@@ -8,15 +8,15 @@ import (
 	"github.com/TheBitDrifter/bappa/coldbrew"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_clientsystems"
 	"github.com/TheBitDrifter/bappa/coldbrew/coldbrew_rendersystems"
-	"github.com/TheBitDrifter/blueprint"
+	"github.com/TheBitDrifter/bappa/blueprint"
 
 	"github.com/TheBitDrifter/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/blueprint/input"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 )
 
 //go:embed assets/*

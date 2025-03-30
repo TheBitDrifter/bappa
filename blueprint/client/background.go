@@ -1,6 +1,6 @@
 package client
 
-import "github.com/TheBitDrifter/blueprint/vector"
+import "github.com/TheBitDrifter/bappa/blueprint/vector"
 
 // ParallaxBackground contains configuration for translating background layers based on camera positions
 // Each RelativeTranslation maps to a coldbrew.Camera

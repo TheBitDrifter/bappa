@@ -6,8 +6,8 @@ import (
 	"sync"
 
 	"github.com/TheBitDrifter/bark"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/table"
 	"github.com/TheBitDrifter/warehouse"
 )

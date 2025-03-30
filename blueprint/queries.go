@@ -1,10 +1,10 @@
 package blueprint
 
 import (
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/blueprint/input"
-	blueprintmotion "github.com/TheBitDrifter/blueprint/motion"
-	blueprintspatial "github.com/TheBitDrifter/blueprint/spatial"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	blueprintmotion "github.com/TheBitDrifter/bappa/blueprint/motion"
+	blueprintspatial "github.com/TheBitDrifter/bappa/blueprint/spatial"
 	"github.com/TheBitDrifter/warehouse"
 )
 

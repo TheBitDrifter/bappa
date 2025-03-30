@@ -2,9 +2,9 @@ package coldbrew_clientsystems
 
 import (
 	"github.com/TheBitDrifter/bappa/coldbrew"
-	"github.com/TheBitDrifter/blueprint"
-	blueprintclient "github.com/TheBitDrifter/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/blueprint/input"
+	"github.com/TheBitDrifter/bappa/blueprint"
+	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/warehouse"
 )
 
