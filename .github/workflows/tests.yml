@@ -108,7 +108,14 @@ jobs:
       - name: Install GLFW dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev
+          sudo apt-get install -y libgl1-mesa-dev xorg-dev libasound2-dev libxcursor-dev libxi-dev libxinerama-dev libxrandr-dev
+
+      # Set up virtual framebuffer for headless UI tests
+      - name: Set up Xvfb
+        run: |
+          sudo apt-get install -y xvfb
+          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       # Run coldbrew tests
       - name: Test coldbrew
@@ -134,3 +141,4 @@ jobs:
       # Run root project tests (integration tests)
       - name: Run integration tests
         run: go test ./...
+
