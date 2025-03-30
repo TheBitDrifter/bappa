@@ -7,3 +7,5 @@ replace github.com/TheBitDrifter/bappa/coldbrew => ./coldbrew/
 replace github.com/TheBitDrifter/bappa/blueprint => ./blueprint/
 
 replace github.com/TheBitDrifter/bappa/tteokbokki => ./tteokbokki/
+
+replace github.com/TheBitDrifter/bappa/table => ./table/

@@ -4,7 +4,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 // Test component types

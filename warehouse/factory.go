@@ -1,6 +1,6 @@
 package warehouse
 
-import "github.com/TheBitDrifter/table"
+import "github.com/TheBitDrifter/bappa/table"
 
 // factory implements the factory pattern for warehouse components.
 type factory struct{}

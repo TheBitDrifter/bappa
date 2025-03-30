@@ -1,7 +1,7 @@
 package warehouse
 
 import (
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 // Component represents a data container that can be attached to entities.

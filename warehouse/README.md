@@ -13,7 +13,7 @@ While its primary purpose is to be the underlying ECS for the [Bappa Framework](
 ## Installation
 
 ```bash
-go get github.com/TheBitDrifter/warehouse
+go get github.com/TheBitDrifter/bappa/warehouse
 ```
 
 ## Quick Start
@@ -22,8 +22,8 @@ go get github.com/TheBitDrifter/warehouse
 package main
 
 import (
- "github.com/TheBitDrifter/table"
- "github.com/TheBitDrifter/warehouse"
+ "github.com/TheBitDrifter/bappa/table"
+ "github.com/TheBitDrifter/bappa/warehouse"
 )
 
 // Define component types as structs

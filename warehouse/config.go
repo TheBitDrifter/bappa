@@ -1,6 +1,6 @@
 package warehouse
 
-import "github.com/TheBitDrifter/table"
+import "github.com/TheBitDrifter/bappa/table"
 
 // Config holds global configuration for the table system
 var Config config = config{}

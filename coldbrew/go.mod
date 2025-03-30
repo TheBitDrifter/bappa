@@ -6,6 +6,10 @@ replace github.com/TheBitDrifter/bappa/blueprint => ../blueprint/
 
 replace github.com/TheBitDrifter/bappa/tteokbokki => ../tteokbokki
 
+replace github.com/TheBitDrifter/bappa/warehouse => ../warehouse/
+
+replace github.com/TheBitDrifter/bappa/table => ../table
+
 require (
 	github.com/TheBitDrifter/bappa/blueprint v0.0.0-00010101000000-000000000000
 	github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9

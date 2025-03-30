@@ -6,7 +6,7 @@ import (
 	"sync"
 
 	"github.com/TheBitDrifter/mask"
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 // Ensure storage implements Storage interface

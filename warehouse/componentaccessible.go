@@ -1,6 +1,6 @@
 package warehouse
 
-import "github.com/TheBitDrifter/table"
+import "github.com/TheBitDrifter/bappa/table"
 
 // AccessibleComponent extends a base Component with table-based accessibility
 // It provides methods to retrieve components using different access patterns

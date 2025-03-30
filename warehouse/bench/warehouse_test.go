@@ -3,8 +3,8 @@ package bench
 import (
 	"testing"
 
-	"github.com/TheBitDrifter/table"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/table"
+	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
 type Position struct {

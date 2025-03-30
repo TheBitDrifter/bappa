@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/TheBitDrifter/bark"
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 // Verify entity implements Entity interface

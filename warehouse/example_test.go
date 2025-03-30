@@ -3,8 +3,8 @@ package warehouse_test
 import (
 	"fmt"
 
-	"github.com/TheBitDrifter/table"
-	"github.com/TheBitDrifter/warehouse"
+	"github.com/TheBitDrifter/bappa/warehouse"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 // Position is a simple component for 2D coordinates

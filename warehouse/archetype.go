@@ -4,7 +4,7 @@ import (
 	"reflect"
 
 	"github.com/TheBitDrifter/bark"
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 // archetypeID is a unique identifier for an archetype

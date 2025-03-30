@@ -3,7 +3,7 @@ package warehouse
 import (
 	"testing"
 
-	"github.com/TheBitDrifter/table"
+	"github.com/TheBitDrifter/bappa/table"
 )
 
 // TestQueryFiltering tests the basic query filtering capabilities
