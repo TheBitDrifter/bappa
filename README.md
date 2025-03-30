@@ -10,7 +10,7 @@ A code-first game engine for Go, providing an Entity Component System (ECS) arch
 Bappa is a cohesive collection of packages, with the main entrypoint being coldbrew:
 
 ```bash
-go get github.com/TheBitDrifter/coldbrew@latest
+go get github.com/TheBitDrifter/bappa/coldbrew@latest
 ```
 
 ## Examples
@@ -28,60 +28,41 @@ The best way to learn how to use Bappa is to read the examples and docs, or use 
   </tr>
 </table>
 
-[Homepage](https://dl43t3h5ccph3.cloudfront.net) | [Examples](https://dl43t3h5ccph3.cloudfront.net/examples) |  [docs](https://dl43t3h5ccph3.cloudfront.net/docs)
+[Homepage](https://dl43t3h5ccph3.cloudfront.net) | [Examples](https://dl43t3h5ccph3.cloudfront.net/examples) | [Docs](https://dl43t3h5ccph3.cloudfront.net/docs)
 
-## Core Repositories
+## Framework Components
 
-These are the packages/libraries that form the Bappa Framework. With the exception of coldbrew, they can be used independently if desired.
+The Bappa Framework is organized as a monorepo, combining all core packages in one repository. This makes it easy to follow all development activity and ensures consistency across the framework.
 
 ### Coldbrew
 
-- [GitHub Repository](https://github.com/TheBitDrifter/coldbrew)
-- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/coldbrew)
+- **Import Path**: `github.com/TheBitDrifter/bappa/coldbrew`
+- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/coldbrew)
 - **Description**: Main package for client-side game operations, handling rendering, input, scene management and cameras
 
 ### Blueprint
 
-- [GitHub Repository](https://github.com/TheBitDrifter/bappa/blueprint)
+- **Import Path**: `github.com/TheBitDrifter/bappa/blueprint`
 - [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/blueprint)
 - **Description**: Core component definitions and scene planning functionality
 
 ### Warehouse
 
-- [GitHub Repository](https://github.com/TheBitDrifter/warehouse)
-- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/warehouse)
+- **Import Path**: `github.com/TheBitDrifter/bappa/warehouse`
+- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/warehouse)
 - **Description**: Entity storage, archetype management, and query system for the ECS architecture
 
 ### Tteokbokki
 
-- [GitHub Repository](https://github.com/TheBitDrifter/tteokbokki)
-- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/tteokbokki)
+- **Import Path**: `github.com/TheBitDrifter/bappa/tteokbokki`
+- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/tteokbokki)
 - **Description**: Physics and collision detection systems
 
 ### Table
 
-- [GitHub Repository](https://github.com/TheBitDrifter/table)
-- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/table)
+- **Import Path**: `github.com/TheBitDrifter/bappa/table`
+- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/table)
 - **Description**: Efficient data storage optimized for game objects
-
-### Mask
-
-- [GitHub Repository](https://github.com/TheBitDrifter/mask)
-- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/mask)
-- **Description**: Bitmasking utilities for component filtering
-
-## Tools & Utilities
-
-### BappaCreate
-
-- [GitHub Repository](https://github.com/TheBitDrifter/bappacreate)
-- **Description**: Template generator tool for quickly creating new Bappa game projects
-- **Templates**:
-  - [Topdown](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/topdown)
-  - [Topdown Split-Screen](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/topdown-split)
-  - [Platformer](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/platformer)
-  - [Platformer Split-Screen](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/platformer-split)
-  - [Sandbox](https://github.com/TheBitDrifter/bappacreate/tree/main/templates/sandbox)
 
 ## License
 
