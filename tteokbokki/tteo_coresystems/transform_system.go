@@ -1,4 +1,4 @@
-package coresystems
+package tteo_coresystems
 
 import (
 	"github.com/TheBitDrifter/bappa/blueprint"
