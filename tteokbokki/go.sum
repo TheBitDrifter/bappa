@@ -1,3 +1,9 @@
+github.com/TheBitDrifter/bappa/blueprint v0.0.0-20250330212722-f989bbd448b4 h1:vrz8LONe+63AafQPzd2npjdN8rKWjX6cWRfV3CRu4Dc=
+github.com/TheBitDrifter/bappa/blueprint v0.0.0-20250330212722-f989bbd448b4/go.mod h1:tvZvc7+oHUp3hx6MAHidcFqdHiRRN5ihoz7Pa/CByk0=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250330195601-61b1a350228f h1:nt8qo1HPvIXH+BtEMN7aJo1dzeWh8ENCuy5c7q/XcCw=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250330195601-61b1a350228f/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
+github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250330212722-f989bbd448b4 h1:Z/53HVv4h2VAmVeKQsl+8yAwrKf49W4Igi2IdNxqcq4=
+github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250330212722-f989bbd448b4/go.mod h1:dnwkll0DlXBEwAEIg7GA3CwCPELAT0zRrH505M0Y134=
 github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9 h1:FKJtdY3t0/gSgQQrawCrUCs8io53Mq6mSKyovNdd4ig=
 github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9/go.mod h1:DfUHSN9ypqQX6IRhwzRdzp7TKoCm1pLFUteZgfWt168=
 github.com/TheBitDrifter/mask v0.0.1-early-alpha.1 h1:OtOctrw0eBkIlHKhzEMmsHt0+xgb3RSDsfNkpd2hiiM=
