@@ -3,7 +3,7 @@
 
 The table package implements a high-performance Entity Component System [(ECS)](https://github.com/SanderMertens/ecs-faq) focused on efficient data organization and processing.
 
-**Note:** for more in depth documentation please see: [bappa-docs](https://dl43t3h5ccph3.cloudfront.net/docs/table/overview/)
+Previously located [here](https://github.com/TheBitDrifter/table) prior to monorepo (archived for Git history).
 
 ## Key Features
 

@@ -2,6 +2,8 @@
 
 Coldbrew is the client and scene management system for the [Bappa Framework](https://dl43t3h5ccph3.cloudfront.net/). It serves as the top-level interface for game developers, providing essential functionality for game lifecycle, rendering, input processing, scene transitions, and resource management.
 
+Previously located [here](https://github.com/TheBitDrifter/coldbrew) prior to monorepo (archived for Git history).
+
 ## Features
 
 - **Game Loop Management**: Handles update-render cycles with configurable timing

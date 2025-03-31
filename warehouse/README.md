@@ -3,6 +3,8 @@
 Warehouse is a high-performance Entity-Component-System (ECS) framework for Go, designed for games and simulations that require efficient entity management and querying.
 While its primary purpose is to be the underlying ECS for the [Bappa Framework](https://dl43t3h5ccph3.cloudfront.net/), it functions as a standalone ECS too.
 
+Previously located [here](https://github.com/TheBitDrifter/warehouse) prior to monorepo (archived for Git history).
+
 ## Features
 
 - **Component-based architecture**: Build entities by composing reusable components

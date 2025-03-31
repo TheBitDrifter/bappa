@@ -1,10 +1,8 @@
 # Blueprint
 
-Blueprint is a foundation package for the [Bappa Framework](https://dl43t3h5ccph3.cloudfront.net/), providing common components, interfaces, and utilities for game development.
+Blueprint serves as the base layer of the Bappa Framework, defining common/shared component types and interfaces that other packages in the framework build upon. It establishes shared patterns and data structures used throughout the ecosystem.
 
-## Overview
-
-Blueprint serves as the base layer of the Bappa Framework, defining standard component types and interfaces that other packages in the framework build upon. It establishes shared patterns and data structures used throughout the ecosystem.
+Previously located [here](https://github.com/TheBitDrifter/blueprint) prior to monorepo (archived for Git history).
 
 ## Features
 
@@ -13,7 +11,6 @@ Blueprint serves as the base layer of the Bappa Framework, defining standard com
 - **Vector Mathematics**: Complete 2D vector implementation with comprehensive operations
 - **Predefined Queries**: Ready-to-use queries for common component combinations
 - **Background Utilities**: Tools for creating static and parallax backgrounds
-- **Shape Factory**: Various shape creation functions for collision geometry
 
 ## Installation
 

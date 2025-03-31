@@ -3,6 +3,8 @@
 A lightweight 2D physics engine for Go, designed to work seamlessly with the [Bappa Framework]. However, it can
 work standalone.
 
+Previously located [here](https://github.com/TheBitDrifter/tteokbokki) prior to monorepo (archived for Git history).
+
 ## Features
 
 - **Collision Detection**: Detect collisions between polygons and axis-aligned boxes
