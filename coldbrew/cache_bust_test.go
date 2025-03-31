@@ -8,7 +8,6 @@ import (
 
 	"github.com/TheBitDrifter/bappa/blueprint"
 	"github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
@@ -225,8 +224,8 @@ func TestSuccessfulCacheBust(t *testing.T) {
 func createScenePlan(assets []string) func(width, height int, storage warehouse.Storage) error {
 	return func(width, height int, storage warehouse.Storage) error {
 		archetype, err := storage.NewOrExistingArchetype(
-			blueprintclient.Components.SpriteBundle,
-			blueprintclient.Components.SoundBundle,
+			client.Components.SpriteBundle,
+			client.Components.SoundBundle,
 		)
 		if err != nil {
 			return err

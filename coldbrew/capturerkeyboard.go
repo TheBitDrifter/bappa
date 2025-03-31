@@ -3,7 +3,7 @@ package coldbrew
 import (
 	"log/slog"
 
-	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
@@ -35,7 +35,7 @@ func (handler *keyboardCapturer) Capture() {
 
 	client := handler.client
 	for i := range client.receivers {
-		client.receivers[i].inputs.kb = []blueprintinput.StampedInput{}
+		client.receivers[i].inputs.kb = []input.StampedInput{}
 		handler.populateReceiver(keys, client.receivers[i])
 	}
 }
@@ -52,7 +52,7 @@ func (handler *keyboardCapturer) populateReceiver(keys []ebiten.Key, receiverPtr
 	for _, key := range keys {
 		if receiverPtr.keyLayout.mask.Contains(uint32(key)) {
 			val := receiverPtr.keyLayout.keys[key]
-			receiverPtr.inputs.kb = append(receiverPtr.inputs.kb, blueprintinput.StampedInput{
+			receiverPtr.inputs.kb = append(receiverPtr.inputs.kb, input.StampedInput{
 				Val:  val,
 				Tick: tick,
 				X:    x,

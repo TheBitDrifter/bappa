@@ -9,7 +9,7 @@ import (
 	"runtime"
 	"sync"
 
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	client "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2/audio"
 )
@@ -17,7 +17,7 @@ import (
 var defaultAudioCtx = audio.NewContext(44100)
 
 type SoundLoader interface {
-	Load(bundle *blueprintclient.SoundBundle, cache warehouse.Cache[Sound]) error
+	Load(bundle *client.SoundBundle, cache warehouse.Cache[Sound]) error
 }
 
 // soundLoader handles loading and caching of audio files
@@ -43,7 +43,7 @@ func isWASM() bool {
 // Load processes a batch of sound locations and caches them
 // It uses the provided cache for lookups and registration
 // which enables cache busting when a new cache is provided
-func (loader *soundLoader) Load(bundle *blueprintclient.SoundBundle, cache warehouse.Cache[Sound]) error {
+func (loader *soundLoader) Load(bundle *client.SoundBundle, cache warehouse.Cache[Sound]) error {
 	for i := range bundle.Blueprints {
 		soundBlueprint := &bundle.Blueprints[i]
 		if soundBlueprint.Location.Key == "" {

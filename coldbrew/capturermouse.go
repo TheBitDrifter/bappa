@@ -3,7 +3,7 @@ package coldbrew
 import (
 	"log/slog"
 
-	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	 "github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -41,7 +41,7 @@ func (handler *mouseCapturer) populateReceiver(receiverPtr *receiver) error {
 	for _, eMouseBtn := range receiverPtr.mouseLayout.mouseButtonsRaw {
 		if ebiten.IsMouseButtonPressed(eMouseBtn) {
 			pressedButtons = append(pressedButtons, eMouseBtn)
-			receiverPtr.inputs.mouse = append(receiverPtr.inputs.mouse, blueprintinput.StampedInput{
+			receiverPtr.inputs.mouse = append(receiverPtr.inputs.mouse,input.StampedInput{
 				Val:  receiverPtr.mouseLayout.mouseButtons[eMouseBtn],
 				Tick: tick,
 				X:    x,

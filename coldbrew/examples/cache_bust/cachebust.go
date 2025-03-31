@@ -16,7 +16,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 
 	"github.com/TheBitDrifter/bappa/blueprint/client"
-	blueprintinput "github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bappa/blueprint/input"
 )
 
 //go:embed assets/*
@@ -86,7 +86,7 @@ func sceneOnePlan(height, width int, sto warehouse.Storage) error {
 	}
 
 	err = spriteArchetype.Generate(1,
-		blueprintinput.Components.InputBuffer,
+		input.Components.InputBuffer,
 
 		spatial.NewPosition(255, 20),
 		client.NewSpriteBundle().

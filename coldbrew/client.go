@@ -9,7 +9,7 @@ import (
 	"sync"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
-	blueprintclient "github.com/TheBitDrifter/bappa/blueprint/client"
+	client "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/table"
 	"github.com/TheBitDrifter/bappa/warehouse"
@@ -204,7 +204,7 @@ func (cli *clientImpl) loadAssetsForScene(scene Scene, spriteCache warehouse.Cac
 	sto := scene.Storage()
 	cursor := warehouse.Factory.NewCursor(blueprint.Queries.SpriteBundle, sto)
 	for range cursor.Next() {
-		bundle := blueprintclient.Components.SpriteBundle.GetFromCursor(cursor)
+		bundle := client.Components.SpriteBundle.GetFromCursor(cursor)
 		err := cli.SpriteLoader.Load(bundle, spriteCache)
 		if err != nil {
 			return err
@@ -213,7 +213,7 @@ func (cli *clientImpl) loadAssetsForScene(scene Scene, spriteCache warehouse.Cac
 
 	cursor = warehouse.Factory.NewCursor(blueprint.Queries.SoundBundle, sto)
 	for range cursor.Next() {
-		bundle := blueprintclient.Components.SoundBundle.GetFromCursor(cursor)
+		bundle := client.Components.SoundBundle.GetFromCursor(cursor)
 		err := cli.SoundLoader.Load(bundle, soundCache)
 		if err != nil {
 			return err
