@@ -23,11 +23,14 @@ type Entry interface {
 type EntryIndex interface {
 	Entry(idx int) (Entry, error)
 	NewEntries(count, previousTableLength int, tbl Table) ([]Entry, error)
+	NewEntriesNoRecycle(count, previousTableLength int, tbl Table) ([]Entry, error)
+
 	UpdateIndex(EntryID, int) error
 	RecycleEntries(...EntryID) error
 	Reset() error
 	Entries() []Entry
 	Recyclable() []Entry
+	NewHole() error
 }
 
 type Schema interface {
@@ -67,6 +70,7 @@ type TableReader interface {
 type TableWriter interface {
 	Set(ElementType, reflect.Value, int) error
 	NewEntries(int) ([]Entry, error)
+	NewEntriesNoRecycle(int) ([]Entry, error)
 	DeleteEntries(...int) ([]EntryID, error)
 	TransferEntries(Table, ...int) error
 	Clear() error

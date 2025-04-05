@@ -1,7 +1,6 @@
 package warehouse
 
 import (
-	"log"
 	"testing"
 
 	"github.com/TheBitDrifter/bappa/table"
@@ -145,7 +144,6 @@ func TestComponentAddRemove(t *testing.T) {
 			// Check final component count
 			components := entity.Components()
 			if len(components) != tt.finalCount {
-				log.Println(entity.ComponentsAsString())
 				t.Errorf("Entity has %d components, want %d", len(components), tt.finalCount)
 			}
 		})

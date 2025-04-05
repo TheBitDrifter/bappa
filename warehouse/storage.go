@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/TheBitDrifter/mask"
 	"github.com/TheBitDrifter/bappa/table"
+	"github.com/TheBitDrifter/mask"
 )
 
 // Ensure storage implements Storage interface
@@ -21,6 +21,7 @@ var (
 type Storage interface {
 	Entity(id int) (Entity, error)
 	NewEntities(int, ...Component) ([]Entity, error)
+	NewEntitiesNoRecycle(int, ...Component) ([]Entity, error)
 	NewOrExistingArchetype(components ...Component) (Archetype, error)
 	EnqueueNewEntities(int, ...Component) error
 	DestroyEntities(...Entity) error
@@ -98,15 +99,28 @@ func (sto *storage) NewOrExistingArchetype(components ...Component) (Archetype, 
 
 // NewEntities creates n new entities with the specified components
 func (sto *storage) NewEntities(n int, components ...Component) ([]Entity, error) {
+	return sto.createEntities(n, components, true)
+}
+
+// NewEntitiesNoRecycle creates n new entities without recycling IDs
+func (sto *storage) NewEntitiesNoRecycle(n int, components ...Component) ([]Entity, error) {
+	return sto.createEntities(n, components, false)
+}
+
+// createEntities handles the common logic between entity creation methods
+func (sto *storage) createEntities(n int, components []Component, recycleEntries bool) ([]Entity, error) {
 	if sto.Locked() {
 		return nil, errors.New("storage is locked")
 	}
+
+	// Prepare component mask and find/create archetype
 	var entityMask mask.Mask
 	for _, component := range components {
 		sto.schema.Register(component)
 		bit := sto.schema.RowIndexFor(component)
 		entityMask.Mark(bit)
 	}
+
 	var entityArchetype Archetype
 	id, archetypeFound := sto.archetypes.idsGroupedByMask[entityMask]
 	if archetypeFound {
@@ -118,30 +132,82 @@ func (sto *storage) NewEntities(n int, components ...Component) ([]Entity, error
 			return nil, err
 		}
 	}
-	entries, err := entityArchetype.Table().NewEntries(n)
+
+	// Create entries with or without recycling
+	var entries []table.Entry
+	var err error
+	if recycleEntries {
+		entries, err = entityArchetype.Table().NewEntries(n)
+	} else {
+		entries, err = entityArchetype.Table().NewEntriesNoRecycle(n)
+	}
 	if err != nil {
 		return nil, err
 	}
-	currentLen := len(globalEntities)
-	neededCap := currentLen + n
-	if cap(globalEntities) < neededCap {
-		newCap := max(neededCap, 2*cap(globalEntities))
-		newEntities := make([]entity, currentLen, newCap)
-		copy(newEntities, globalEntities)
-		globalEntities = newEntities
-	}
-	globalEntities = globalEntities[:neededCap]
 
+	// Resize globalEntities as needed and create entity objects
 	entities := make([]Entity, n)
-	for i, entry := range entries {
-		en := &entity{
-			Entry:      entry,
-			sto:        sto,
-			id:         entry.ID(),
-			components: components,
+
+	if recycleEntries {
+		// Find maximum ID for preallocation
+		maxID := uint32(0)
+		for _, entry := range entries {
+			if uint32(entry.ID()) > maxID {
+				maxID = uint32(entry.ID())
+			}
 		}
-		entities[i] = en
-		globalEntities[currentLen+i] = *en
+
+		// Expand globalEntities if needed
+		if int(maxID) > len(globalEntities) {
+			newCap := max(int(maxID), 2*len(globalEntities))
+			if cap(globalEntities) < newCap {
+				newEntities := make([]entity, len(globalEntities), newCap)
+				copy(newEntities, globalEntities)
+				globalEntities = newEntities
+			}
+			globalEntities = globalEntities[:int(maxID)]
+		}
+
+		// Create entities and add them to the right positions
+		for i, entry := range entries {
+			entryID := entry.ID()
+			en := &entity{
+				Entry:      entry,
+				sto:        sto,
+				id:         entryID,
+				components: components,
+			}
+			entities[i] = en
+
+			// Place the entity at the correct position in globalEntities
+			idx := int(entryID) - 1
+			for idx >= len(globalEntities) {
+				globalEntities = append(globalEntities, entity{})
+			}
+			globalEntities[idx] = *en
+		}
+	} else {
+		// For no-recycle, we can append entities sequentially
+		currentLen := len(globalEntities)
+		neededCap := currentLen + n
+		if cap(globalEntities) < neededCap {
+			newCap := max(neededCap, 2*cap(globalEntities))
+			newEntities := make([]entity, currentLen, newCap)
+			copy(newEntities, globalEntities)
+			globalEntities = newEntities
+		}
+		globalEntities = globalEntities[:neededCap]
+
+		for i, entry := range entries {
+			en := &entity{
+				Entry:      entry,
+				sto:        sto,
+				id:         entry.ID(),
+				components: components,
+			}
+			entities[i] = en
+			globalEntities[currentLen+i] = *en
+		}
 	}
 
 	return entities, nil
@@ -214,18 +280,22 @@ func (s *storage) DestroyEntities(entities ...Entity) error {
 		return errors.New("storage is locked")
 	}
 	for _, en := range entities {
-		if en == nil {
+		if en == nil || !en.Valid() {
 			continue
 		}
 
-		id := int(en.ID())
+		id := en.ID()
+		idIndex := int(id) - 1
 		table := en.Table()
 		_, err := table.DeleteEntries(en.Index())
 		if err != nil {
 			return err
 		}
-		globalEntities[id] = entity{}
 
+		// Clear entity in the global array
+		if idIndex < len(globalEntities) {
+			globalEntities[idIndex] = entity{}
+		}
 	}
 	return nil
 }

@@ -1,6 +1,8 @@
 package warehouse
 
-import "github.com/TheBitDrifter/bappa/table"
+import (
+	"github.com/TheBitDrifter/bappa/table"
+)
 
 // factory implements the factory pattern for warehouse components.
 type factory struct{}
@@ -26,10 +28,14 @@ func (f factory) NewCursor(query QueryNode, storage Storage) *Cursor {
 // FactoryNewComponent creates a new AccessibleComponent for type T.
 func FactoryNewComponent[T any]() AccessibleComponent[T] {
 	iden := table.FactoryNewElementType[T]()
-	return AccessibleComponent[T]{
+	comp := AccessibleComponent[T]{
 		Component: iden,
 		Accessor:  table.FactoryNewAccessor[T](iden),
 	}
+
+	// Register the type using the generic method
+	GlobalTypeRegistry.RegisterComp(comp)
+	return comp
 }
 
 // FactoryNewCache creates a new Cache with the specified capacity.
