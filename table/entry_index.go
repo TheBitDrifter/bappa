@@ -19,20 +19,30 @@ func (ei *entryIndex) NewEntries(n, start int, tbl Table) ([]Entry, error) {
 	amountRecyclable := min(len(ei.recyclable), n)
 	newEntries := []Entry{}
 
+	// First use recyclable entries
 	for i := 0; i < amountRecyclable; i++ {
-		entry := entry{
+		e := entry{
 			id:       ei.recyclable[i].ID(),
 			recycled: ei.recyclable[i].Recycled() + 1,
 			table:    tbl,
 			index:    start + i,
 		}
-		globalIndex := entry.ID() - 1
-		ei.entries[globalIndex] = entry
-		newEntries = append(newEntries, entry)
-	}
-	ei.recyclable = ei.recyclable[amountRecyclable:]
-	leftover := n - amountRecyclable
+		globalIndex := int(e.ID()) - 1
 
+		// Ensure the entries slice has enough capacity
+		for globalIndex >= len(ei.entries) {
+			ei.entries = append(ei.entries, entry{})
+		}
+
+		ei.entries[globalIndex] = e
+		newEntries = append(newEntries, e)
+	}
+
+	// Remove used recyclable entries
+	ei.recyclable = ei.recyclable[amountRecyclable:]
+
+	// Create new entries for the remaining
+	leftover := n - amountRecyclable
 	for i := 0; i < leftover; i++ {
 		ei.currEntryID++
 		entry := entry{
@@ -40,6 +50,26 @@ func (ei *entryIndex) NewEntries(n, start int, tbl Table) ([]Entry, error) {
 			recycled: 0,
 			table:    tbl,
 			index:    start + i + amountRecyclable,
+		}
+		ei.entries = append(ei.entries, entry)
+		newEntries = append(newEntries, entry)
+	}
+
+	return newEntries, nil
+}
+
+func (ei *entryIndex) NewEntriesNoRecycle(n, start int, tbl Table) ([]Entry, error) {
+	if n <= 0 {
+		return nil, BatchOperationError{Count: n}
+	}
+	newEntries := []Entry{}
+	for i := 0; i < n; i++ {
+		ei.currEntryID++
+		entry := entry{
+			id:       ei.currEntryID,
+			recycled: 0,
+			table:    tbl,
+			index:    start + i,
 		}
 		ei.entries = append(ei.entries, entry)
 		newEntries = append(newEntries, entry)
@@ -125,4 +155,26 @@ func (ei *entryIndex) Recyclable() []Entry {
 		recyclableEntriesAsInterface[i] = en
 	}
 	return recyclableEntriesAsInterface
+}
+
+// Note: This is for deserialization, use with caution!
+func (ei *entryIndex) NewHole() error {
+	ei.currEntryID++
+
+	// Create a zero entry for this ID
+	zeroEntry := entry{
+		id:       0,
+		recycled: 0,
+		index:    0,
+	}
+	recycled := entry{
+		id:       ei.currEntryID,
+		recycled: 0,
+		index:    0,
+	}
+	// Add it to recyclable entries
+	ei.recyclable = append(ei.recyclable, recycled)
+	ei.entries = append(ei.entries, zeroEntry)
+
+	return nil
 }

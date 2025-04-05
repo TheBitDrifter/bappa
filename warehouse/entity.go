@@ -7,8 +7,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/TheBitDrifter/bark"
 	"github.com/TheBitDrifter/bappa/table"
+	"github.com/TheBitDrifter/bark"
 )
 
 // Verify entity implements Entity interface
@@ -118,6 +118,10 @@ func (e *entity) AddComponent(c Component) error {
 	if err := originTable.TransferEntries(destArchetype.Table(), e.Index()); err != nil {
 		return err
 	}
+
+	e.Entry = globalEntryIndex.Entries()[e.id-1]
+	globalEntities[e.id-1] = *e
+
 	return nil
 }
 
@@ -181,6 +185,10 @@ func (e *entity) RemoveComponent(c Component) error {
 	if err := originTable.TransferEntries(destArchetype.Table(), e.Index()); err != nil {
 		return fmt.Errorf("failed to transfer entity: %w", err)
 	}
+
+	e.Entry = globalEntryIndex.Entries()[e.id-1]
+	globalEntities[e.id-1] = *e
+
 	return nil
 }
 

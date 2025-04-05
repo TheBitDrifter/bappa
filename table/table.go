@@ -75,6 +75,14 @@ func (tbl *quickTable) Entry(tableIndex int) (Entry, error) {
 }
 
 func (tbl *quickTable) NewEntries(n int) ([]Entry, error) {
+	return tbl.createEntries(n, tbl.entryIndex.NewEntries)
+}
+
+func (tbl *quickTable) NewEntriesNoRecycle(n int) ([]Entry, error) {
+	return tbl.createEntries(n, tbl.entryIndex.NewEntriesNoRecycle)
+}
+
+func (tbl *quickTable) createEntries(n int, createEntriesFn func(int, int, Table) ([]Entry, error)) ([]Entry, error) {
 	if tbl.hasEvents() {
 		if err := tbl.events.OnBeforeEntriesCreated(n); err != nil {
 			return nil, err
@@ -91,20 +99,25 @@ func (tbl *quickTable) NewEntries(n int) ([]Entry, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	err = tbl.setLen(n)
 	if err != nil {
 		return nil, err
 	}
-	entries, entryIndexError := tbl.entryIndex.NewEntries(n, prevTableLength, tbl)
+
+	entries, entryIndexError := createEntriesFn(n, prevTableLength, tbl)
 	if tbl.hasEvents() {
 		defer tbl.events.OnAfterEntriesCreated(entries)
 	}
+
 	if entryIndexError != nil {
 		return nil, entryIndexError
 	}
+
 	for _, entry := range entries {
 		tbl.entryIDs = append(tbl.entryIDs, entry.ID())
 	}
+
 	return entries, nil
 }
 
@@ -313,6 +326,7 @@ func (tbl *quickTable) Set(elementType ElementType, re reflect.Value, idx int) e
 	row.set(idx, re)
 	rowIdx := tbl.schema.RowIndexFor(elementType)
 	tbl.rowCache.cacheRow(int(rowIdx), row)
+
 	return nil
 }
 
