@@ -73,7 +73,6 @@ func testScenarioCreatingEntities(t *testing.T) {
 			if err != nil {
 				t.Fatalf("Failed to add velocity component: %v", err)
 			}
-
 			vel := velComp.GetFromEntity(entity)
 			vel.X = float64(i) * 0.5
 			vel.Y = float64(i) * 0.25

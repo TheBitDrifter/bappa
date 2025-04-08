@@ -17,6 +17,7 @@ type ConfigManager interface {
 	BindDebugKey(ebiten.Key)
 	SetDebugMode(bool)
 	SetCameraBorderSize(int)
+	SetLocalAssetPath(path string)
 }
 
 // configWrite contains configuration parameters that can be written to
@@ -101,4 +102,9 @@ func (cm *configManager) SetDebugMode(val bool) {
 // BindDebugKey sets the key used to trigger debug functionality
 func (cm *configManager) SetCameraBorderSize(thickness int) {
 	ClientConfig.cameraBorderSize = thickness
+}
+
+// Set local asset path for dev
+func (cm *configManager) SetLocalAssetPath(path string) {
+	ClientConfig.localAssetPath = path
 }

@@ -53,6 +53,10 @@ func (m *MockSpriteLoader) Load(spriteBundle *client.SpriteBundle, cache warehou
 	return nil
 }
 
+func (m *MockSpriteLoader) PreLoad(bundle client.PreLoadAssetBundle, cache warehouse.Cache[Sprite]) error {
+	return nil
+}
+
 // MockSoundLoader implements the sound loading functionality for tests
 type MockSoundLoader struct {
 	// mu sync.RWMutex
@@ -100,12 +104,16 @@ func (m *MockSoundLoader) Load(soundBundle *client.SoundBundle, cache warehouse.
 	return nil
 }
 
+func (m *MockSoundLoader) PreLoad(bundle client.PreLoadAssetBundle, cache warehouse.Cache[Sound]) error {
+	return nil
+}
+
 // NewTestClient creates a client specifically for testing purposes
 // with mock asset loaders that don't require real files
 func NewTestClient(baseResX, baseResY, maxSpritesCached, maxSoundsCached, maxScenesCached int) Client {
 	cli := &clientImpl{
 		tickManager:   newTickManager(),
-		cameraUtility: newCameraUtility(),
+		renderUtility: newRenderUtility(),
 		systemManager: &systemManager{},
 		configManager: newConfigManager(),
 		sceneManager:  newSceneManager(maxScenesCached),

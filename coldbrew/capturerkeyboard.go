@@ -35,7 +35,7 @@ func (handler *keyboardCapturer) Capture() {
 
 	client := handler.client
 	for i := range client.receivers {
-		client.receivers[i].inputs.kb = []input.StampedInput{}
+		client.receivers[i].actions.kb = []input.StampedAction{}
 		handler.populateReceiver(keys, client.receivers[i])
 	}
 }
@@ -52,7 +52,7 @@ func (handler *keyboardCapturer) populateReceiver(keys []ebiten.Key, receiverPtr
 	for _, key := range keys {
 		if receiverPtr.keyLayout.mask.Contains(uint32(key)) {
 			val := receiverPtr.keyLayout.keys[key]
-			receiverPtr.inputs.kb = append(receiverPtr.inputs.kb, input.StampedInput{
+			receiverPtr.actions.kb = append(receiverPtr.actions.kb, input.StampedAction{
 				Val:  val,
 				Tick: tick,
 				X:    x,

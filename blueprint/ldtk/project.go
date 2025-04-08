@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"runtime"
+
+	"github.com/TheBitDrifter/bappa/environment"
 )
 
 // LDtkProject represents the main structure for an LDtk project
@@ -75,8 +77,7 @@ type parsedGridTile struct {
 func Parse(ldtkFS fs.FS, relPath string) (*LDtkProject, error) {
 	var data []byte
 	var err error
-	isProd := os.Getenv("BAPPA_ENV") == "production"
-	if isProd || isWASM() {
+	if environment.IsProd() || environment.IsWASM() {
 		data, err = fs.ReadFile(ldtkFS, "data.ldtk")
 		if err != nil {
 			log.Printf("Error reading LDtk file from embedded assets: %v", err)

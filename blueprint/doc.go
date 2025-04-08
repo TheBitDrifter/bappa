@@ -20,7 +20,7 @@ Blueprint defines these key elements:
 Blueprint organizes components by domain into several subpackages:
 
   - blueprint/client: Visual and audio components (sprites, animations, sounds)
-  - blueprint/input: User interaction components (input buffers)
+  - blueprint/input: User interaction components (input/action buffers)
   - blueprint/vector: 2D vector mathematics utilities
 
 # Working with Queries

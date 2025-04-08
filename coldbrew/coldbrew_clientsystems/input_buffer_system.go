@@ -8,38 +8,37 @@ import (
 	"github.com/TheBitDrifter/bappa/warehouse"
 )
 
-// InputBufferSystem extracts client inputs and passes them to the core system components as StampedInputs
+// InputBufferSystem extracts client inputs and passes them to the core system components as StampedActions
 type InputBufferSystem struct{}
 
-// Run processes all active input buffers across scenes
 func (InputBufferSystem) Run(cli coldbrew.Client) error {
 	for scene := range cli.ActiveScenes() {
-		inputBufferCursor := warehouse.Factory.NewCursor(blueprint.Queries.InputBuffer, scene.Storage())
-		for range inputBufferCursor.Next() {
-			buffer := input.Components.InputBuffer.GetFromCursor(inputBufferCursor)
+		actionBufferCursor := warehouse.Factory.NewCursor(blueprint.Queries.ActionBuffer, scene.Storage())
+		for range actionBufferCursor.Next() {
+			buffer := input.Components.ActionBuffer.GetFromCursor(actionBufferCursor)
 			receiver := cli.Receiver(buffer.ReceiverIndex)
 			if !receiver.Active() {
 				continue
 			}
-			poppedInputs := receiver.PopInputs()
+			poppedActions := receiver.PopActions()
 
 			// Transform input coordinates if camera component exists
-			hasCam := client.Components.CameraIndex.CheckCursor(inputBufferCursor)
+			hasCam := client.Components.CameraIndex.CheckCursor(actionBufferCursor)
 			if hasCam {
-				camIndex := *client.Components.CameraIndex.GetFromCursor(inputBufferCursor)
+				camIndex := *client.Components.CameraIndex.GetFromCursor(actionBufferCursor)
 				cam := cli.Cameras()[camIndex]
 				if cam.Active() {
 					globalPos, localPos := cam.Positions()
 					// Convert global coordinates to local camera space
-					for i, sInput := range poppedInputs {
-						localX := int(localPos.X + float64(sInput.X) - globalPos.X)
-						localY := int(localPos.Y + float64(sInput.Y) - globalPos.Y)
-						poppedInputs[i].LocalX = localX
-						poppedInputs[i].LocalY = localY
+					for i, sAction := range poppedActions {
+						localX := int(localPos.X + float64(sAction.X) - globalPos.X)
+						localY := int(localPos.Y + float64(sAction.Y) - globalPos.Y)
+						poppedActions[i].LocalX = localX
+						poppedActions[i].LocalY = localY
 					}
 				}
 			}
-			buffer.AddBatch(poppedInputs)
+			buffer.AddBatch(poppedActions)
 		}
 	}
 	return nil

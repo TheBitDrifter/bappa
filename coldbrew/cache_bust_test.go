@@ -221,7 +221,7 @@ func TestSuccessfulCacheBust(t *testing.T) {
 }
 
 // Helper function to create a scene plan
-func createScenePlan(assets []string) func(width, height int, storage warehouse.Storage) error {
+func createScenePlan(assets []string) blueprint.Plan {
 	return func(width, height int, storage warehouse.Storage) error {
 		archetype, err := storage.NewOrExistingArchetype(
 			client.Components.SpriteBundle,

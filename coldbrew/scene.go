@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 
 	"github.com/TheBitDrifter/bappa/blueprint"
+	"github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/table"
 	"github.com/TheBitDrifter/bappa/warehouse"
 )
@@ -41,13 +42,14 @@ type Scene interface {
 	ClientSystems() []ClientSystem
 	ExecutePlan() (alreadyExecuted bool, err error)
 	Reset() error
+	PreloadAssetBundle() client.PreLoadAssetBundle
 }
 
 type scene struct {
 	name              string
 	loaded            atomic.Bool       // Tracks if scene resources are loaded
 	loading           atomic.Bool       // Tracks if scene is currently loading
-	height, width     int               // Dimensions of the scene
+	width, height     int               // Dimensions of the scene
 	storage           warehouse.Storage // Entity component storage
 	plan              blueprint.Plan    // Initialization plan
 	planExecuted      bool              // Tracks if initialization plan has run
@@ -58,6 +60,8 @@ type scene struct {
 		client    []ClientSystem         // Systems for client-side logic
 		core      []blueprint.CoreSystem // Core game systems
 	}
+
+	preloadedAssetBundle client.PreLoadAssetBundle // Manually specified assets to load
 }
 
 // Core information methods
@@ -91,7 +95,7 @@ func (s *scene) Ready() bool {
 // Systems and execution methods
 func (s *scene) ExecutePlan() (bool, error) {
 	if !s.planExecuted {
-		err := s.plan(s.height, s.width, s.storage)
+		err := s.plan(s.width, s.height, s.storage)
 		if err != nil {
 			return false, err
 		}
@@ -113,4 +117,8 @@ func (s *scene) Reset() error {
 	s.storage = warehouse.Factory.NewStorage(schema)
 	s.planExecuted = false
 	return nil
+}
+
+func (s *scene) PreloadAssetBundle() client.PreLoadAssetBundle {
+	return s.preloadedAssetBundle
 }

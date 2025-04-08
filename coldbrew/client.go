@@ -2,7 +2,6 @@ package coldbrew
 
 import (
 	"errors"
-	"fmt"
 	"image/color"
 	"io/fs"
 	"log"
@@ -11,10 +10,10 @@ import (
 	"github.com/TheBitDrifter/bappa/blueprint"
 	client "github.com/TheBitDrifter/bappa/blueprint/client"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
+	"github.com/TheBitDrifter/bappa/environment"
 	"github.com/TheBitDrifter/bappa/table"
 	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 	text "github.com/hajimehoshi/ebiten/v2/text/v2"
 	"golang.org/x/image/font/basicfont"
@@ -34,7 +33,7 @@ type Client interface {
 
 type LocalClient interface {
 	Start() error
-	CameraUtility
+	RenderUtility
 	TickManager
 	InputManager
 	CameraManager
@@ -47,7 +46,7 @@ type LocalClient interface {
 type clientImpl struct {
 	*tickManager
 	*inputManager
-	*cameraUtility
+	*renderUtility
 	*systemManager
 	*sceneManager
 	*configManager
@@ -56,24 +55,35 @@ type clientImpl struct {
 
 // NewClient creates a new client with specified resolution and cache settings
 func NewClient(baseResX, baseResY, maxSpritesCached, maxSoundsCached, maxScenesCached int, embeddedFS fs.FS) Client {
+	baseClient := newClientImplBase(baseResX, baseResY, maxSpritesCached, maxSoundsCached, maxScenesCached, embeddedFS)
+	return baseClient
+}
+
+func newClientImplBase(baseResX, baseResY, maxSpritesCached, maxSoundsCached, maxScenesCached int, embeddedFS fs.FS) *clientImpl {
 	cli := &clientImpl{
 		tickManager:   newTickManager(),
-		cameraUtility: newCameraUtility(),
+		renderUtility: newRenderUtility(),
 		systemManager: &systemManager{},
 		configManager: newConfigManager(),
 		sceneManager:  newSceneManager(maxScenesCached),
 		assetManager:  newAssetManager(embeddedFS),
 	}
 	cli.inputManager = newInputManager(cli)
+
 	ClientConfig.maxSoundsCached.Store(uint32(maxSoundsCached))
 	ClientConfig.maxSpritesCached.Store(uint32(maxSpritesCached))
+
+	// Store base resolution
 	ClientConfig.baseResolution.x = baseResX
 	ClientConfig.baseResolution.y = baseResY
+
 	ClientConfig.resolution.x = baseResX
 	ClientConfig.resolution.y = baseResY
 	ClientConfig.windowSize.x = baseResX
 	ClientConfig.windowSize.y = baseResY
+
 	ebiten.SetWindowSize(baseResX, baseResY)
+
 	return cli
 }
 
@@ -91,36 +101,17 @@ func (cli *clientImpl) Start() error {
 }
 
 func (cli *clientImpl) Update() error {
-	cli.toggleDebugView()
-
-	err := cli.processNonExecutedPlansForActiveScenes()
-	if err != nil {
-		return err
-	}
-
-	cli.findAndLoadMissingAssetsForActiveScenesAsync()
-
-	if isCacheFull.Load() {
-		cli.resolveCacheForActiveScenes()
-	}
-
-	cli.captureInputs()
-
-	err = cli.runGlobalClientSystems()
-	if err != nil {
-		return err
-	}
-
-	err = cli.run()
-	if err != nil {
-		return err
-	}
-
-	tick++
-	return nil
+	return sharedClientUpdate(cli)
 }
 
 func (cli *clientImpl) run() error {
+	for _, globalClientSystem := range cli.globalClientSystems {
+		err := globalClientSystem.Run(cli)
+		if err != nil {
+			return err
+		}
+	}
+
 	loadingScenes := cli.loadingScenes
 	for activeScene := range cli.ActiveScenes() {
 		cameraReady := true
@@ -166,7 +157,7 @@ func (cli *clientImpl) run() error {
 }
 
 func (cli *clientImpl) toggleDebugView() {
-	if inpututil.IsKeyJustReleased(ClientConfig.DebugKey()) && !isProd {
+	if inpututil.IsKeyJustReleased(ClientConfig.DebugKey()) && !environment.IsProd() {
 		ClientConfig.DebugVisual = !ClientConfig.DebugVisual
 	}
 }
@@ -209,6 +200,7 @@ func (cli *clientImpl) loadAssetsForScene(scene Scene, spriteCache warehouse.Cac
 		if err != nil {
 			return err
 		}
+
 	}
 
 	cursor = warehouse.Factory.NewCursor(blueprint.Queries.SoundBundle, sto)
@@ -219,6 +211,17 @@ func (cli *clientImpl) loadAssetsForScene(scene Scene, spriteCache warehouse.Cac
 			return err
 		}
 	}
+
+	err := cli.SpriteLoader.PreLoad(scene.PreloadAssetBundle(), spriteCache)
+	if err != nil {
+		return err
+	}
+
+	err = cli.SoundLoader.PreLoad(scene.PreloadAssetBundle(), soundCache)
+	if err != nil {
+		return err
+	}
+
 	scene.SetLoading(false)
 	scene.SetLoaded(true)
 	return nil
@@ -299,64 +302,12 @@ func (cli *clientImpl) captureInputs() {
 	cli.capturers.touch.Capture()
 }
 
-func (cli *clientImpl) runGlobalClientSystems() error {
-	for _, globalClientSystem := range cli.globalClientSystems {
-		err := globalClientSystem.Run(cli)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func (cli *clientImpl) Layout(int, int) (int, int) {
 	return ClientConfig.resolution.x, ClientConfig.resolution.y
 }
 
 func (cli *clientImpl) Draw(image *ebiten.Image) {
-	for i := range cli.cameras {
-		c := cli.cameras[i]
-		c.Surface().Clear()
-	}
-	screen := Screen{
-		sprite{name: "screen", image: image},
-	}
-	for _, renderSys := range cli.globalRenderers {
-		renderSys.Render(cli, screen)
-	}
-
-	// Take a snapshot of active scenes for rendering
-	for activeScene := range cli.ActiveScenes() {
-		renderers := activeScene.Renderers()
-		cameraReady := true
-		cameras := cli.ActiveCamerasFor(activeScene)
-		for _, cam := range cameras {
-			if !cam.Ready(cli) {
-				cameraReady = false
-			}
-		}
-
-		if !activeScene.Ready() || !cameraReady {
-			if len(cli.loadingScenes) > 0 {
-				loadingScene := cli.loadingScenes[0]
-				for _, renderSys := range loadingScene.Renderers() {
-					renderSys.Render(activeScene, screen, cli)
-				}
-			}
-		}
-
-		for _, renderSys := range renderers {
-			if !activeScene.Ready() {
-				continue
-			}
-			renderSys.Render(activeScene, screen, cli)
-		}
-	}
-
-	if ClientConfig.DebugVisual && !isProd {
-		stats := fmt.Sprintf("FRAMES: %v\nTICKS: %v", ebiten.ActualFPS(), ebiten.ActualTPS())
-		ebitenutil.DebugPrint(screen.Image(), stats)
-	}
+	sharedDraw(cli, image)
 }
 
 func (cli clientImpl) CameraSceneTracker() CameraSceneTracker {
@@ -396,13 +347,13 @@ type defaultLoaderTextSystem struct {
 	LoadingText string
 }
 
-func (sys defaultLoaderTextSystem) Render(scene Scene, screen Screen, cameraUtil CameraUtility) {
+func (sys defaultLoaderTextSystem) Render(scene Scene, screen Screen, c LocalClient) {
 	loadingText := sys.LoadingText
 	if loadingText == "" {
 		loadingText = "Loading!"
 	}
-	for _, cam := range cameraUtil.ActiveCamerasFor(scene) {
-		if cameraUtil.Ready(cam) {
+	for _, cam := range c.ActiveCamerasFor(scene) {
+		if c.Ready(cam) {
 			continue
 		}
 		cam.Surface().Fill(color.RGBA{R: 20, G: 0, B: 10, A: 1})

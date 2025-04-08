@@ -3,7 +3,7 @@ package coldbrew
 import (
 	"log/slog"
 
-	 "github.com/TheBitDrifter/bappa/blueprint/input"
+	"github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
 )
@@ -39,7 +39,7 @@ func (handler *touchCapturer) populateReceiver(receiverPtr *receiver) error {
 	touchIDs := ebiten.AppendTouchIDs(make([]ebiten.TouchID, 0))
 	for _, id := range touchIDs {
 		x, y := ebiten.TouchPosition(id)
-		receiverPtr.inputs.touches = append(receiverPtr.inputs.touches,input.StampedInput{
+		receiverPtr.actions.touches = append(receiverPtr.actions.touches, input.StampedAction{
 			Val:  receiverPtr.touchLayout.input,
 			Tick: tick,
 			X:    x,

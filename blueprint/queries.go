@@ -11,7 +11,7 @@ import (
 type defaultQueries struct {
 	ParallaxBackground warehouse.Query
 	CameraIndex        warehouse.Query
-	InputBuffer        warehouse.Query
+	ActionBuffer       warehouse.Query
 	Position           warehouse.Query
 	Dynamics           warehouse.Query
 	Shape              warehouse.Query
@@ -28,8 +28,8 @@ var _ = func() error {
 	Queries.CameraIndex = warehouse.Factory.NewQuery()
 	Queries.CameraIndex.And(client.Components.CameraIndex)
 
-	Queries.InputBuffer = warehouse.Factory.NewQuery()
-	Queries.InputBuffer.And(input.Components.InputBuffer)
+	Queries.ActionBuffer = warehouse.Factory.NewQuery()
+	Queries.ActionBuffer.And(input.Components.ActionBuffer)
 
 	Queries.Position = warehouse.Factory.NewQuery()
 	Queries.Position.And(spatial.Components.Position)

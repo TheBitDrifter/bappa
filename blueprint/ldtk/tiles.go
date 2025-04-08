@@ -36,15 +36,8 @@ func (p *LDtkProject) LoadTiles(levelName string, sto warehouse.Storage) error {
 			continue
 		}
 
-		// Clean up the path to handle various path issues
-		// First, remove any "../" prefix if it exists
-		tilesetPath = strings.TrimPrefix(tilesetPath, "../")
-
-		// Remove "assets/" prefix if it exists
-		tilesetPath = strings.TrimPrefix(tilesetPath, "assets/")
-
-		// Remove "images/" prefix if it exists
-		tilesetPath = strings.TrimPrefix(tilesetPath, "images/")
+		index := strings.Index(tilesetPath, "tilesets")
+		tilesetPath = "images/" + tilesetPath[index:]
 
 		// Create a single entity with a sprite bundle for this layer
 		archetype, err := sto.NewOrExistingArchetype(
