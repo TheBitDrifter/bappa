@@ -4,10 +4,10 @@ go 1.24.1
 
 // replace github.com/TheBitDrifter/bappa/blueprint => ../blueprint
 
-replace github.com/TheBitDrifter/bappa/table => ../table
+// replace github.com/TheBitDrifter/bappa/table => ../table
 
 require (
-	github.com/TheBitDrifter/bappa/table v0.0.0-20250406131439-a591f228f237
+	github.com/TheBitDrifter/bappa/table v0.0.0-20250408213844-3ea7eedb470f
 	github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9
 	github.com/TheBitDrifter/mask v0.0.1-early-alpha.1
 )
