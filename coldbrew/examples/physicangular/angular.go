@@ -73,7 +73,7 @@ func main() {
 }
 
 // Creates the initial scene layout
-func playgroundScenePlan(height, width int, sto warehouse.Storage) error {
+func playgroundScenePlan(width, height int, sto warehouse.Storage) error {
 	if err := createBoundaries(width, height, sto); err != nil {
 		return err
 	}

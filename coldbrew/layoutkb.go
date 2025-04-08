@@ -6,20 +6,20 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-// KeyLayout maps keyboard keys to game inputs
+// KeyLayout maps keyboard keys to game actions
 type KeyLayout interface {
-	RegisterKey(ebiten.Key, input.Input)
+	RegisterKey(ebiten.Key, input.Action)
 }
 
 type keyLayout struct {
 	mask mask.Mask256
-	keys []input.Input // indexed by ebiten key
+	keys []input.Action // indexed by ebiten key
 }
 
-// RegisterKey maps a key to an input and marks it in the mask.
-func (layout *keyLayout) RegisterKey(key ebiten.Key, localInput input.Input) {
+// RegisterKey maps a key to an action and marks it in the mask.
+func (layout *keyLayout) RegisterKey(key ebiten.Key, localInput input.Action) {
 	if len(layout.keys) <= int(key) {
-		newKeys := make([]input.Input, key+1)
+		newKeys := make([]input.Action, key+1)
 		copy(newKeys, layout.keys)
 		layout.keys = newKeys
 	}

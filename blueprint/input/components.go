@@ -3,9 +3,9 @@ package input
 import "github.com/TheBitDrifter/bappa/warehouse"
 
 type defaultComponents struct {
-	InputBuffer warehouse.AccessibleComponent[InputBuffer]
+	ActionBuffer warehouse.AccessibleComponent[ActionBuffer]
 }
 
 var Components = defaultComponents{
-	InputBuffer: warehouse.FactoryNewComponent[InputBuffer](),
+	ActionBuffer: warehouse.FactoryNewComponent[ActionBuffer](),
 }

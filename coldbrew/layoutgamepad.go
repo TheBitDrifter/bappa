@@ -9,18 +9,18 @@ import (
 // PadLayout manages gamepad input mapping configuration
 type PadLayout interface {
 	RegisterPad(padID int)
-	RegisterGamepadButton(ebiten.GamepadButton, input.Input)
-	RegisterGamepadAxes(left bool, input input.Input)
+	RegisterGamepadButton(ebiten.GamepadButton, input.Action)
+	RegisterGamepadAxes(left bool, input input.Action)
 }
 
 type padLayout struct {
 	padID          int
 	mask           mask.Mask
-	buttons        []input.Input
+	buttons        []input.Action
 	leftAxes       bool
 	rightAxes      bool
-	leftAxesInput  input.Input
-	rightAxesInput input.Input
+	leftAxesInput  input.Action
+	rightAxesInput input.Action
 }
 
 // RegisterPad sets the gamepad identifier
@@ -29,9 +29,9 @@ func (layout *padLayout) RegisterPad(padID int) {
 }
 
 // RegisterGamepadButton maps a gamepad button to an input action
-func (layout *padLayout) RegisterGamepadButton(btn ebiten.GamepadButton, localInput input.Input) {
+func (layout *padLayout) RegisterGamepadButton(btn ebiten.GamepadButton, localInput input.Action) {
 	if len(layout.buttons) <= int(btn) {
-		newBtns := make([]input.Input, btn+1)
+		newBtns := make([]input.Action, btn+1)
 		copy(newBtns, layout.buttons)
 		layout.buttons = newBtns
 	}
@@ -40,7 +40,7 @@ func (layout *padLayout) RegisterGamepadButton(btn ebiten.GamepadButton, localIn
 }
 
 // RegisterGamepadAxes maps an analog stick to an input action
-func (layout *padLayout) RegisterGamepadAxes(left bool, localInput input.Input) {
+func (layout *padLayout) RegisterGamepadAxes(left bool, localInput input.Action) {
 	if left {
 		layout.leftAxes = true
 		layout.leftAxesInput = localInput

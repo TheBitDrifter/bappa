@@ -74,7 +74,7 @@ func main() {
 	}
 }
 
-func sceneOnePlan(height, width int, sto warehouse.Storage) error {
+func sceneOnePlan(width, height int, sto warehouse.Storage) error {
 	spriteArchetype, err := sto.NewOrExistingArchetype(
 		spatial.Components.Position,
 		client.Components.SpriteBundle,
@@ -85,19 +85,19 @@ func sceneOnePlan(height, width int, sto warehouse.Storage) error {
 	}
 
 	err = spriteArchetype.Generate(1,
-		input.Components.InputBuffer,
+		input.Components.ActionBuffer,
 
 		spatial.NewPosition(255, 20),
 		client.NewSpriteBundle().
-			AddSprite("sprite.png", true),
+			AddSprite("images/sprite.png", true),
 
 		client.CameraIndex(0),
 	)
 	err = blueprint.NewParallaxBackgroundBuilder(sto).
-		AddLayer("sky.png", 0.1, 0.1).
-		AddLayer("far.png", 0.3, 0.3).
-		AddLayer("mid.png", 0.4, 0.4).
-		AddLayer("near.png", 0.8, 0.8).
+		AddLayer("images/sky.png", 0.1, 0.1).
+		AddLayer("images/far.png", 0.3, 0.3).
+		AddLayer("images/mid.png", 0.4, 0.4).
+		AddLayer("images/near.png", 0.8, 0.8).
 		Build()
 	if err != nil {
 		return err
@@ -105,9 +105,9 @@ func sceneOnePlan(height, width int, sto warehouse.Storage) error {
 	return nil
 }
 
-func sceneTwoPlan(height, width int, sto warehouse.Storage) error {
+func sceneTwoPlan(width, height int, sto warehouse.Storage) error {
 	err := blueprint.NewParallaxBackgroundBuilder(sto).
-		AddLayer("sky.png", 0.1, 0.1).
+		AddLayer("images/sky.png", 0.1, 0.1).
 		Build()
 	if err != nil {
 		return err

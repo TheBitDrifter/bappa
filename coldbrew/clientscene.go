@@ -30,7 +30,7 @@ type SceneManager interface {
 	ActiveScene(int) Scene
 	SceneCount() int
 	// RegisterScene creates and registers a new scene with the provided configuration
-	RegisterScene(string, int, int, blueprint.Plan, []RenderSystem, []ClientSystem, []blueprint.CoreSystem) error
+	RegisterScene(string, int, int, blueprint.Plan, []RenderSystem, []ClientSystem, []blueprint.CoreSystem, ...client.PreLoadAssetBlueprint) error
 	// ChangeScene transitions to a target scene, transferring specified entities
 	ChangeScene(target Scene, entities ...warehouse.Entity) error
 	// ActivateScene activates a target scene while keeping the origin scene active
@@ -186,8 +186,9 @@ func (m *sceneManager) RegisterScene(
 	renderSystems []RenderSystem,
 	clientSystems []ClientSystem,
 	coreSystems []blueprint.CoreSystem,
+	optionalPreloadAssetBlueprints ...client.PreLoadAssetBlueprint,
 ) error {
-	newScene, err := m.newScene(name, width, height, plan, renderSystems, clientSystems, coreSystems)
+	newScene, err := m.newScene(name, width, height, plan, renderSystems, clientSystems, coreSystems, optionalPreloadAssetBlueprints...)
 	if err != nil {
 		return bark.AddTrace(err)
 	}
@@ -210,6 +211,7 @@ func (m *sceneManager) newScene(
 	renderSystems []RenderSystem,
 	clientSystems []ClientSystem,
 	coreSystems []blueprint.CoreSystem,
+	optionalPreloadAssetBlueprints ...client.PreLoadAssetBlueprint,
 ) (Scene, error) {
 	schema := table.Factory.NewSchema()
 	storage := warehouse.Factory.NewStorage(schema)
@@ -228,6 +230,8 @@ func (m *sceneManager) newScene(
 			core:      coreSystems,
 			client:    clientSystems,
 		},
+
+		preloadedAssetBundle: optionalPreloadAssetBlueprints,
 	}
 	return newScene, nil
 }

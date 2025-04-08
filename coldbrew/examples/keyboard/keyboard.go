@@ -20,12 +20,12 @@ import (
 var assets embed.FS
 
 var actions = struct {
-	Up, Down, Left, Right input.Input
+	Up, Down, Left, Right input.Action
 }{
-	Up:    input.NewInput(),
-	Down:  input.NewInput(),
-	Left:  input.NewInput(),
-	Right: input.NewInput(),
+	Up:    input.NewAction(),
+	Down:  input.NewAction(),
+	Left:  input.NewAction(),
+	Right: input.NewAction(),
 }
 
 func main() {
@@ -78,9 +78,9 @@ func main() {
 	}
 }
 
-func exampleScenePlan(height, width int, sto warehouse.Storage) error {
+func exampleScenePlan(width, height int, sto warehouse.Storage) error {
 	spriteArchetype, err := sto.NewOrExistingArchetype(
-		input.Components.InputBuffer,
+		input.Components.ActionBuffer,
 		spatial.Components.Position,
 		client.Components.SpriteBundle,
 	)
@@ -89,11 +89,11 @@ func exampleScenePlan(height, width int, sto warehouse.Storage) error {
 	}
 
 	err = spriteArchetype.Generate(1,
-		input.Components.InputBuffer,
+		input.Components.ActionBuffer,
 
 		spatial.NewPosition(255, 20),
 		client.NewSpriteBundle().
-			AddSprite("sprite.png", true),
+			AddSprite("images/sprite.png", true),
 	)
 	if err != nil {
 		return err
@@ -105,27 +105,27 @@ type inputSystem struct{}
 
 func (inputSystem) Run(scene blueprint.Scene, _ float64) error {
 	query := warehouse.Factory.NewQuery().
-		And(input.Components.InputBuffer, spatial.Components.Position)
+		And(input.Components.ActionBuffer, spatial.Components.Position)
 
 	cursor := scene.NewCursor(query)
 
 	for range cursor.Next() {
 		pos := spatial.Components.Position.GetFromCursor(cursor)
-		inputBuffer := input.Components.InputBuffer.GetFromCursor(cursor)
+		actionBuffer := input.Components.ActionBuffer.GetFromCursor(cursor)
 
-		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Up); ok {
+		if stampedAction, ok := actionBuffer.ConsumeAction(actions.Up); ok {
 			log.Println("Tick", stampedAction.Tick)
 			pos.Y -= 2
 		}
-		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Down); ok {
+		if stampedAction, ok := actionBuffer.ConsumeAction(actions.Down); ok {
 			log.Println("Tick", stampedAction.Tick)
 			pos.Y += 2
 		}
-		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Left); ok {
+		if stampedAction, ok := actionBuffer.ConsumeAction(actions.Left); ok {
 			log.Println("Tick", stampedAction.Tick)
 			pos.X -= 2
 		}
-		if stampedAction, ok := inputBuffer.ConsumeInput(actions.Right); ok {
+		if stampedAction, ok := actionBuffer.ConsumeAction(actions.Right); ok {
 			log.Println("Tick", stampedAction.Tick)
 			pos.X += 2
 		}

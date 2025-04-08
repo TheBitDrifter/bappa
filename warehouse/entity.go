@@ -3,6 +3,7 @@ package warehouse
 import (
 	"errors"
 	"fmt"
+	"log"
 	"reflect"
 	"sort"
 	"strings"
@@ -54,6 +55,12 @@ type Entity interface {
 
 	// SetStorage changes the storage this entity belongs to
 	SetStorage(Storage)
+
+	Serialize() SerializedEntity
+
+	SerializeInclude(...Component) SerializedEntity
+
+	SerializeExclude(...Component) SerializedEntity
 }
 
 // EntityDestroyCallback is called when an entity is destroyed
@@ -271,12 +278,183 @@ func (e *entity) ComponentsAsString() string {
 	return "[" + strings.Join(components, ", ") + "]"
 }
 
-// Valid returns whether this entity has a valid ID
-func (e entity) Valid() bool {
-	return e.id != 0
+func (e *entity) Valid() bool {
+	if e == nil || e.ID() == 0 {
+		return false
+	}
+	globalIndex := int(e.ID() - 1)
+	currentIndexData, err := globalEntryIndex.Entry(globalIndex)
+	if err != nil {
+		return false // Entry doesn't exist in the index.
+	}
+
+	if currentIndexData.ID() == e.ID() && currentIndexData.Recycled() == e.Recycled() {
+		e.Entry = currentIndexData
+		return true
+	}
+	return false
 }
 
 // SetStorage sets the storage for this entity
 func (e *entity) SetStorage(sto Storage) {
 	e.sto = sto
+}
+
+func (e *entity) Serialize() SerializedEntity {
+	serializedEntity := SerializedEntity{
+		ID:       e.ID(),
+		Recycled: e.Recycled(),
+		Data:     make(map[string]any),
+	}
+
+	components := e.Components()
+	serializedEntity.Components = make([]string, 0, len(components))
+
+	for _, comp := range components {
+		typeName, ok := GlobalTypeRegistry.LookupName(comp)
+		if !ok {
+			typeName = comp.Type().String()
+		}
+
+		serializedEntity.Components = append(serializedEntity.Components, typeName)
+
+		tbl := e.Table()
+		idx := e.Index()
+
+		val, err := tbl.Get(comp, idx)
+		if err != nil {
+			// log.Printf("Warning: Failed to get component %s for entity %d: %v. Skipping component.", typeName, e.ID(), err)
+			continue
+		}
+		if val.Kind() == reflect.Pointer {
+			val = val.Elem()
+		}
+		serializedEntity.Data[typeName] = val.Interface()
+	}
+
+	return serializedEntity
+}
+
+// SerializeInclude serializes the entity including ONLY the components specified in comps.
+func (e *entity) SerializeInclude(comps ...Component) SerializedEntity {
+	includeMap := make(map[string]bool, len(comps))
+
+	for _, filterComp := range comps {
+		typeName, ok := GlobalTypeRegistry.LookupName(filterComp)
+		if !ok {
+			typeName = filterComp.Type().String()
+			log.Printf("SerializeInclude Warning: Component type %T not found in registry, using reflection name '%s' for filter.", filterComp, typeName)
+		}
+		includeMap[typeName] = true
+	}
+
+	serializedEntity := SerializedEntity{
+		ID:         e.ID(),
+		Recycled:   e.Recycled(),
+		Components: make([]string, 0, len(comps)),
+		Data:       make(map[string]any, len(comps)),
+	}
+
+	attachedComponents := e.Components()
+	for _, attachedComp := range attachedComponents {
+		typeName, ok := GlobalTypeRegistry.LookupName(attachedComp)
+		if !ok {
+			typeName = attachedComp.Type().String()
+		}
+
+		if !includeMap[typeName] {
+			continue
+		}
+
+		serializedEntity.Components = append(serializedEntity.Components, typeName)
+
+		tbl := e.Table()
+		idx := e.Index()
+
+		val, err := tbl.Get(attachedComp, idx)
+		if err != nil {
+			continue
+		}
+
+		// Handle potential pointers returned by Get
+		if val.IsValid() && val.Kind() == reflect.Pointer {
+			if val.IsNil() {
+				serializedEntity.Data[typeName] = nil
+				continue
+			}
+			val = val.Elem() // Dereference non-nil pointer
+		}
+
+		// Check validity again after potential dereference
+		if !val.IsValid() {
+			serializedEntity.Data[typeName] = nil // Store nil if dereferencing resulted in invalid value
+			continue
+		}
+
+		serializedEntity.Data[typeName] = val.Interface() // Store the actual component value
+	}
+
+	return serializedEntity
+}
+
+// SerializeExclude serializes the entity including all components EXCEPT those specified in comps.
+func (e *entity) SerializeExclude(comps ...Component) SerializedEntity {
+	excludeMap := make(map[string]bool, len(comps))
+	for _, filterComp := range comps {
+		typeName, ok := GlobalTypeRegistry.LookupName(filterComp)
+		if !ok {
+			typeName = filterComp.Type().String()
+			log.Printf("SerializeExclude Warning: Component type %T not found in registry, using reflection name '%s' for filter.", filterComp, typeName)
+		}
+		excludeMap[typeName] = true
+	}
+
+	// Initialize the result
+	serializedEntity := SerializedEntity{
+		ID:         e.ID(),
+		Recycled:   e.Recycled(),
+		Components: make([]string, 0, len(e.Components())),
+		Data:       make(map[string]any, len(e.Components())),
+	}
+
+	attachedComponents := e.Components()
+	for _, attachedComp := range attachedComponents {
+		typeName, ok := GlobalTypeRegistry.LookupName(attachedComp)
+		if !ok {
+			typeName = attachedComp.Type().String()
+		}
+
+		if excludeMap[typeName] {
+			continue
+		}
+
+		serializedEntity.Components = append(serializedEntity.Components, typeName) // Add type name to list
+
+		tbl := e.Table()
+		idx := e.Index()
+
+		val, err := tbl.Get(attachedComp, idx)
+		if err != nil {
+			continue
+		}
+
+		// Handle potential pointers
+		if val.IsValid() && val.Kind() == reflect.Pointer {
+			if val.IsNil() {
+				serializedEntity.Data[typeName] = nil
+				continue
+			}
+			val = val.Elem()
+		}
+
+		if !val.IsValid() {
+			serializedEntity.Data[typeName] = nil // Store nil if dereferencing resulted in invalid value
+
+			continue
+		}
+
+		serializedEntity.Data[typeName] = val.Interface() // Store the actual component value
+	}
+
+	return serializedEntity
 }

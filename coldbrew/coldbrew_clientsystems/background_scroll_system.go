@@ -21,6 +21,7 @@ func (BackgroundScrollSystem) Run(cli coldbrew.LocalClient, scene coldbrew.Scene
 		_, worldPosition := cam.Positions()
 
 		for range cursor.Next() {
+
 			config := client.Components.ParallaxBackground.GetFromCursor(cursor)
 
 			// Calculate raw new translations
@@ -44,6 +45,7 @@ func (BackgroundScrollSystem) Run(cli coldbrew.LocalClient, scene coldbrew.Scene
 				config.RelativeTranslations[cam.Index()].Y = newY
 			}
 		}
+
 	}
 	return nil
 }

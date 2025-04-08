@@ -5,6 +5,7 @@ import (
 	"iter"
 	"math"
 	"reflect"
+	"sort"
 	"unsafe"
 
 	"github.com/TheBitDrifter/mask"
@@ -151,81 +152,172 @@ func (tbl *quickTable) DeleteEntries(indices ...int) ([]EntryID, error) {
 	if err != nil {
 		return nil, err
 	}
-	deleted, err := tbl.popEntries(n, true), nil
-	if err != nil {
-		return nil, err
-	}
+	deleted := tbl.popEntries(n, true)
+
 	if tbl.hasEvents() {
 		tbl.events.OnAfterEntriesDeleted(deleted)
 	}
 	return deleted, nil
 }
 
-func (tbl *quickTable) TransferEntries(
-	other Table,
-	indexes ...int,
-) error {
+func (tbl *quickTable) TransferEntries(other Table, indexes ...int) error {
+	// Ensure unique indexes
 	indexes = numbers_util.UniqueInts(indexes)
 	n := len(indexes)
-	otherLenOriginal := other.Length()
 
+	// Validation checks
 	if n <= 0 {
 		return BatchOperationError{Count: n}
 	}
 	if n > tbl.len {
 		return BatchDeletionError{Capacity: tbl.len, BatchOperationError: BatchOperationError{Count: n}}
 	}
+
+	// Tables must share the same entry index
 	if entryIndexTracker[tbl] != entryIndexTracker[other] {
 		return TransferEntryIndexMismatchError{}
 	}
-	defer tbl.rowCache.cacheRows(tbl)
 
-	sharedElementTypes := tbl.sharedElementTypesWith(other)
-	if len(sharedElementTypes) == 0 {
-		_, err := tbl.DeleteEntries(indexes...)
-		if err != nil {
-			return err
-		}
-		_, err = other.NewEntries(len(indexes))
-		if err != nil {
-			return err
-		}
-		return nil
+	// Get destination table
+	otherTbl, ok := other.(*quickTable)
+	if !ok {
+		return fmt.Errorf("destination table must be a quickTable")
 	}
-	otherTableLength := other.Length()
-	entryIDs := make([]EntryID, len(indexes))
+
+	// Find shared element types
+	sharedElementTypes := tbl.sharedElementTypesWith(other)
+
+	// Ensure capacity in destination and collect entries
+	if err := otherTbl.ensureCapacity(n); err != nil {
+		return err
+	}
+
+	entryIDs := make([]EntryID, n)
 	for i, idx := range indexes {
-		if idx < 0 || idx >= len(tbl.entryIDs) {
-			return AccessError{Index: idx, UpperBound: len(tbl.entryIDs)}
+		if idx < 0 || idx >= tbl.len {
+			return AccessError{Index: idx, UpperBound: tbl.len}
 		}
 		entryIDs[i] = tbl.entryIDs[idx]
 	}
-	err := tbl.entryIndex.RecycleEntries(entryIDs...)
-	newEntries, err := other.NewEntries(n)
-	if err != nil {
-		return err
+
+	// Create space in destination
+	oldOtherLen := otherTbl.len
+	otherTbl.len += n
+
+	// Update all rows in destination
+	for elementType := range otherTbl.ElementTypes() {
+		row, err := otherTbl.Row(elementType)
+		if err != nil {
+			continue
+		}
+		row.setLen(otherTbl.len)
 	}
+
+	// Add entry IDs to destination
+	otherTbl.entryIDs = append(otherTbl.entryIDs, entryIDs...)
+
+	// Copy data
 	for i, idx := range indexes {
-		for _, sharedElementType := range sharedElementTypes {
-			row, err := tbl.Row(sharedElementType)
+		destIdx := oldOtherLen + i
+
+		// Copy component data
+		for _, elementType := range sharedElementTypes {
+			srcRow, err := tbl.Row(elementType)
 			if err != nil {
-				return err
+				continue
 			}
-			otherRow, err := other.Row(sharedElementType)
+
+			destRow, err := otherTbl.Row(elementType)
 			if err != nil {
-				return err
+				continue
 			}
-			otherRow.set(i+otherTableLength, row.get(idx))
+
+			destRow.set(destIdx, srcRow.get(idx))
 		}
 	}
-	n, err = tbl.prepForPopDeletion(indexes...)
-	if err != nil {
-		return err
+
+	// Update entries AFTER all data is transferred
+	for i, entryID := range entryIDs {
+		destIdx := oldOtherLen + i
+
+		// Update entry index to point to new location
+		if err := tbl.entryIndex.UpdateIndex(entryID, destIdx); err != nil {
+			return err
+		}
+
+		// Update table reference in entry
+		entryIdx := int(entryID) - 1
+		ei := tbl.entryIndex.(*entryIndex)
+		if entryIdx >= 0 && entryIdx < len(ei.entries) {
+			e := ei.entries[entryIdx]
+			e.table = other
+			ei.entries[entryIdx] = e
+		}
 	}
-	tbl.popEntries(n, false)
-	for i, en := range newEntries {
-		tbl.entryIndex.UpdateIndex(en.ID(), otherLenOriginal+i)
+
+	// Remove transferred entries
+	//
+	// First create a copy of the indexes to avoid modifying the input
+	indexesCopy := make([]int, len(indexes))
+	copy(indexesCopy, indexes)
+
+	// Sort in descending order to avoid index shifts
+	sort.Sort(sort.Reverse(sort.IntSlice(indexesCopy)))
+
+	// Remove entities one by one from highest index to lowest
+	for _, idx := range indexesCopy {
+		// If this isn't the last entity, swap with the last one
+		if idx < tbl.len-1 {
+			lastIdx := tbl.len - 1
+
+			// Swap component data
+			for _, elementType := range tbl.elementTypes {
+				row, err := tbl.Row(elementType)
+				if err != nil {
+					continue
+				}
+
+				// Get values
+				if idx < reflect.Value(row).Len() && lastIdx < reflect.Value(row).Len() {
+					temp := reflect.Value(row).Index(idx)
+					tempCopy := reflect.New(temp.Type()).Elem()
+					tempCopy.Set(temp)
+
+					// Copy last to idx
+					reflect.Value(row).Index(idx).Set(reflect.Value(row).Index(lastIdx))
+
+					// Copy saved temp to last
+					reflect.Value(row).Index(lastIdx).Set(tempCopy)
+				}
+			}
+
+			// Swap entry IDs without updating entries
+			lastEntryID := tbl.entryIDs[lastIdx]
+			tbl.entryIDs[idx] = lastEntryID
+
+			// Now update the entry index for the swapped entity
+			tbl.entryIndex.UpdateIndex(lastEntryID, idx)
+		}
+
+		// Decrease table length
+		tbl.len--
 	}
+
+	// Update row lengths
+	for _, elementType := range tbl.elementTypes {
+		row, err := tbl.Row(elementType)
+		if err != nil {
+			continue
+		}
+		row.setLen(tbl.len)
+	}
+
+	// Truncate entry IDs array
+	tbl.entryIDs = tbl.entryIDs[:tbl.len]
+
+	// Update row caches
+	tbl.rowCache.cacheRows(tbl)
+	otherTbl.rowCache.cacheRows(other)
 
 	return nil
 }

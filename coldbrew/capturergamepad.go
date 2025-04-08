@@ -268,9 +268,9 @@ func (h *gamepadCapturer) processButtonInputsForGamepad(receiverIndex int, recei
 		}
 
 		curInput := receiver.padLayout.buttons[btn]
-		h.client.receivers[receiverIndex].inputs.pad = append(
-			h.client.receivers[receiverIndex].inputs.pad,
-			input.StampedInput{
+		h.client.receivers[receiverIndex].actions.pad = append(
+			h.client.receivers[receiverIndex].actions.pad,
+			input.StampedAction{
 				Tick: tick,
 				X:    x,
 				Y:    y,
@@ -294,9 +294,9 @@ func (h *gamepadCapturer) processStickInputsForGamepad(receiverIndex int, receiv
 
 	// Process left stick if enabled
 	if (stickState.Left.X != 0 || stickState.Left.Y != 0) && h.client.receivers[receiverIndex].leftAxes {
-		h.client.receivers[receiverIndex].inputs.pad = append(
-			h.client.receivers[receiverIndex].inputs.pad,
-			input.StampedInput{
+		h.client.receivers[receiverIndex].actions.pad = append(
+			h.client.receivers[receiverIndex].actions.pad,
+			input.StampedAction{
 				Tick: tick,
 				// Use stick X/Y values directly as the vector components
 				X:   int(stickState.Left.X * 100),  // Scale to a reasonable range if needed
@@ -315,9 +315,9 @@ func (h *gamepadCapturer) processStickInputsForGamepad(receiverIndex int, receiv
 
 	// Process right stick if enabled
 	if (stickState.Right.X != 0 || stickState.Right.Y != 0) && h.client.receivers[receiverIndex].rightAxes {
-		h.client.receivers[receiverIndex].inputs.pad = append(
-			h.client.receivers[receiverIndex].inputs.pad,
-			input.StampedInput{
+		h.client.receivers[receiverIndex].actions.pad = append(
+			h.client.receivers[receiverIndex].actions.pad,
+			input.StampedAction{
 				Tick: tick,
 				// Use stick X/Y values directly as the vector components
 				X:   int(stickState.Right.X * 100),  // Scale to a reasonable range if needed
