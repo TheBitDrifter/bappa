@@ -47,7 +47,7 @@ func (sb SpriteBundle) WithAnimations(anims ...AnimationData) SpriteBundle {
 			panic("Animation limit exceeded")
 		}
 		blueprint.Animations[i] = anim
-		blueprint.Config.hasAnim = true
+		blueprint.Config.HasAnim = true
 	}
 	return sb
 }
@@ -106,7 +106,7 @@ func (sb SpriteBundle) SetActiveAnimation(anim AnimationData) SpriteBundle {
 		panic("No sprite to add animations to")
 	}
 	blueprint := &sb.Blueprints[sb.index-1]
-	if !blueprint.Config.hasAnim {
+	if !blueprint.Config.HasAnim {
 		panic("sprite has no animations")
 	}
 	match := false
@@ -127,7 +127,7 @@ func (sb SpriteBundle) SetActiveAnimationFromIndex(index int) SpriteBundle {
 		panic("No sprite to add animations to")
 	}
 	blueprint := &sb.Blueprints[sb.index-1]
-	if !blueprint.Config.hasAnim {
+	if !blueprint.Config.HasAnim {
 		panic("sprite has no animations")
 	}
 	blueprint.Config.ActiveAnimIndex = index
