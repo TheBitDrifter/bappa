@@ -21,7 +21,6 @@ var (
 type Storage interface {
 	Entity(id int) (Entity, error)
 	NewEntities(int, ...Component) ([]Entity, error)
-	NewEntitiesNoRecycle(int, ...Component) ([]Entity, error)
 	NewOrExistingArchetype(components ...Component) (Archetype, error)
 	EnqueueNewEntities(int, ...Component) error
 	DestroyEntities(...Entity) error
@@ -37,6 +36,9 @@ type Storage interface {
 	Enqueue(EntityOperation)
 	Archetypes() []ArchetypeImpl
 	TotalEntities() int
+	Entities() []Entity
+
+	ForceSerializedEntity(SerializedEntity) (Entity, error)
 }
 
 // storage implements the Storage interface
@@ -99,16 +101,6 @@ func (sto *storage) NewOrExistingArchetype(components ...Component) (Archetype, 
 
 // NewEntities creates n new entities with the specified components
 func (sto *storage) NewEntities(n int, components ...Component) ([]Entity, error) {
-	return sto.createEntities(n, components, true)
-}
-
-// NewEntitiesNoRecycle creates n new entities without recycling IDs
-func (sto *storage) NewEntitiesNoRecycle(n int, components ...Component) ([]Entity, error) {
-	return sto.createEntities(n, components, false)
-}
-
-// createEntities handles the common logic between entity creation methods
-func (sto *storage) createEntities(n int, components []Component, recycleEntries bool) ([]Entity, error) {
 	if sto.Locked() {
 		return nil, errors.New("storage is locked")
 	}
@@ -134,13 +126,7 @@ func (sto *storage) createEntities(n int, components []Component, recycleEntries
 	}
 
 	// Create entries with or without recycling
-	var entries []table.Entry
-	var err error
-	if recycleEntries {
-		entries, err = entityArchetype.Table().NewEntries(n)
-	} else {
-		entries, err = entityArchetype.Table().NewEntriesNoRecycle(n)
-	}
+	entries, err := entityArchetype.Table().NewEntries(n)
 	if err != nil {
 		return nil, err
 	}
@@ -148,68 +134,43 @@ func (sto *storage) createEntities(n int, components []Component, recycleEntries
 	// Resize globalEntities as needed and create entity objects
 	entities := make([]Entity, n)
 
-	if recycleEntries {
-		// Find maximum ID for preallocation
-		maxID := uint32(0)
-		for _, entry := range entries {
-			if uint32(entry.ID()) > maxID {
-				maxID = uint32(entry.ID())
-			}
-		}
-
-		// Expand globalEntities if needed
-		if int(maxID) > len(globalEntities) {
-			newCap := max(int(maxID), 2*len(globalEntities))
-			if cap(globalEntities) < newCap {
-				newEntities := make([]entity, len(globalEntities), newCap)
-				copy(newEntities, globalEntities)
-				globalEntities = newEntities
-			}
-			globalEntities = globalEntities[:int(maxID)]
-		}
-
-		// Create entities and add them to the right positions
-		for i, entry := range entries {
-			entryID := entry.ID()
-			en := &entity{
-				Entry:      entry,
-				sto:        sto,
-				id:         entryID,
-				components: components,
-			}
-			entities[i] = en
-
-			// Place the entity at the correct position in globalEntities
-			idx := int(entryID) - 1
-			for idx >= len(globalEntities) {
-				globalEntities = append(globalEntities, entity{})
-			}
-			globalEntities[idx] = *en
-		}
-	} else {
-		// For no-recycle, we can append entities sequentially
-		currentLen := len(globalEntities)
-		neededCap := currentLen + n
-		if cap(globalEntities) < neededCap {
-			newCap := max(neededCap, 2*cap(globalEntities))
-			newEntities := make([]entity, currentLen, newCap)
-			copy(newEntities, globalEntities)
-			globalEntities = newEntities
-		}
-		globalEntities = globalEntities[:neededCap]
-
-		for i, entry := range entries {
-			en := &entity{
-				Entry:      entry,
-				sto:        sto,
-				id:         entry.ID(),
-				components: components,
-			}
-			entities[i] = en
-			globalEntities[currentLen+i] = *en
+	// Find maximum ID for preallocation
+	maxID := uint32(0)
+	for _, entry := range entries {
+		if uint32(entry.ID()) > maxID {
+			maxID = uint32(entry.ID())
 		}
 	}
 
+	// Expand globalEntities if needed
+	if int(maxID) > len(globalEntities) {
+		newCap := max(int(maxID), 2*len(globalEntities))
+		if cap(globalEntities) < newCap {
+			newEntities := make([]entity, len(globalEntities), newCap)
+			copy(newEntities, globalEntities)
+			globalEntities = newEntities
+		}
+		globalEntities = globalEntities[:int(maxID)]
+	}
+
+	// Create entities and add them to the right positions
+	for i, entry := range entries {
+		entryID := entry.ID()
+		en := &entity{
+			Entry:      entry,
+			sto:        sto,
+			id:         entryID,
+			components: components,
+		}
+		entities[i] = en
+
+		// Place the entity at the correct position in globalEntities
+		idx := int(entryID) - 1
+		for idx >= len(globalEntities) {
+			globalEntities = append(globalEntities, entity{})
+		}
+		globalEntities[idx] = *en
+	}
 	return entities, nil
 }
 
@@ -386,4 +347,119 @@ func (s *storage) tableFor(comps ...Component) (table.Table, error) {
 	}
 	arche := s.archetypes.asSlice[id-archetypeID(decrement)]
 	return arche.table, nil
+}
+
+func (s *storage) Entities() []Entity {
+	result := []Entity{}
+
+	for _, a := range s.archetypes.asSlice {
+		tbl := a.table
+		n := tbl.Length()
+
+		for i := 0; i < n; i++ {
+			entry, err := tbl.Entry(i)
+			if err == nil {
+				result = append(result, &globalEntities[entry.ID()-1])
+			}
+		}
+	}
+	return result
+}
+
+func (s *storage) ForceSerializedEntity(se SerializedEntity) (Entity, error) {
+	id := int(se.ID)
+	comps := se.GetComponents()
+	index := id - 1
+
+	entityExistsGlobally := id > 0 && index < len(globalEntities) && globalEntities[index].Valid()
+
+	var entityPtr *entity
+
+	if !entityExistsGlobally {
+		createdEntity, err := s.forceNewEntity(se) // Creates in globalEntities and table
+		if err != nil {
+			return nil, fmt.Errorf("failed to force new entity %d: %w", id, err)
+		}
+		return createdEntity, nil
+	}
+
+	entityPtr = &globalEntities[index]
+
+	if entityPtr.sto != s {
+		sourceStorage := entityPtr.sto
+		if sourceStorage == nil {
+			return nil, fmt.Errorf("entity %d exists globally but has nil storage", id)
+		}
+		err := sourceStorage.TransferEntities(s, entityPtr)
+		if err != nil {
+			return nil, fmt.Errorf("failed to transfer entity %d from other storage: %w", id, err)
+		}
+
+		refreshedEntry, err := globalEntryIndex.Entry(index)
+		if err != nil {
+			return nil, err
+		}
+		entityPtr.Entry = refreshedEntry
+	}
+
+	targetArchetype, err := s.NewOrExistingArchetype(comps...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get target archetype for entity %d: %w", id, err)
+	}
+	currentMask := entityPtr.Table().(mask.Maskable).Mask()
+	targetMask := targetArchetype.Table().(mask.Maskable).Mask()
+
+	if targetMask != currentMask {
+		err := entityPtr.Table().TransferEntries(targetArchetype.Table(), entityPtr.Index())
+		if err != nil {
+			return nil, fmt.Errorf("failed to transfer entity %d to target archetype: %w", id, err)
+		}
+		refreshedEntry, err := globalEntryIndex.Entry(index)
+		if err != nil {
+			return nil, err
+		}
+		entityPtr.Entry = refreshedEntry
+	}
+
+	entityPtr.components = comps
+
+	return entityPtr, nil
+}
+
+func (s *storage) forceNewEntity(se SerializedEntity) (Entity, error) {
+	id := int(se.ID)
+	comps := se.GetComponents()
+	recycled := se.Recycled
+
+	// Calculate index in the slice (id-1 since arrays are 0-indexed)
+	index := id - 1
+
+	// Check how many new slots we need to add
+	amountNeeded := index + 1 - len(globalEntities)
+
+	// If we need to expand the slice
+	if amountNeeded > 0 {
+		// Create a new slice with enough capacity
+		newEntities := make([]entity, amountNeeded)
+		// Append the new space to the global entities
+		globalEntities = append(globalEntities, newEntities...)
+	}
+
+	arche, err := s.NewOrExistingArchetype(comps...)
+	if err != nil {
+		return nil, err
+	}
+	err = arche.Table().ForceNewEntry(id, recycled)
+	if err != nil {
+		return nil, err
+	}
+
+	// Initialize the entity at the specified index
+	globalEntities[index] = entity{
+		id:         table.EntryID(id),
+		components: comps,
+		Entry:      globalEntryIndex.Entries()[id-1],
+	}
+
+	return &globalEntities[index], nil
 }

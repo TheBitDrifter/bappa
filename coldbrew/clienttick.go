@@ -26,3 +26,7 @@ func (g *tickManager) Update() error {
 	tick++
 	return nil
 }
+
+func ForceSetTick(i int) {
+	tick = i
+}

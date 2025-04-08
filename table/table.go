@@ -75,14 +75,6 @@ func (tbl *quickTable) Entry(tableIndex int) (Entry, error) {
 }
 
 func (tbl *quickTable) NewEntries(n int) ([]Entry, error) {
-	return tbl.createEntries(n, tbl.entryIndex.NewEntries)
-}
-
-func (tbl *quickTable) NewEntriesNoRecycle(n int) ([]Entry, error) {
-	return tbl.createEntries(n, tbl.entryIndex.NewEntriesNoRecycle)
-}
-
-func (tbl *quickTable) createEntries(n int, createEntriesFn func(int, int, Table) ([]Entry, error)) ([]Entry, error) {
 	if tbl.hasEvents() {
 		if err := tbl.events.OnBeforeEntriesCreated(n); err != nil {
 			return nil, err
@@ -100,12 +92,12 @@ func (tbl *quickTable) createEntries(n int, createEntriesFn func(int, int, Table
 		return nil, err
 	}
 
-	err = tbl.setLen(n)
+	err = tbl.addLen(n)
 	if err != nil {
 		return nil, err
 	}
 
-	entries, entryIndexError := createEntriesFn(n, prevTableLength, tbl)
+	entries, entryIndexError := tbl.entryIndex.NewEntries(n, prevTableLength, tbl)
 	if tbl.hasEvents() {
 		defer tbl.events.OnAfterEntriesCreated(entries)
 	}
@@ -119,6 +111,34 @@ func (tbl *quickTable) createEntries(n int, createEntriesFn func(int, int, Table
 	}
 
 	return entries, nil
+}
+
+func (tbl *quickTable) ForceNewEntry(id, recycled int) error {
+	defer tbl.rowCache.cacheRows(tbl)
+
+	err := tbl.ensureCapacity(1)
+	if err != nil {
+		return err
+	}
+
+	err = tbl.addLen(1)
+	if err != nil {
+		return err
+	}
+
+	err = tbl.entryIndex.ForceNewEntry(id, recycled, tbl.len-1, tbl)
+	if err != nil {
+		return err
+	}
+
+	newEn, err := tbl.entryIndex.Entry(id - 1)
+	if err != nil {
+		return err
+	}
+
+	tbl.entryIDs = append(tbl.entryIDs, newEn.ID())
+
+	return nil
 }
 
 func (tbl *quickTable) DeleteEntries(indices ...int) ([]EntryID, error) {
@@ -336,7 +356,7 @@ func (tbl *quickTable) Mask() mask.Mask {
 }
 
 // --------- private helpers --------------
-func (tbl *quickTable) setLen(n int) error {
+func (tbl *quickTable) addLen(n int) error {
 	tbl.len += n
 	for elementType := range tbl.ElementTypes() {
 		row, err := tbl.Row(elementType)
@@ -399,7 +419,7 @@ func (tbl *quickTable) popEntries(n int, recycle bool) []EntryID {
 	}
 	defer tbl.rowCache.cacheRows(tbl)
 	entryIDsToDelete := tbl.entryIDs[tbl.len-n : tbl.len]
-	tbl.setLen(-n)
+	tbl.addLen(-n)
 	tbl.shrink()
 	tbl.entryIDs = tbl.entryIDs[:tbl.len]
 	if recycle {
