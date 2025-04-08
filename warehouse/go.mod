@@ -4,7 +4,7 @@ go 1.24.1
 
 // replace github.com/TheBitDrifter/bappa/blueprint => ../blueprint
 
-// replace github.com/TheBitDrifter/bappa/table => ../table
+replace github.com/TheBitDrifter/bappa/table => ../table
 
 require (
 	github.com/TheBitDrifter/bappa/table v0.0.0-20250406131439-a591f228f237

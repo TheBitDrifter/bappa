@@ -28,7 +28,7 @@ type SpriteBlueprint struct {
 		Active, Static, IgnoreDefaultRenderer bool
 		// ActiveAnimIndex currently playing animation index
 		ActiveAnimIndex int
-		hasAnim         bool
+		HasAnim         bool
 	}
 	// A tilset contains the layout to render the blueprint's sprites as a tiles (cached subimages)
 	TileSet []Tile
@@ -38,7 +38,7 @@ type SpriteBlueprint struct {
 // Panics if animations exceed the predefined limit
 func (s *SpriteBlueprint) RegisterAnimations(anims ...AnimationData) {
 	if len(anims) > ANIM_LIMIT {
-		panic("todo error sig")
+		panic("beyond animation limit")
 	}
 	// I'm not sure how to use copy with array vs slice
 	for i, anim := range anims {
@@ -81,7 +81,7 @@ func (s *SpriteBlueprint) TryAnimationFromIndex(index int) {
 
 // HasAnimations returns whether this sprite has animations registered
 func (s *SpriteBlueprint) HasAnimations() bool {
-	return s.Config.hasAnim
+	return s.Config.HasAnim
 }
 
 func (sb SpriteBlueprint) GetAnim(anim AnimationData) (AnimationData, error) {
