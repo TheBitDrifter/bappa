@@ -60,7 +60,7 @@ func main() {
 	}
 }
 
-func exampleScenePlan(height, width int, sto warehouse.Storage) error {
+func exampleScenePlan(width, height int, sto warehouse.Storage) error {
 	boxArchetype, err := sto.NewOrExistingArchetype(
 		spatial.Components.Position,
 		spatial.Components.Rotation,

@@ -1,6 +1,8 @@
 package table
 
 import (
+	"fmt"
+
 	numbers_util "github.com/TheBitDrifter/util/numbers"
 )
 
@@ -33,7 +35,6 @@ func (ei *entryIndex) NewEntries(n, start int, tbl Table) ([]Entry, error) {
 		for globalIndex >= len(ei.entries) {
 			ei.entries = append(ei.entries, entry{})
 		}
-
 		ei.entries[globalIndex] = e
 		newEntries = append(newEntries, e)
 	}
@@ -94,23 +95,27 @@ func (ei *entryIndex) RecycleEntries(ids ...EntryID) error {
 		return BatchDeletionError{Capacity: uniqCount, BatchOperationError: BatchOperationError{Count: uniqCount}}
 	}
 
-	for _, id := range ids {
-		index := id - 1
+	for _, id := range uniqueIDs {
+		entryID := EntryID(id)
+		index := entryID - 1
+
 		if ei.entries[index].ID() == 0 {
 			continue
 		}
+
 		zeroEntry := entry{
 			id:       0,
 			recycled: ei.entries[index].Recycled(),
 			index:    0,
 		}
 		recycledEntry := entry{
-			id:       id,
+			id:       entryID,
 			recycled: ei.entries[index].Recycled(),
 			index:    0,
 		}
 		ei.recyclable = append(ei.recyclable, recycledEntry)
 		ei.entries[index] = zeroEntry
+
 	}
 	return nil
 }
@@ -139,25 +144,45 @@ func (ei *entryIndex) Recyclable() []Entry {
 }
 
 // Use with caution, primarily for deser
-func (ei *entryIndex) ForceNewEntry(id int, recycled, tblIndex int, tbl Table) error {
-	index := id - 1
+func (ei *entryIndex) ForceNewEntry(id int, recycledValue, tblIndex int, tbl Table) error {
+	entryIDToForce := EntryID(id)
+	if entryIDToForce == 0 {
+		return fmt.Errorf("cannot force entry with ID 0") // ID 0 is reserved for invalid/empty
+	}
+	index := id - 1 // Target index for the new entry
 
 	if index >= len(ei.entries) {
-		amountNeeded := index + 1 - len(ei.entries)
+		requiredLen := index + 1
 
-		newEntries := make([]entry, amountNeeded)
-		newRecycled := make([]entry, amountNeeded-1)
+		// Create a new slice large enough
+		newEntriesSlice := make([]entry, requiredLen)
 
-		ei.recyclable = append(ei.recyclable, newRecycled...)
-		ei.entries = append(ei.entries, newEntries...)
-		ei.currEntryID = EntryID(id)
+		// Copy existing entries
+		copy(newEntriesSlice, ei.entries)
+
+		// Replace the old slice
+		ei.entries = newEntriesSlice
+
+		// Update highest ID tracker if needed
+		if entryIDToForce > ei.currEntryID {
+			ei.currEntryID = entryIDToForce
+		}
+
+	} else {
+		// Slot already exists. Check if it's currently occupied by a *different* entry.
+		existingEntry := ei.entries[index]
+
+		// If the existing ID is not 0 (it's occupied) AND it's not the ID we intend to force
+		if existingEntry.id != 0 && existingEntry.id != entryIDToForce {
+			return fmt.Errorf("cannot force entry for ID %d: index %d is already occupied by valid ID %d", id, index, existingEntry.id)
+		}
 	}
 
 	ei.entries[index] = entry{
-		id:       EntryID(id),
+		id:       entryIDToForce,
 		table:    tbl,
 		index:    tblIndex,
-		recycled: recycled,
+		recycled: recycledValue,
 	}
 
 	return nil

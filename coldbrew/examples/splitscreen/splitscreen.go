@@ -86,12 +86,12 @@ func main() {
 	}
 }
 
-func exampleScenePlan(height, width int, sto warehouse.Storage) error {
+func exampleScenePlan(width, height int, sto warehouse.Storage) error {
 	err := blueprint.NewParallaxBackgroundBuilder(sto).
-		AddLayer("sky.png", 0.1, 0.1).
-		AddLayer("far.png", 0.3, 0.3).
-		AddLayer("mid.png", 0.4, 0.4).
-		AddLayer("near.png", 0.8, 0.8).
+		AddLayer("images/sky.png", 0.1, 0.1).
+		AddLayer("images/far.png", 0.3, 0.3).
+		AddLayer("images/mid.png", 0.4, 0.4).
+		AddLayer("images/near.png", 0.8, 0.8).
 		Build()
 	if err != nil {
 		return err

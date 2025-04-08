@@ -8,39 +8,41 @@ const (
 )
 
 type Direction struct {
-	value directionValue
+	// Sadly for serialization I'm making this public because lazy
+	// Its better to use the methods rather than this value directly
+	Value directionValue
 }
 
 func NewDirectionRight() Direction {
 	return Direction{
-		value: right,
+		Value: right,
 	}
 }
 
 func NewDirectionLeft() Direction {
 	return Direction{
-		value: left,
+		Value: left,
 	}
 }
 
 func (d *Direction) SetLeft() {
-	d.value = left
+	d.Value = left
 }
 
 func (d *Direction) SetRight() {
-	d.value = right
+	d.Value = right
 }
 
 func (d *Direction) IsRight() bool {
-	return d.value == right
+	return d.Value == right
 }
 
 func (d *Direction) IsLeft() bool {
-	return d.value == left
+	return d.Value == left
 }
 
 func (d *Direction) AsFloat() float64 {
-	if d.value == left {
+	if d.Value == left {
 		return -1
 	} else {
 		return 1

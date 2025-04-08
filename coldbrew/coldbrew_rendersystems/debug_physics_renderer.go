@@ -7,6 +7,7 @@ import (
 	"github.com/TheBitDrifter/bappa/blueprint"
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
 	"github.com/TheBitDrifter/bappa/coldbrew"
+	"github.com/TheBitDrifter/bappa/environment"
 	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
@@ -26,7 +27,7 @@ type ShapeInfo struct {
 // Render draws debug information when debug visualization is enabled
 // Displays shapes and their collisions for each active camera
 func (sys *DebugRenderer) Render(cli coldbrew.Client, screen coldbrew.Screen) {
-	if !coldbrew.ClientConfig.DebugVisual || coldbrew.IsProd() {
+	if !coldbrew.ClientConfig.DebugVisual || environment.IsProd() {
 		return
 	}
 	for _, cam := range cli.Cameras() {

@@ -3,6 +3,7 @@ package warehouse
 import (
 	"errors"
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/TheBitDrifter/bappa/table"
@@ -39,6 +40,7 @@ type Storage interface {
 	Entities() []Entity
 
 	ForceSerializedEntity(SerializedEntity) (Entity, error)
+	ForceSerializedEntityExclude(se SerializedEntity, excludeComps ...Component) (Entity, error)
 }
 
 // storage implements the Storage interface
@@ -73,7 +75,12 @@ func newStorage(schema table.Schema) Storage {
 
 // Entity retrieves an entity by ID
 func (sto *storage) Entity(id int) (Entity, error) {
-	return &globalEntities[id-1], nil
+	index := id - 1
+	if index < 0 || index >= len(globalEntities) {
+		log.Println(id)
+		return nil, errors.New("invalid index")
+	}
+	return &globalEntities[index], nil
 }
 
 // NewOrExistingArchetype gets an existing archetype matching the component signature or creates a new one
@@ -245,19 +252,14 @@ func (s *storage) DestroyEntities(entities ...Entity) error {
 			continue
 		}
 
-		id := en.ID()
-		idIndex := int(id) - 1
 		table := en.Table()
 		_, err := table.DeleteEntries(en.Index())
 		if err != nil {
 			return err
 		}
 
-		// Clear entity in the global array
-		if idIndex < len(globalEntities) {
-			globalEntities[idIndex] = entity{}
-		}
 	}
+
 	return nil
 }
 
@@ -459,7 +461,94 @@ func (s *storage) forceNewEntity(se SerializedEntity) (Entity, error) {
 		id:         table.EntryID(id),
 		components: comps,
 		Entry:      globalEntryIndex.Entries()[id-1],
+		sto:        s,
 	}
 
 	return &globalEntities[index], nil
+}
+
+func (s *storage) ForceSerializedEntityExclude(se SerializedEntity, xComps ...Component) (Entity, error) {
+	id := int(se.ID)
+	comps := se.GetComponents()
+	index := id - 1
+
+	entityExistsGlobally := id > 0 && index < len(globalEntities) && globalEntities[index].Valid()
+
+	var entityPtr *entity
+
+	if !entityExistsGlobally {
+		createdEntity, err := s.forceNewEntity(se) // Creates in globalEntities and table
+		if err != nil {
+			return nil, fmt.Errorf("failed to force new entity %d: %w", id, err)
+		}
+		return createdEntity, nil
+	}
+
+	entityPtr = &globalEntities[index]
+
+	if entityPtr.sto != s {
+		sourceStorage := entityPtr.sto
+
+		if sourceStorage == nil {
+			return nil, fmt.Errorf("entity %d exists globally but has nil storage", id)
+		}
+
+		err := sourceStorage.TransferEntities(s, entityPtr)
+		if err != nil {
+			return nil, fmt.Errorf("failed to transfer entity %d from other storage: %w", id, err)
+		}
+
+		refreshedEntry, err := globalEntryIndex.Entry(index)
+		if err != nil {
+			return nil, err
+		}
+		entityPtr.Entry = refreshedEntry
+	}
+
+	targetComps := mergeUniqueComponents(xComps, comps)
+
+	targetArchetype, err := s.NewOrExistingArchetype(targetComps...)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get target archetype for entity %d: %w", id, err)
+	}
+	currentMask := entityPtr.Table().(mask.Maskable).Mask()
+	targetMask := targetArchetype.Table().(mask.Maskable).Mask()
+
+	if targetMask != currentMask {
+		err := entityPtr.Table().TransferEntries(targetArchetype.Table(), entityPtr.Index())
+		if err != nil {
+			return nil, fmt.Errorf("failed to transfer entity %d to target archetype: %w", id, err)
+		}
+		refreshedEntry, err := globalEntryIndex.Entry(index)
+		if err != nil {
+			return nil, err
+		}
+		entityPtr.Entry = refreshedEntry
+	}
+
+	entityPtr.components = comps
+
+	return entityPtr, nil
+}
+
+func mergeUniqueComponents(slice1, slice2 []Component) []Component {
+	seen := make(map[int]bool)
+	result := []Component{}
+
+	for _, comp := range slice1 {
+		id := int(comp.ID())
+
+		if !seen[id] {
+			seen[id] = true
+			result = append(result, comp)
+		}
+	}
+	for _, comp := range slice2 {
+		id := int(comp.ID())
+		if !seen[id] {
+			seen[id] = true
+			result = append(result, comp)
+		}
+	}
+	return result
 }

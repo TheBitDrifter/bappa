@@ -7,6 +7,9 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+// TODO: This whole setup is subpar and odd
+// Would like to refactor the coldbrew config eventually
+//
 // MaxSplit is the maximum number of splits allowed by the blueprint client
 const MaxSplit = client.MaxSplit
 
@@ -31,6 +34,7 @@ var ClientConfig = func() *config {
 			x: 1920,
 			y: 1080,
 		},
+		localAssetPath: "assets/",
 	}
 
 	defConfig.maxSpritesCached.Store(200)
@@ -57,6 +61,8 @@ type config struct {
 	windowSize struct {
 		x, y int
 	}
+
+	localAssetPath string
 }
 
 // BaseResolution returns the base resolution x and y values
@@ -82,3 +88,5 @@ func (c config) DebugKey() ebiten.Key { return c.debugKey }
 
 // DebugKey returns the key bound to trigger debug functionality
 func (c config) CameraBorderSize() int { return c.cameraBorderSize }
+
+func (c config) LocalAssetPath() string { return c.localAssetPath }

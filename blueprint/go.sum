@@ -1,9 +1,9 @@
-github.com/TheBitDrifter/bappa/table v0.0.0-20250330195601-61b1a350228f h1:nt8qo1HPvIXH+BtEMN7aJo1dzeWh8ENCuy5c7q/XcCw=
-github.com/TheBitDrifter/bappa/table v0.0.0-20250330195601-61b1a350228f/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250408213844-3ea7eedb470f h1:kLdP95tAwTuwSqjU/RRaDxkHCX+GKfaOyq74cnjnOsE=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250408213844-3ea7eedb470f/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
 github.com/TheBitDrifter/bappa/tteokbokki v0.0.0-20250330212722-f989bbd448b4 h1:cyi+UCEX9dD8TAXt3YL/smak/Ww3LFCqH4z2uxMJ60o=
 github.com/TheBitDrifter/bappa/tteokbokki v0.0.0-20250330212722-f989bbd448b4/go.mod h1:n9+trB8+hXlmR+tkhOUtTgBnzV+g87LY0Juy1STtYvs=
-github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250330212722-f989bbd448b4 h1:Z/53HVv4h2VAmVeKQsl+8yAwrKf49W4Igi2IdNxqcq4=
-github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250330212722-f989bbd448b4/go.mod h1:dnwkll0DlXBEwAEIg7GA3CwCPELAT0zRrH505M0Y134=
+github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250408214137-aae872bb6dfc h1:9BBgOU2sJjjYlP5/4VErjJKQL9wok7nEhHIkbrAZgIc=
+github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250408214137-aae872bb6dfc/go.mod h1:N/cwiu6RLeeNMb1CUKvA1kMSdhxza0qpYYYwAneKKss=
 github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9 h1:FKJtdY3t0/gSgQQrawCrUCs8io53Mq6mSKyovNdd4ig=
 github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9/go.mod h1:DfUHSN9ypqQX6IRhwzRdzp7TKoCm1pLFUteZgfWt168=
 github.com/TheBitDrifter/mask v0.0.1-early-alpha.1 h1:OtOctrw0eBkIlHKhzEMmsHt0+xgb3RSDsfNkpd2hiiM=

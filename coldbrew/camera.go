@@ -57,7 +57,7 @@ type Camera interface {
 type camera struct {
 	active                        bool
 	surface                       Sprite
-	height, width                 int
+	width, height                 int
 	screenPosition, worldPosition vector.Two
 	index                         int
 }

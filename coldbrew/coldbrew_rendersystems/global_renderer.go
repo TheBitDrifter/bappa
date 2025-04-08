@@ -251,10 +251,12 @@ func RenderBackground(
 	}
 	// Render the background layers
 	for i := 0; i < bgCount; i++ {
+
 		opts := &ebiten.DrawImageOptions{}
 		opts.GeoM.Translate(currentTrans.X, currentTrans.Y)
 		opts.GeoM.Translate(float64(i)*spriteWidth, 0)
 		cam.DrawImage(backgroundSprite.Image(), opts, position)
+
 	}
 }
 
@@ -395,7 +397,6 @@ func RenderSpriteSheetAnimation(
 	logger *slog.Logger,
 ) {
 	anim := &spriteBlueprint.Animations[index]
-
 	durationInTicks := anim.FrameCount * anim.Speed
 	if anim.StartTick == 0 {
 		anim.StartTick = tick

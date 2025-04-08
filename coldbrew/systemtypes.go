@@ -2,7 +2,7 @@ package coldbrew
 
 // RenderSystem handles rendering at the scene level and runs after global render systems when its parent scene is active
 type RenderSystem interface {
-	Render(Scene, Screen, CameraUtility)
+	Render(Scene, Screen, LocalClient)
 }
 
 // GlobalRenderSystem handles rendering at the global/client level with access to all scenes

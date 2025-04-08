@@ -18,6 +18,7 @@ func MaterializeSprites(spriteBundle *client.SpriteBundle) []Sprite {
 		if spriteBlueprint.Location.Index.Load() != 0 && !isCacheFull.Load() {
 			spr := globalSpriteCache.GetItem32(spriteBlueprint.Location.Index.Load())
 			sprites = append(sprites, spr)
+
 			continue
 		}
 		if spriteBlueprint.Location.Key != "" {

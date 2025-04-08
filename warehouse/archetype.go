@@ -3,8 +3,8 @@ package warehouse
 import (
 	"reflect"
 
-	"github.com/TheBitDrifter/bark"
 	"github.com/TheBitDrifter/bappa/table"
+	"github.com/TheBitDrifter/bark"
 )
 
 // archetypeID is a unique identifier for an archetype
@@ -16,8 +16,11 @@ type Archetype interface {
 	ID() uint32
 	// Table returns the underlying data table for the ArchetypeImpl
 	Table() table.Table
+
 	// Generate creates entities with the specified components
 	Generate(count int, fromComponents ...any) error
+
+	GenerateAndReturnEntity(count int, fromComponents ...any) ([]Entity, error)
 }
 
 // ArchetypeImpl is the concrete implementation of the Archetype interface
@@ -94,4 +97,34 @@ func (a ArchetypeImpl) Generate(count int, fromComponents ...any) error {
 		}
 	}
 	return nil
+}
+
+// Generate creates the specified number of entities with optional component values
+func (a ArchetypeImpl) GenerateAndReturnEntity(count int, fromComponents ...any) ([]Entity, error) {
+	entities, err := a.storage.NewEntities(count, a.components...)
+	if err != nil {
+		return nil, err
+	}
+	reflectTypeToRow := make(map[reflect.Type]table.Row)
+	for _, row := range a.table.Rows() {
+		reflectTypeToRow[row.Type().Elem()] = row
+	}
+	log := bark.For("ArchetypeImpl")
+
+	for _, en := range entities {
+		for _, component := range fromComponents {
+			compType := reflect.TypeOf(component)
+			row, exists := reflectTypeToRow[compType]
+			if !exists {
+				log.Debug("skipping component not in ArchetypeImpl",
+					"component_type", compType.String(),
+					"ArchetypeImpl_id", a.id,
+					"entity_index", en.Index())
+				continue
+			}
+			compValue := reflect.ValueOf(component)
+			reflect.Value(row).Index(en.Index()).Set(compValue)
+		}
+	}
+	return entities, nil
 }
