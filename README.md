@@ -1,34 +1,34 @@
 <div align="center">
-  <img src="https://github.com/user-attachments/assets/ba2ca552-dcb4-4379-8a8d-2e9a460fa452" width="120" height="120" alt="Bappa Framework Logo">
-  <h1>The Bappa Framework</h1>
+  
+<h2>
+<div><img src="https://github.com/user-attachments/assets/ba2ca552-dcb4-4379-8a8d-2e9a460fa452" width="120" height="120" alt="Bappa Framework Logo"></div>
+  Bappa
+  <p>(www.bappa.net)</p>
+</h2>
 </div>
 
-A code-first game engine for Go, providing an Entity Component System (ECS) architecture to enable developers to build captivating 2D games.
+A code-first 2D game engine/framework for Go, providing an Entity Component System (ECS) architecture to enable developers to build captivating projects.
 
-## Installation
+## Getting Started
 
-Bappa is a cohesive collection of packages, with the main entrypoint being coldbrew:
+The best way to get started with Bappa is through examples and documentation, or use a `bappacreate` starter template for hands on experience!
 
-```bash
-go get github.com/TheBitDrifter/bappa/coldbrew@latest
-```
-
-## Examples
-
-The best way to learn how to use Bappa is to read the examples and docs, or use a starter template!
+[Getting Started](https://bappa.net/docs/getting-started) | [Examples](https://bappa.net/examples) | [Docs](https://bappa.net/docs)
 
 <table>
   <tr>
     <td align="center"><img src="https://github.com/user-attachments/assets/35bc153f-fd00-4833-9970-a51108ada8e8" width="100%"></td>
     <td align="center"><img src="https://github.com/user-attachments/assets/2b8962d6-6315-4e8e-84ac-31e50f713977" width="100%"></td>
+    <td align="center"><img src="https://github.com/user-attachments/assets/fab72558-50c0-4a24-b01e-77d5547ae905" width="100%"></td>
   </tr>
   <tr>
     <td align="center">LDTK Split Screen Platformer Template</td>
     <td align="center">Topdown Split Screen Template</td>
+    <td align="center">LDTK Netcode POC Template</td>
   </tr>
 </table>
 
-[Homepage](https://dl43t3h5ccph3.cloudfront.net) | [Examples](https://dl43t3h5ccph3.cloudfront.net/examples) | [Docs](https://dl43t3h5ccph3.cloudfront.net/docs)
+
 
 ## Framework Components
 
@@ -63,6 +63,12 @@ The Bappa Framework is organized as a monorepo, combining all core packages in o
 - **Import Path**: `github.com/TheBitDrifter/bappa/table`
 - [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/table)
 - **Description**: Efficient data storage optimized for game objects
+
+### Drip
+
+- **Import Path**: `github.com/TheBitDrifter/bappa/drip`
+- [GoDoc](https://pkg.go.dev/github.com/TheBitDrifter/bappa/drip)
+- **Description**: Basic TCP server to run core Bappa systems, receive input, and broadcast state
 
 ## License
 
