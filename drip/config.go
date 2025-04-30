@@ -17,6 +17,6 @@ func DefaultServerConfig() ServerConfig {
 	return ServerConfig{
 		TPS:            60,
 		Port:           8080,
-		MaxConnections: 100,
+		MaxConnections: 400,
 	}
 }

@@ -101,7 +101,7 @@ func (cli *clientImpl) Start() error {
 }
 
 func (cli *clientImpl) Update() error {
-	return sharedClientUpdate(cli)
+	return sharedClientUpdate(cli, true)
 }
 
 func (cli *clientImpl) run() error {
@@ -137,16 +137,17 @@ func (cli *clientImpl) run() error {
 					}
 				}
 			}
+			return nil
 		}
 		if activeScene.Ready() {
-			for _, coreSys := range activeScene.CoreSystems() {
-				err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
+			for _, clientSys := range activeScene.ClientSystems() {
+				err := clientSys.Run(cli, activeScene)
 				if err != nil {
 					return err
 				}
 			}
-			for _, clientSys := range activeScene.ClientSystems() {
-				err := clientSys.Run(cli, activeScene)
+			for _, coreSys := range activeScene.CoreSystems() {
+				err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
 				if err != nil {
 					return err
 				}

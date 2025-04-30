@@ -50,8 +50,6 @@ type networkClientImpl struct {
 	associatedEntityID    int // Server-assigned entity ID.
 	hasAssociatedEntityID bool
 	assocEntityIDMutex    sync.RWMutex
-
-	hasReceivedStateOnce bool
 }
 
 // NewNetworkClient creates a new network-enabled client.
@@ -62,7 +60,7 @@ func NewNetworkClient(baseResX, baseResY, maxSpritesCached, maxSoundsCached, max
 	// Create the network client wrapper
 	nc := &networkClientImpl{
 		clientImpl:            baseClient,
-		dripClient:            drip.NewClient(10),
+		dripClient:            drip.NewClient(100),
 		isConnected:           false,
 		associatedEntityID:    0,
 		hasAssociatedEntityID: false,
@@ -153,51 +151,49 @@ func (nc *networkClientImpl) IsConnected() bool {
 
 // Update processes network messages and runs client logic.
 func (nc *networkClientImpl) Update() error {
-	if nc.IsConnected() {
-		var latestStateData []byte = nil
-		messageBuffer := nc.dripClient.Buffer()
+	if !nc.IsConnected() {
+		return nil
+	}
 
-		// Process all buffered messages.
-		for len(messageBuffer) > 0 {
-			msgData := <-messageBuffer
+	var latestStateData []byte = nil
+	messageBuffer := nc.dripClient.Buffer()
 
-			// Attempt to process as the special ID message first.
-			err := nc.tryProcessAssignEntityID(msgData)
-			if err == nil {
-				continue // ID message processed, skip to next buffer item.
-			} else if errors.Is(err, errNotAssignEntityIDMessage) {
-				latestStateData = msgData // Not the ID message, keep as potential state.
-			} else {
-				// Error during check itself.
-				log.Printf("NetworkClient Update: Error checking for AssignEntityID type: %v", err)
-				latestStateData = msgData
-			}
-		}
+	// Process all buffered messages.
+	for len(messageBuffer) > 0 {
+		msgData := <-messageBuffer
 
-		// Process the last non-ID message using the general callback.
-		if latestStateData != nil {
-			if nc.deserCallback != nil {
-				if deserErr := nc.deserCallback(nc, latestStateData); deserErr != nil {
-					log.Printf("NetworkClient Update: Deserialization callback error: %v", deserErr)
-				}
-			} else {
-				log.Println("NetworkClient Update: Received unhandled non-AssignEntityID message; no deserCallback set.")
-			}
-			nc.hasReceivedStateOnce = true
+		// Attempt to process as the special ID message first.
+		err := nc.tryProcessAssignEntityID(msgData)
+		if err == nil {
+			continue
+		} else if errors.Is(err, errNotAssignEntityIDMessage) {
+			latestStateData = msgData // Not the ID message, keep as potential state.
+		} else {
+			log.Printf("NetworkClient Update: Error checking for AssignEntityID type: %v", err)
+			latestStateData = msgData
 		}
 	}
-	// Run standard client update logic.
-	if err := sharedClientUpdate(nc); err != nil {
+
+	// Process the last non-ID message using the general callback.
+	if latestStateData != nil {
+		if nc.deserCallback != nil {
+			if deserErr := nc.deserCallback(nc, latestStateData); deserErr != nil {
+				log.Printf("NetworkClient Update: Deserialization callback error: %v", deserErr)
+			}
+		} else {
+			log.Println("NetworkClient Update: Received unhandled non-AssignEntityID message; no deserCallback set.")
+		}
+	}
+
+	if err := sharedClientUpdate(nc, latestStateData == nil); err != nil {
 		log.Printf("Error during shared client update: %v", err)
 		return err
 	}
+
 	return nil
 }
 
-func (cli *networkClientImpl) run() error {
-	if !cli.hasReceivedStateOnce {
-		return nil
-	}
+func (cli *networkClientImpl) run(interpolateCoreSystems bool) error {
 	for _, globalClientSystem := range cli.globalClientSystems {
 		err := globalClientSystem.Run(cli)
 		if err != nil {
@@ -228,17 +224,24 @@ func (cli *networkClientImpl) run() error {
 						return err
 					}
 				}
+
+				return nil
 			}
 		}
 		if activeScene.Ready() {
-			for _, coreSys := range activeScene.CoreSystems() {
-				err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
+			for _, clientSys := range activeScene.ClientSystems() {
+				err := clientSys.Run(cli, activeScene)
 				if err != nil {
 					return err
 				}
 			}
-			for _, clientSys := range activeScene.ClientSystems() {
-				err := clientSys.Run(cli, activeScene)
+
+			if !interpolateCoreSystems {
+				return nil
+			}
+
+			for _, coreSys := range activeScene.CoreSystems() {
+				err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
 				if err != nil {
 					return err
 				}
@@ -279,6 +282,6 @@ func (nc *networkClientImpl) tryProcessAssignEntityID(data []byte) error {
 	return nil
 }
 
-func (cli *networkClientImpl) Draw(image *ebiten.Image) {
-	sharedDraw(cli, image)
+func (nc *networkClientImpl) Draw(image *ebiten.Image) {
+	sharedDraw(nc, image)
 }
