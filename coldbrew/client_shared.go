@@ -10,6 +10,8 @@ import (
 
 func sharedClientUpdate(cli Client, interpolateCoreSystemsForNetworked bool) error {
 	clientAsStandard, isStandard := cli.(*clientImpl)
+	clientAsNetworked, isNetworked := cli.(*networkClientImpl)
+
 	if isStandard {
 		clientAsStandard.toggleDebugView()
 
@@ -29,10 +31,11 @@ func sharedClientUpdate(cli Client, interpolateCoreSystemsForNetworked bool) err
 			return err
 		}
 
+		tick++
 	}
 
-	clientAsNetworked, isNetworked := cli.(*networkClientImpl)
 	if isNetworked {
+
 		clientAsNetworked.toggleDebugView()
 
 		err := clientAsNetworked.processNonExecutedPlansForActiveScenes()
@@ -52,7 +55,6 @@ func sharedClientUpdate(cli Client, interpolateCoreSystemsForNetworked bool) err
 		}
 	}
 
-	tick++
 	return nil
 }
 

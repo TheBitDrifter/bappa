@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io/fs"
 	"log"
+	"math/rand/v2"
 	"sync"
 
 	"github.com/TheBitDrifter/bappa/drip"
@@ -154,14 +155,11 @@ func (nc *networkClientImpl) Update() error {
 	if !nc.IsConnected() {
 		return nil
 	}
-
 	var latestStateData []byte = nil
 	messageBuffer := nc.dripClient.Buffer()
-
 	// Process all buffered messages.
 	for len(messageBuffer) > 0 {
 		msgData := <-messageBuffer
-
 		// Attempt to process as the special ID message first.
 		err := nc.tryProcessAssignEntityID(msgData)
 		if err == nil {
@@ -171,6 +169,15 @@ func (nc *networkClientImpl) Update() error {
 		} else {
 			log.Printf("NetworkClient Update: Error checking for AssignEntityID type: %v", err)
 			latestStateData = msgData
+		}
+	}
+
+	// Sim packet loss (disabled lol)
+	if false {
+		// Adjust the probability value (0.3 = 30% chance) to control frequency
+		if rand.Float32() < 0.3 {
+			latestStateData = nil
+			log.Println("NetworkClient Update: Simulating packet loss")
 		}
 	}
 
@@ -189,7 +196,6 @@ func (nc *networkClientImpl) Update() error {
 		log.Printf("Error during shared client update: %v", err)
 		return err
 	}
-
 	return nil
 }
 
@@ -229,19 +235,17 @@ func (cli *networkClientImpl) run(interpolateCoreSystems bool) error {
 			}
 		}
 		if activeScene.Ready() {
-			for _, clientSys := range activeScene.ClientSystems() {
-				err := clientSys.Run(cli, activeScene)
-				if err != nil {
-					return err
+
+			if interpolateCoreSystems {
+				for _, coreSys := range activeScene.CoreSystems() {
+					err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
+					if err != nil {
+						return err
+					}
 				}
 			}
-
-			if !interpolateCoreSystems {
-				return nil
-			}
-
-			for _, coreSys := range activeScene.CoreSystems() {
-				err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
+			for _, clientSys := range activeScene.ClientSystems() {
+				err := clientSys.Run(cli, activeScene)
 				if err != nil {
 					return err
 				}
