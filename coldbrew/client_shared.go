@@ -8,7 +8,7 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
-func sharedClientUpdate(cli Client) error {
+func sharedClientUpdate(cli Client, interpolateCoreSystemsForNetworked bool) error {
 	clientAsStandard, isStandard := cli.(*clientImpl)
 	if isStandard {
 		clientAsStandard.toggleDebugView()
@@ -46,7 +46,7 @@ func sharedClientUpdate(cli Client) error {
 		}
 
 		clientAsNetworked.captureInputs()
-		err = clientAsNetworked.run()
+		err = clientAsNetworked.run(interpolateCoreSystemsForNetworked)
 		if err != nil {
 			return err
 		}

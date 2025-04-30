@@ -3,7 +3,6 @@ package warehouse
 import (
 	"errors"
 	"fmt"
-	"log"
 	"sync"
 
 	"github.com/TheBitDrifter/bappa/table"
@@ -77,7 +76,6 @@ func newStorage(schema table.Schema) Storage {
 func (sto *storage) Entity(id int) (Entity, error) {
 	index := id - 1
 	if index < 0 || index >= len(globalEntities) {
-		log.Println(id)
 		return nil, errors.New("invalid index")
 	}
 	return &globalEntities[index], nil
@@ -469,7 +467,7 @@ func (s *storage) forceNewEntity(se SerializedEntity) (Entity, error) {
 
 func (s *storage) ForceSerializedEntityExclude(se SerializedEntity, xComps ...Component) (Entity, error) {
 	id := int(se.ID)
-	comps := se.GetComponents()
+	seComps := se.GetComponents()
 	index := id - 1
 
 	entityExistsGlobally := id > 0 && index < len(globalEntities) && globalEntities[index].Valid()
@@ -477,7 +475,7 @@ func (s *storage) ForceSerializedEntityExclude(se SerializedEntity, xComps ...Co
 	var entityPtr *entity
 
 	if !entityExistsGlobally {
-		createdEntity, err := s.forceNewEntity(se) // Creates in globalEntities and table
+		createdEntity, err := s.forceNewEntity(se)
 		if err != nil {
 			return nil, fmt.Errorf("failed to force new entity %d: %w", id, err)
 		}
@@ -505,7 +503,8 @@ func (s *storage) ForceSerializedEntityExclude(se SerializedEntity, xComps ...Co
 		entityPtr.Entry = refreshedEntry
 	}
 
-	targetComps := mergeUniqueComponents(xComps, comps)
+	existingXComps := mergeUniqueComponents(entityPtr.components, xComps)
+	targetComps := mergeUniqueComponents(existingXComps, seComps)
 
 	targetArchetype, err := s.NewOrExistingArchetype(targetComps...)
 	if err != nil {
@@ -526,7 +525,7 @@ func (s *storage) ForceSerializedEntityExclude(se SerializedEntity, xComps ...Co
 		entityPtr.Entry = refreshedEntry
 	}
 
-	entityPtr.components = comps
+	entityPtr.components = targetComps
 
 	return entityPtr, nil
 }

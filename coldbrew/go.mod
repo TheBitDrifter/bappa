@@ -6,11 +6,11 @@ go 1.24.1
 
 // replace github.com/TheBitDrifter/bappa/tteokbokki => ../tteokbokki
 
-// replace github.com/TheBitDrifter/bappa/warehouse => ../warehouse
+replace github.com/TheBitDrifter/bappa/warehouse => ../warehouse
 
 // replace github.com/TheBitDrifter/bappa/table => ../table
 
-// replace github.com/TheBitDrifter/bappa/drip => ../drip
+replace github.com/TheBitDrifter/bappa/drip => ../drip
 
 // replace github.com/TheBitDrifter/bappa/environment => ../environment/
 

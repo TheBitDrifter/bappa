@@ -2,7 +2,8 @@
 
 Drip enables server-client communication with custom state serialization
 and transmission. The server runs on a fixed timestep and handles core game logic,
-while clients receive state updates and can send input to the server.
+while clients receive state updates and can send input to the server. The client may also run the
+main sim when network buffer is stale.
 
 Currently in early development. Only supports networking for a single scene. Uses a basic server authoritative
 TCP architecture.
@@ -93,6 +94,7 @@ import (
  "example/sharedclient/assets"
  "example/sharedclient/clientsystems"
  "example/sharedclient/rendersystems"
+ "example/shared/coresystems" // optional (if you want client to interpolate/run core sim when network buffer is stale)
 
  "github.com/hajimehoshi/ebiten/v2"
 )
@@ -126,7 +128,8 @@ func main() {
   scenes.SceneOne.Plan,
   rendersystems.DefaultRenderSystems,
   clientsystems.DefaultClientSystemsNetworked,
-  []blueprint.CoreSystem{},
+  coresystems.DefaultCoreSystems{}, // OR
+  // []blueprint.CoreSystem{}, <- use this instead for no interpolation
   scenes.SceneOne.Preload...,
  )
  if err != nil {

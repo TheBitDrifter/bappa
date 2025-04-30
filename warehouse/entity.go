@@ -151,6 +151,7 @@ func (e *entity) AddComponentWithValue(c Component, value any) error {
 	}
 
 	e.components = append(e.components, c)
+
 	destArchetype, err := e.sto.NewOrExistingArchetype(e.components...)
 	if err != nil {
 		return err
@@ -166,6 +167,7 @@ func (e *entity) AddComponentWithValue(c Component, value any) error {
 			return nil
 		}
 	}
+
 	return fmt.Errorf("invalid value type %v for component %v", valueType, c.Type())
 }
 
