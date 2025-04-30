@@ -450,7 +450,6 @@ DrainDeletionChannel:
 	activeScenes := s.ActiveScenes()
 
 	for _, scene := range activeScenes {
-		scene.IncrementTick()
 		// Core systems iterate and modify ECS state. Protected by the outer ecsMutex.
 		for _, system := range scene.CoreSystems() {
 			if err := system.Run(scene, deltaTime); err != nil {
@@ -459,6 +458,7 @@ DrainDeletionChannel:
 				return err
 			}
 		}
+		scene.IncrementTick()
 	}
 	s.ecsMutex.Unlock()
 

@@ -140,14 +140,14 @@ func (cli *clientImpl) run() error {
 			return nil
 		}
 		if activeScene.Ready() {
-			for _, clientSys := range activeScene.ClientSystems() {
-				err := clientSys.Run(cli, activeScene)
+			for _, coreSys := range activeScene.CoreSystems() {
+				err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
 				if err != nil {
 					return err
 				}
 			}
-			for _, coreSys := range activeScene.CoreSystems() {
-				err := coreSys.Run(activeScene, 1.0/float64(ClientConfig.tps))
+			for _, clientSys := range activeScene.ClientSystems() {
+				err := clientSys.Run(cli, activeScene)
 				if err != nil {
 					return err
 				}
