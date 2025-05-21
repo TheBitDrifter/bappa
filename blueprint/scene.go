@@ -11,4 +11,5 @@ type Scene interface {
 	CurrentTick() int
 
 	Storage() warehouse.Storage
+	Name() string
 }

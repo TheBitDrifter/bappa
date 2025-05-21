@@ -74,11 +74,13 @@ func (b *ParallaxBackgroundBuilder) Build() error {
 	}
 	// Generate each layer from the provided slice
 	for _, layer := range b.layers {
+
+		pos := spatial.NewPosition(0, 0)
 		sprite := client.NewSpriteBundle().AddSprite(layer.SpritePath, true)
-		// Apply offset if specified
+
 		if b.offset.X != 0 || b.offset.Y != 0 {
-			// Backgrounds only use first index
-			sprite.Blueprints[0].Config.Offset = b.offset
+			pos.X = b.offset.X
+			pos.Y = b.offset.Y
 		}
 		err = backgroundArchetype.Generate(
 			1,
@@ -88,6 +90,7 @@ func (b *ParallaxBackgroundBuilder) Build() error {
 				SpeedY:         layer.SpeedY,
 				DisableLooping: b.disableLooping,
 			},
+			pos,
 		)
 		if err != nil {
 			return err

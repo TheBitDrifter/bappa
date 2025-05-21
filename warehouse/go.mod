@@ -2,10 +2,6 @@ module github.com/TheBitDrifter/bappa/warehouse
 
 go 1.24.1
 
-// replace github.com/TheBitDrifter/bappa/blueprint => ../blueprint
-
-// replace github.com/TheBitDrifter/bappa/table => ../table
-
 require (
 	github.com/TheBitDrifter/bappa/table v0.0.0-20250420132432-5606172c9a41
 	github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9

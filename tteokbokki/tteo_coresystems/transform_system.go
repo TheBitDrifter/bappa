@@ -14,9 +14,9 @@ func (TransformSystem) Run(scene blueprint.Scene, dt float64) error {
 	cursor := scene.NewCursor(blueprint.Queries.Shape)
 	for range cursor.Next() {
 		shape := spatial.Components.Shape.GetFromCursor(cursor)
-		hasPos, pos := spatial.Components.Position.GetFromCursorSafe(cursor)
-		hasRot, rot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
-		hasScale, scale := spatial.Components.Scale.GetFromCursorSafe(cursor)
+		pos, hasPos := spatial.Components.Position.GetFromCursorSafe(cursor)
+		rot, hasRot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
+		scale, hasScale := spatial.Components.Scale.GetFromCursorSafe(cursor)
 
 		// Initialize default transform values
 		var posToUse, scaleToUse vector.Two

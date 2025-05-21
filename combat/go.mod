@@ -1,11 +1,12 @@
-module github.com/TheBitDrifter/bappa/blueprint
+module github.com/TheBitDrifter/bappa/combat
 
 go 1.24.1
 
 require (
+	github.com/TheBitDrifter/bappa/blueprint v0.0.0-20250420132432-5606172c9a41
 	github.com/TheBitDrifter/bappa/environment v0.0.0-20250420132432-5606172c9a41
-	github.com/TheBitDrifter/bappa/tteokbokki v0.0.0-20250330212722-f989bbd448b4
-	github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250420132432-5606172c9a41
+	github.com/TheBitDrifter/bappa/tteokbokki v0.0.0-20250501003118-59b6d175b975
+	github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250430195144-74efeb4efaab
 )
 
 require (

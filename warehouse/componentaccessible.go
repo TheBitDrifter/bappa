@@ -19,12 +19,12 @@ func (c AccessibleComponent[T]) GetFromCursor(cursor *Cursor) *T {
 
 // GetFromCursorSafe safely retrieves a component value, checking if the component exists
 // Returns a boolean indicating success and the component pointer if found
-func (c AccessibleComponent[T]) GetFromCursorSafe(cursor *Cursor) (bool, *T) {
+func (c AccessibleComponent[T]) GetFromCursorSafe(cursor *Cursor) (*T, bool) {
 	ok := c.Accessor.Check(cursor.currentArchetype.table)
 	if ok {
-		return true, c.GetFromCursor(cursor)
+		return c.GetFromCursor(cursor), true
 	}
-	return false, nil
+	return nil, false
 }
 
 // CheckCursor determines if the component exists in the archetype at the cursor position

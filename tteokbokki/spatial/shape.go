@@ -1,6 +1,7 @@
 package spatial
 
 import (
+	"math"
 	"slices"
 
 	"github.com/TheBitDrifter/bappa/blueprint/vector"
@@ -216,4 +217,31 @@ func NewDoubleRamp(width, height float64, topWidthRatio float64) Shape {
 	ramp.Polygon.WorldVertices = slices.Clone(ramp.Polygon.LocalVertices)
 	ramp.Skin = CalcSkin(ramp.Polygon, ramp.LocalAAB, NewScale(1, 1))
 	return ramp
+}
+
+func NewRegularPolygon(radius float64, numVertices int) Shape {
+	if numVertices < 3 {
+		numVertices = 3 // A polygon must have at least 3 vertices
+	}
+
+	// Create a polygon with the specified number of vertices
+	shape := NewPolygon(make([]vector.Two, numVertices))
+
+	angleStep := (2 * math.Pi) / float64(numVertices)
+
+	// Calculate the vertices of the regular polygon around the origin (0,0)
+	for i := 0; i < numVertices; i++ {
+		angle := angleStep * float64(i)
+		x := radius * math.Cos(angle)
+		y := radius * math.Sin(angle)
+		shape.Polygon.LocalVertices[i] = vector.Two{X: x, Y: y}
+	}
+
+	// Clone the local vertices to world vertices
+	shape.Polygon.WorldVertices = slices.Clone(shape.Polygon.LocalVertices)
+
+	// Calculate skin for collision detection
+	shape.Skin = CalcSkin(shape.Polygon, shape.LocalAAB, NewScale(1, 1))
+
+	return shape
 }

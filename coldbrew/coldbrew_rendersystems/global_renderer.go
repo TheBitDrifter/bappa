@@ -11,6 +11,7 @@ import (
 	"github.com/TheBitDrifter/bappa/warehouse"
 	"github.com/TheBitDrifter/bark"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/colorm"
 
 	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 )
@@ -67,7 +68,7 @@ func (sys GlobalRenderer) Render(cli coldbrew.Client, screen coldbrew.Screen) {
 		// Render backgrounds
 		cursor := scene.NewCursor(blueprint.Queries.ParallaxBackground)
 		for range cursor.Next() {
-			if ok, bgConfig := client.Components.ParallaxBackground.GetFromCursorSafe(cursor); ok {
+			if bgConfig, ok := client.Components.ParallaxBackground.GetFromCursorSafe(cursor); ok {
 				position := spatial.Components.Position.GetFromCursor(cursor)
 				sprBundle := client.Components.SpriteBundle.GetFromCursor(cursor)
 
@@ -89,17 +90,17 @@ func (sys GlobalRenderer) Render(cli coldbrew.Client, screen coldbrew.Screen) {
 			for i, sprite := range sprites {
 				bp := &sprBundle.Blueprints[i]
 				pos := spatial.Components.Position.GetFromCursor(cursor)
-				hasDirection, direction := spatial.Components.Direction.GetFromCursorSafe(cursor)
+				direction, hasDirection := spatial.Components.Direction.GetFromCursorSafe(cursor)
 				if !hasDirection {
 					directionV := spatial.NewDirectionRight()
 					direction = &directionV
 				}
-				hasRot, rot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
+				rot, hasRot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
 				if !hasRot {
 					rotV := spatial.Rotation(0)
 					rot = &rotV
 				}
-				hasScale, scale := spatial.Components.Scale.GetFromCursorSafe(cursor)
+				scale, hasScale := spatial.Components.Scale.GetFromCursorSafe(cursor)
 				if !hasScale {
 					scaleV := spatial.NewScale(1, 1)
 					scale = &scaleV
@@ -290,6 +291,7 @@ func RenderEntity(
 			cam,
 			currentTick,
 			nil,
+			nil,
 		)
 	} else {
 		RenderSprite(spr, position, rotation, scale, config.Offset, direction, config.Static, cam)
@@ -303,17 +305,17 @@ func RenderEntityFromCursor(cursor *warehouse.Cursor, cam coldbrew.Camera, curre
 	for i, sprite := range sprites {
 		bp := &sprBundle.Blueprints[i]
 		pos := spatial.Components.Position.GetFromCursor(cursor)
-		hasDirection, direction := spatial.Components.Direction.GetFromCursorSafe(cursor)
+		direction, hasDirection := spatial.Components.Direction.GetFromCursorSafe(cursor)
 		if !hasDirection {
 			directionV := spatial.NewDirectionRight()
 			direction = &directionV
 		}
-		hasRot, rot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
+		rot, hasRot := spatial.Components.Rotation.GetFromCursorSafe(cursor)
 		if !hasRot {
 			rotV := spatial.Rotation(0)
 			rot = &rotV
 		}
-		hasScale, scale := spatial.Components.Scale.GetFromCursorSafe(cursor)
+		scale, hasScale := spatial.Components.Scale.GetFromCursorSafe(cursor)
 		if !hasScale {
 			scaleV := spatial.NewScale(0, 0)
 			scale = &scaleV
@@ -337,6 +339,7 @@ func RenderEntityFromCursor(cursor *warehouse.Cursor, cam coldbrew.Camera, curre
 					bp.Config.Static,
 					cam,
 					currentTick,
+					nil,
 					nil,
 				)
 			} else {
@@ -395,6 +398,7 @@ func RenderSpriteSheetAnimation(
 	cam coldbrew.Camera,
 	tick int,
 	logger *slog.Logger,
+	cm *colorm.ColorM,
 ) {
 	anim := &spriteBlueprint.Animations[index]
 	durationInTicks := anim.FrameCount * anim.Speed
@@ -431,11 +435,22 @@ func RenderSpriteSheetAnimation(
 	if rotation != 0 {
 		opts.GeoM.Rotate(rotation)
 	}
+
 	if static {
 		cam.DrawImageStatic(frame, opts, position)
 		return
 	}
-	cam.DrawImage(frame, opts, position)
+
+	if cm != nil {
+		optsCM := &colorm.DrawImageOptions{}
+		optsCM.GeoM = opts.GeoM
+
+		localPos := cam.Localize(position)
+		optsCM.GeoM.Translate(localPos.X, localPos.Y)
+		colorm.DrawImage(cam.Surface(), frame, *cm, optsCM)
+	} else {
+		cam.DrawImage(frame, opts, position)
+	}
 }
 
 // GetAnimationFrame extracts a single frame from a sprite sheet based on animation data

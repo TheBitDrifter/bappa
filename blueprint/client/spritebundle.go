@@ -35,6 +35,29 @@ func (sb SpriteBundle) AddSprite(path string, active bool) SpriteBundle {
 	return sb
 }
 
+// Warning: Using AddSprite after this will break unless AddSpriteAtIndex is called again at the last available index...
+func (sb SpriteBundle) AddSpriteAtIndex(index int, path string, active bool) SpriteBundle {
+	if sb.index >= SPRITE_LIMIT {
+		panic("Sprite limit exceeded")
+	}
+
+	// Check if the provided index is valid.
+	if index < 0 || index > SPRITE_LIMIT {
+		panic("Index out of bounds")
+	}
+	sb.index = index + 1
+
+	sb.Blueprints[index] = SpriteBlueprint{
+		Location: warehouse.CacheLocation{
+			Key: path,
+		},
+	}
+
+	sb.Blueprints[index].Config.Active = active
+
+	return sb
+}
+
 // WithAnimations adds animations to the most recently added sprite
 // Returns the updated bundle
 func (sb SpriteBundle) WithAnimations(anims ...AnimationData) SpriteBundle {
