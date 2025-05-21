@@ -19,6 +19,9 @@ type Cache[T any] interface {
 	GetItem32(uint32) T
 	// Register adds a new item to the cache with the given key
 	Register(string, T) (int, error)
+
+	Clear()
+	All() []T
 }
 
 // CacheLocation represents the position of an item in a cache
@@ -79,4 +82,10 @@ func (c *SimpleCache[T]) Clear() {
 	defer c.mu.Unlock()
 	c.items = make([]T, 0, c.maxCapacity)
 	c.itemIndices = make(map[string]int)
+}
+
+func (c *SimpleCache[T]) All() []T {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.items
 }

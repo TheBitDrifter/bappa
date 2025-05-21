@@ -6,6 +6,7 @@ import (
 
 	"github.com/TheBitDrifter/bappa/blueprint/input"
 	"github.com/TheBitDrifter/bark"
+	"github.com/TheBitDrifter/mask"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
 )
@@ -14,12 +15,16 @@ var _ InputCapturer = &gamepadCapturer{}
 
 // gamepadCapturer handles gamepad input detection and processing
 type gamepadCapturer struct {
-	client  *clientImpl
-	logger  *slog.Logger
-	buttons map[ebiten.GamepadID][]ebiten.GamepadButton
-	axes    map[ebiten.GamepadID][]float64
-	sticks  map[ebiten.GamepadID]stickState
-	active  bool
+	client *clientImpl
+	logger *slog.Logger
+
+	buttons            map[ebiten.GamepadID][]ebiten.GamepadButton
+	justPressedButtons map[ebiten.GamepadID][]ebiten.GamepadButton
+	releasedButtons    map[ebiten.GamepadID][]ebiten.GamepadButton
+
+	axes   map[ebiten.GamepadID][]float64
+	sticks map[ebiten.GamepadID]stickState
+	active bool
 
 	// Map logical padIDs (what users register with RegisterPad) to physical GamepadIDs
 	padMapping         map[int]ebiten.GamepadID
@@ -44,6 +49,8 @@ func newGamepadCapturer(client *clientImpl) *gamepadCapturer {
 		client:             client,
 		logger:             bark.For("gamepad"),
 		buttons:            make(map[ebiten.GamepadID][]ebiten.GamepadButton),
+		justPressedButtons: make(map[ebiten.GamepadID][]ebiten.GamepadButton),
+		releasedButtons:    make(map[ebiten.GamepadID][]ebiten.GamepadButton),
 		axes:               make(map[ebiten.GamepadID][]float64),
 		sticks:             make(map[ebiten.GamepadID]stickState),
 		padMapping:         make(map[int]ebiten.GamepadID),
@@ -188,7 +195,16 @@ func (h *gamepadCapturer) captureInputs() {
 func (h *gamepadCapturer) captureButtonState(id ebiten.GamepadID) {
 	var pressedButtons []ebiten.GamepadButton
 	pressedButtons = inpututil.AppendPressedGamepadButtons(id, pressedButtons)
+
+	var justPressedButtons []ebiten.GamepadButton
+	justPressedButtons = inpututil.AppendJustPressedGamepadButtons(id, justPressedButtons)
+
+	var releasedButtons []ebiten.GamepadButton
+	releasedButtons = inpututil.AppendJustReleasedGamepadButtons(id, releasedButtons)
+
 	h.buttons[id] = pressedButtons
+	h.justPressedButtons[id] = justPressedButtons
+	h.releasedButtons[id] = releasedButtons
 }
 
 // captureAxesState captures analog input state, preferring standard gamepad layout
@@ -253,35 +269,63 @@ func (h *gamepadCapturer) processReceiverInputs() {
 
 // processButtonInputsForGamepad handles button presses for a specific receiver with explicit gamepad ID
 func (h *gamepadCapturer) processButtonInputsForGamepad(receiverIndex int, receiver *receiver, gamepadID ebiten.GamepadID, x, y int) {
-	buttons := h.buttons[gamepadID]
-	for _, btn := range buttons {
-		if !receiver.padLayout.mask.Contains(uint32(btn)) {
-			continue
+	type maskWithButtonSlice struct {
+		buttons []ebiten.GamepadButton
+		mask    mask.Mask
+		actions []input.Action
+	}
+
+	masksAndButtons := []maskWithButtonSlice{
+		{
+			buttons: h.buttons[gamepadID],
+			mask:    receiver.padLayout.mask,
+			actions: receiver.padLayout.buttons,
+		},
+		{
+			buttons: h.justPressedButtons[gamepadID],
+			mask:    receiver.padLayout.justPressedMask,
+			actions: receiver.padLayout.pressed,
+		},
+		{
+			buttons: h.releasedButtons[gamepadID],
+			mask:    receiver.padLayout.releaseMask,
+			actions: receiver.padLayout.released,
+		},
+	}
+
+	for _, config := range masksAndButtons {
+		for _, btn := range config.buttons {
+			if !config.mask.Contains(uint32(btn)) {
+				continue
+			}
+
+			if int(btn) >= len(config.actions) {
+				h.logger.Debug("button index out of range",
+					"button", btn,
+					"buttons_length", len(config.actions))
+				continue
+			}
+
+			curInput := config.actions[btn]
+			if curInput == 0 {
+				continue
+			}
+
+			h.client.receivers[receiverIndex].actions.pad = append(
+				h.client.receivers[receiverIndex].actions.pad,
+				input.StampedAction{
+					Tick: tick,
+					X:    x,
+					Y:    y,
+					Val:  curInput,
+				},
+			)
+
+			h.logger.Debug("button input processed",
+				"receiver", receiverIndex,
+				"gamepad_id", gamepadID,
+				"button", btn)
 		}
-
-		// Make sure button index is within the slice bounds
-		if int(btn) >= len(receiver.padLayout.buttons) {
-			h.logger.Debug("button index out of range",
-				"button", btn,
-				"buttons_length", len(receiver.padLayout.buttons))
-			continue
-		}
-
-		curInput := receiver.padLayout.buttons[btn]
-		h.client.receivers[receiverIndex].actions.pad = append(
-			h.client.receivers[receiverIndex].actions.pad,
-			input.StampedAction{
-				Tick: tick,
-				X:    x,
-				Y:    y,
-				Val:  curInput,
-			},
-		)
-
-		h.logger.Debug("button input processed",
-			"receiver", receiverIndex,
-			"gamepad_id", gamepadID,
-			"button", btn)
 	}
 }
 

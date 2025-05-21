@@ -38,6 +38,7 @@ type Storage interface {
 	TotalEntities() int
 	Entities() []Entity
 
+	ForceSerializedEntityWithID(SerializedEntity, int) (Entity, error)
 	ForceSerializedEntity(SerializedEntity) (Entity, error)
 	ForceSerializedEntityExclude(se SerializedEntity, excludeComps ...Component) (Entity, error)
 }
@@ -366,8 +367,7 @@ func (s *storage) Entities() []Entity {
 	return result
 }
 
-func (s *storage) ForceSerializedEntity(se SerializedEntity) (Entity, error) {
-	id := int(se.ID)
+func (s *storage) ForceSerializedEntityWithID(se SerializedEntity, id int) (Entity, error) {
 	comps := se.GetComponents()
 	index := id - 1
 
@@ -424,6 +424,10 @@ func (s *storage) ForceSerializedEntity(se SerializedEntity) (Entity, error) {
 	entityPtr.components = comps
 
 	return entityPtr, nil
+}
+
+func (s *storage) ForceSerializedEntity(se SerializedEntity) (Entity, error) {
+	return s.ForceSerializedEntityWithID(se, int(se.ID))
 }
 
 func (s *storage) forceNewEntity(se SerializedEntity) (Entity, error) {

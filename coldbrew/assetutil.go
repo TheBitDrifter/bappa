@@ -1,6 +1,7 @@
 package coldbrew
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/TheBitDrifter/bappa/blueprint/client"
@@ -31,6 +32,27 @@ func MaterializeSprites(spriteBundle *client.SpriteBundle) []Sprite {
 		}
 	}
 	return sprites
+}
+
+// MaterializeSprites converts a bundle of sprite blueprints into concrete Sprite objects
+// It skips any blueprint with an empty location key
+func MaterializeSprite(spriteBundle *client.SpriteBundle, index int) (Sprite, error) {
+	cacheSwapMutex.RLock()
+	defer cacheSwapMutex.RUnlock()
+
+	spriteBlueprint := &spriteBundle.Blueprints[index]
+
+	if spriteBlueprint.Location.Index.Load() != 0 && !isCacheFull.Load() {
+		return globalSpriteCache.GetItem32(spriteBlueprint.Location.Index.Load()), nil
+	}
+
+	if spriteBlueprint.Location.Key != "" {
+		if idx, ok := globalSpriteCache.GetIndex(spriteBlueprint.Location.Key); ok {
+			spriteBlueprint.Location.Index.Store(uint32(idx))
+			return globalSpriteCache.GetItem(idx), nil
+		}
+	}
+	return nil, errors.New("failed to materialize sprite")
 }
 
 // MaterializeSounds converts a collection of sound blueprints into concrete Sound objects

@@ -1,7 +1,7 @@
 github.com/TheBitDrifter/bappa/environment v0.0.0-20250420132432-5606172c9a41 h1:AZQxCMVMweP6mLWz6ovpMbaZGOaG8r7fX024Lin4CDM=
 github.com/TheBitDrifter/bappa/environment v0.0.0-20250420132432-5606172c9a41/go.mod h1:Kt1WbpF5cboazY4QDusBE2VAtKXdgJOBmGSdVixeMDs=
-github.com/TheBitDrifter/bappa/table v0.0.0-20250408214137-aae872bb6dfc h1:vnWUdJtlBPy4E/OZdgYfKgFceEQb4EZAlEv5f1DvW7g=
-github.com/TheBitDrifter/bappa/table v0.0.0-20250408214137-aae872bb6dfc/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250420132432-5606172c9a41 h1:goyrQ7uv29O5+UqW863Wlp1p/Xwx0ilO69sfn7haL20=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250420132432-5606172c9a41/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
 github.com/TheBitDrifter/bappa/tteokbokki v0.0.0-20250330212722-f989bbd448b4 h1:cyi+UCEX9dD8TAXt3YL/smak/Ww3LFCqH4z2uxMJ60o=
 github.com/TheBitDrifter/bappa/tteokbokki v0.0.0-20250330212722-f989bbd448b4/go.mod h1:n9+trB8+hXlmR+tkhOUtTgBnzV+g87LY0Juy1STtYvs=
 github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250420132432-5606172c9a41 h1:fm2734aPCrqEHqmhzQCVwqZ5dnDCLmsw9kWVcX0Fgrk=

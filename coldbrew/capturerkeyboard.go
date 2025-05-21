@@ -33,25 +33,68 @@ func (handler *keyboardCapturer) Capture() {
 		)
 	}
 
+	justPressedKeys := []ebiten.Key{}
+	justPressedKeys = inpututil.AppendJustPressedKeys(justPressedKeys)
+
+	releasedKeys := []ebiten.Key{}
+	releasedKeys = inpututil.AppendJustReleasedKeys(releasedKeys)
+
 	client := handler.client
 	for i := range client.receivers {
 		client.receivers[i].actions.kb = []input.StampedAction{}
-		handler.populateReceiver(keys, client.receivers[i])
+		handler.populateReceiver(keys, justPressedKeys, releasedKeys, client.receivers[i])
 	}
 }
 
 // populateReceiver processes keyboard inputs for a specific receiver
 // based on its key layout mask and active status
-func (handler *keyboardCapturer) populateReceiver(keys []ebiten.Key, receiverPtr *receiver) {
+func (handler *keyboardCapturer) populateReceiver(keys, justPressedKeys, releasedKeys []ebiten.Key, receiverPtr *receiver) {
 	if !receiverPtr.active {
 		return
 	}
 
 	x, y := ebiten.CursorPosition()
 	inputCount := 0
+
 	for _, key := range keys {
 		if receiverPtr.keyLayout.mask.Contains(uint32(key)) {
 			val := receiverPtr.keyLayout.keys[key]
+			receiverPtr.actions.kb = append(receiverPtr.actions.kb, input.StampedAction{
+				Val:  val,
+				Tick: tick,
+				X:    x,
+				Y:    y,
+			})
+			handler.logger.Debug("keyboard inputs processed",
+				"count", inputCount,
+				"cursor_x", x,
+				"cursor_y", y,
+				"val", key,
+			)
+			inputCount++
+		}
+	}
+	for _, key := range justPressedKeys {
+		if receiverPtr.keyLayout.justPressedMask.Contains(uint32(key)) {
+			val := receiverPtr.keyLayout.justPressedKeys[key]
+			receiverPtr.actions.kb = append(receiverPtr.actions.kb, input.StampedAction{
+				Val:  val,
+				Tick: tick,
+				X:    x,
+				Y:    y,
+			})
+			handler.logger.Debug("keyboard inputs processed",
+				"count", inputCount,
+				"cursor_x", x,
+				"cursor_y", y,
+				"val", key,
+			)
+			inputCount++
+		}
+	}
+	for _, key := range releasedKeys {
+		if receiverPtr.keyLayout.releasedMask.Contains(uint32(key)) {
+			val := receiverPtr.keyLayout.releasedKeys[key]
 			receiverPtr.actions.kb = append(receiverPtr.actions.kb, input.StampedAction{
 				Val:  val,
 				Tick: tick,

@@ -54,6 +54,7 @@ func (s *SpriteBlueprint) TryAnimation(anim AnimationData) {
 		if anim.Name == bpAnim.Name && i != current {
 			s.Animations[s.Config.ActiveAnimIndex].StartTick = 0 // Reset first
 			s.Config.ActiveAnimIndex = i
+			break
 		}
 	}
 }
@@ -61,12 +62,12 @@ func (s *SpriteBlueprint) TryAnimation(anim AnimationData) {
 // Set changes the active animation
 // Resets the previous animation's state if needed
 func (s *SpriteBlueprint) SetAnimation(anim AnimationData) {
-	current := s.Config.ActiveAnimIndex
-
 	for i, bpAnim := range s.Animations {
-		if anim.Name == bpAnim.Name && i != current {
-			s.Animations[s.Config.ActiveAnimIndex].StartTick = 0 // Reset first
+		if anim.Name == bpAnim.Name {
+
+			s.Animations[s.Config.ActiveAnimIndex].StartTick = 0
 			s.Config.ActiveAnimIndex = i
+			break
 		}
 	}
 }

@@ -9,20 +9,39 @@ import (
 // KeyLayout maps keyboard keys to game actions
 type KeyLayout interface {
 	RegisterKey(ebiten.Key, input.Action)
+	RegisterReleasedKey(ebiten.Key, input.Action)
+	RegisterJustPressedKey(ebiten.Key, input.Action)
 }
 
 type keyLayout struct {
-	mask mask.Mask256
-	keys []input.Action // indexed by ebiten key
+	mask            mask.Mask256
+	releasedMask    mask.Mask256
+	justPressedMask mask.Mask256
+
+	keys            []input.Action // indexed by ebiten key
+	releasedKeys    []input.Action // indexed by ebiten key
+	justPressedKeys []input.Action // indexed by ebiten key
 }
 
-// RegisterKey maps a key to an action and marks it in the mask.
 func (layout *keyLayout) RegisterKey(key ebiten.Key, localInput input.Action) {
-	if len(layout.keys) <= int(key) {
+	layout.register(key, localInput, &layout.keys, &layout.mask)
+}
+
+func (layout *keyLayout) RegisterReleasedKey(key ebiten.Key, action input.Action) {
+	layout.register(key, action, &layout.releasedKeys, &layout.releasedMask)
+}
+
+func (layout *keyLayout) RegisterJustPressedKey(key ebiten.Key, action input.Action) {
+	layout.register(key, action, &layout.justPressedKeys, &layout.justPressedMask)
+}
+
+func (layout *keyLayout) register(key ebiten.Key, action input.Action, selectedKeySlice *[]input.Action, selectedKeyMask *mask.Mask256) {
+	if len(*selectedKeySlice) <= int(key) {
 		newKeys := make([]input.Action, key+1)
-		copy(newKeys, layout.keys)
-		layout.keys = newKeys
+		copy(newKeys, *selectedKeySlice)
+		*selectedKeySlice = newKeys
 	}
-	layout.keys[key] = localInput
-	layout.mask.Mark(uint32(key))
+
+	(*selectedKeySlice)[key] = action
+	selectedKeyMask.Mark(uint32(key))
 }

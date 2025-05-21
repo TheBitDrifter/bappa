@@ -3,13 +3,11 @@ package spatial
 type directionValue int
 
 const (
-	left  = 0
+	left  = -1
 	right = 1
 )
 
 type Direction struct {
-	// Sadly for serialization I'm making this public because lazy
-	// Its better to use the methods rather than this value directly
 	Value directionValue
 }
 
@@ -47,4 +45,8 @@ func (d *Direction) AsFloat() float64 {
 	} else {
 		return 1
 	}
+}
+
+func (d *Direction) Valid() bool {
+	return d.Value == left || d.Value == right
 }
