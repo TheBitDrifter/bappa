@@ -3,6 +3,9 @@ package warehouse
 
 import (
 	"fmt"
+	"log"
+	"sort"
+	"strings"
 
 	"github.com/TheBitDrifter/bark"
 	"github.com/TheBitDrifter/mask"
@@ -19,6 +22,7 @@ type Query interface {
 // QueryNode represents a node in the query tree that can be evaluated
 type QueryNode interface {
 	Evaluate(archetype Archetype, storage Storage) bool
+	Key() string
 }
 
 // QueryOperation defines the logical operations for query nodes
@@ -73,7 +77,7 @@ func (n *compositeNode) Evaluate(archetype Archetype, storage Storage) bool {
 		bit := storage.RowIndexFor(comp)
 		nodeMask.Mark(bit)
 	}
-	archeMask := archetype.Table().(mask.Maskable).Mask()
+	archeMask := archetype.Mask()
 
 	switch n.op {
 	case OpAnd:
@@ -196,4 +200,55 @@ func (q *query) Evaluate(archetype Archetype, storage Storage) bool {
 		return false
 	}
 	return q.root.Evaluate(archetype, storage)
+}
+
+func (n *leafNode) Key() string {
+	if len(n.components) == 0 {
+		return "leaf()"
+	}
+	ids := make([]int, len(n.components))
+	for i, c := range n.components {
+		ids[i] = int(c.ID())
+		log.Println(c.Type())
+	}
+
+	return fmt.Sprintf("leaf(%v)", ids)
+}
+
+func (n *compositeNode) Key() string {
+	parts := make([]string, 0)
+	if len(n.components) > 0 {
+		ids := make([]int, len(n.components))
+		for i, c := range n.components {
+			ids[i] = int(c.ID())
+		}
+
+		sort.Ints(ids)
+		parts = append(parts, fmt.Sprintf("comps(%v)", ids))
+	}
+	if len(n.children) > 0 {
+		childKeys := make([]string, len(n.children))
+		for i, child := range n.children {
+			childKeys[i] = child.Key()
+		}
+		sort.Strings(childKeys)
+		parts = append(parts, childKeys...)
+	}
+	var opStr string
+	switch n.op {
+	case OpAnd:
+		opStr = "and"
+	case OpOr:
+		opStr = "or"
+	case OpNot:
+		opStr = "not"
+	}
+	return fmt.Sprintf("%s(%s)", opStr, strings.Join(parts, ","))
+}
+
+func (q *query) Key() string {
+	if q.root == nil {
+		return ""
+	}
+	return q.root.Key()
 }

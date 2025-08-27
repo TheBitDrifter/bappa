@@ -28,7 +28,7 @@ func (ts TableSetter) Unpack(s Schema, ei EntryIndex, t *testing.T) (Table, erro
 	for elType := range typeMap {
 		elTypes = append(elTypes, elType)
 	}
-	tbl, err := Factory.NewTable(s, ei, elTypes...)
+	tbl, err := Factory.NewTable(s, ei, 0, elTypes...)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create table entries: %w", err)
 	}

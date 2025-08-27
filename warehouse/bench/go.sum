@@ -1,3 +1,11 @@
+github.com/TheBitDrifter/bappa/table v0.0.0-20250827165724-bdbbec2c9d60 h1:c1riYcbNcJ1iP5ZAheyWzrwb0J8HX3iB3pKhVBDfUMo=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250827165724-bdbbec2c9d60/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250827171057-a28714d78123 h1:xsi40VmJErg1t6bZUhp9QQ0RBA9n0VkuxyZn/ydoHKI=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250827171057-a28714d78123/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250827171242-3f6179875b16 h1:neP4q4Pko3IiZ813Lnwl6qTzDR7PsATCIt6cYmvx2SE=
+github.com/TheBitDrifter/bappa/table v0.0.0-20250827171242-3f6179875b16/go.mod h1:PE3smUzTI4pj/+gV8igZtbbXr5QInqwqTChFAirrDXY=
+github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250805064827-5d0801e0a7d5 h1:1NeaAbiqSLVSAwcrdNKTgGFMTMF9cq+P/bTV5U7Om9U=
+github.com/TheBitDrifter/bappa/warehouse v0.0.0-20250805064827-5d0801e0a7d5/go.mod h1:eLlmlm511ut7H/ZYwHW74njkFb7K5be6d4odeTnIzVU=
 github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9 h1:FKJtdY3t0/gSgQQrawCrUCs8io53Mq6mSKyovNdd4ig=
 github.com/TheBitDrifter/bark v0.0.0-20250302175939-26104a815ed9/go.mod h1:DfUHSN9ypqQX6IRhwzRdzp7TKoCm1pLFUteZgfWt168=
 github.com/TheBitDrifter/mask v0.0.1-early-alpha.1 h1:OtOctrw0eBkIlHKhzEMmsHt0+xgb3RSDsfNkpd2hiiM=
@@ -6,11 +14,11 @@ github.com/TheBitDrifter/util v0.0.0-20241102212109-342f4c0a810e h1:GichypQhTVgS
 github.com/TheBitDrifter/util v0.0.0-20241102212109-342f4c0a810e/go.mod h1:k3LfyqK/t6Tm1vP1jqGvmIgc05BTEI6rbOEhkXS1uH4=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/mlange-42/arche v0.13.2 h1:5mbYKYBTLrXkz33IEONBskRfpWmnLF6HAt3r+zPlSCI=
-github.com/mlange-42/arche v0.13.2/go.mod h1:bFktKnvGDj2kP01xar79z0hKwGHdnoaEZR8HWmJkIyU=
+github.com/mlange-42/arche v0.15.3 h1:vonT1aCIHmu3nnCopzmhzOP5+J2NswVTexa2UDyek34=
+github.com/mlange-42/arche v0.15.3/go.mod h1:bX5PDzTbf2pEIlwnjRu3IpVqduLsxve4rUblXV0Byj0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
-github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+github.com/stretchr/testify v1.10.0 h1:Xv5erBjTwe/5IxqUQTdXv5kgmIvbHo3QQyRwhJsOfJA=
+github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
 gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=

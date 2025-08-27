@@ -12,7 +12,7 @@ import (
 	"github.com/TheBitDrifter/bappa/tteokbokki/spatial"
 )
 
-const MaxHitBox = 15
+const MaxHitBox = 60
 
 var (
 	ATTACK_REPOSITORY = map[string]int{}

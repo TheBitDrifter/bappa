@@ -15,6 +15,7 @@ var _ Storage = &storage{}
 var (
 	globalEntryIndex = table.Factory.NewEntryIndex()
 	globalEntities   = make([]entity, 0)
+	initOnce         sync.Once
 )
 
 // Storage defines the interface for entity storage and manipulation
@@ -40,7 +41,9 @@ type Storage interface {
 
 	ForceSerializedEntityWithID(SerializedEntity, int) (Entity, error)
 	ForceSerializedEntity(SerializedEntity) (Entity, error)
+
 	ForceSerializedEntityExclude(se SerializedEntity, excludeComps ...Component) (Entity, error)
+	Gen() int
 }
 
 // storage implements the Storage interface
@@ -554,4 +557,8 @@ func mergeUniqueComponents(slice1, slice2 []Component) []Component {
 		}
 	}
 	return result
+}
+
+func (s *storage) Gen() int {
+	return globalEntryIndex.Gen()
 }

@@ -5,7 +5,7 @@ import (
 	"unsafe"
 )
 
-func newRow(elementType ElementType) Row {
+func newRow(elementType ElementType, initCap int) Row {
 	// Per: https://pkg.go.dev/reflect#Value.CanAddr
 	//
 	// `func (v Value) CanAddr() bool`
@@ -24,6 +24,12 @@ func newRow(elementType ElementType) Row {
 	// slice.
 	addressableSlice := reflect.Indirect(slicePtr)
 	return Row(addressableSlice)
+}
+
+func newRowExper(elementType ElementType, initialCapacity int) Row {
+	sliceType := reflect.SliceOf(elementType.Type())
+	newSlice := reflect.MakeSlice(sliceType, 0, initialCapacity)
+	return Row(newSlice)
 }
 
 func (r Row) Interface() any {

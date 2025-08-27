@@ -32,7 +32,7 @@ type TableFactory interface {
 }
 
 type iTableFactory interface {
-	NewTable(Schema, EntryIndex, ...ElementType) (Table, error)
+	NewTable(Schema, EntryIndex, int, ...ElementType) (Table, error)
 }
 
 type iSchemaFactory interface {
@@ -55,8 +55,8 @@ func (tableFactory) NewEntryIndex() EntryIndex {
 	return &entryIndex{}
 }
 
-func (factory safeTableFactory) NewTable(schema Schema, entryIndex EntryIndex, elementTypes ...ElementType) (Table, error) {
-	tbl, err := newTable(schema, true, entryIndex, elementTypes...)
+func (factory safeTableFactory) NewTable(schema Schema, entryIndex EntryIndex, initCap int, elementTypes ...ElementType) (Table, error) {
+	tbl, err := newTable(schema, true, entryIndex, initCap, elementTypes...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,8 +64,8 @@ func (factory safeTableFactory) NewTable(schema Schema, entryIndex EntryIndex, e
 	return tbl, nil
 }
 
-func (factory unsafeTableFactory) NewTable(schema Schema, entryIndex EntryIndex, elementTypes ...ElementType) (Table, error) {
-	tbl, err := newTable(schema, false, entryIndex, elementTypes...)
+func (factory unsafeTableFactory) NewTable(schema Schema, entryIndex EntryIndex, initCapacity int, elementTypes ...ElementType) (Table, error) {
+	tbl, err := newTable(schema, false, entryIndex, initCapacity, elementTypes...)
 	if err != nil {
 		return nil, err
 	}

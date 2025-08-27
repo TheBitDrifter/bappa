@@ -42,7 +42,7 @@ func TestEntryIndex_NewEntriesAndRecycle(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ei := f.NewEntryIndex()
 			schema := f.NewSchema()
-			tbl, err := f.NewTable(schema, ei, blankElementType)
+			tbl, err := f.NewTable(schema, ei, 0, blankElementType)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -116,7 +116,7 @@ func TestEntryIndex_UpdateIndex(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := f.NewSchema()
 			ei := f.NewEntryIndex()
-			tbl, err := f.NewTable(s, ei, blankElementType)
+			tbl, err := f.NewTable(s, ei, 0, blankElementType)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -182,7 +182,7 @@ func TestEntryIndex_Reset(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			ei := f.NewEntryIndex()
 			s := f.NewSchema()
-			tbl, err := f.NewTable(s, ei, blankElementType)
+			tbl, err := f.NewTable(s, ei, 0, blankElementType)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -224,7 +224,7 @@ func TestEntryIndex_Recyclable(t *testing.T) {
 
 	ei := f.NewEntryIndex()
 	s := f.NewSchema()
-	tbl, err := f.NewTable(s, ei, blankElementType)
+	tbl, err := f.NewTable(s, ei, 0, blankElementType)
 	if err != nil {
 		t.Fatal(err)
 	}

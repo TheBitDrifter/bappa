@@ -102,5 +102,5 @@ func MaterializeSound(soundBundle *client.SoundBundle, sc client.SoundConfig) (S
 			}
 		}
 	}
-	return Sound{}, fmt.Errorf("%v not found", sc)
+	return Sound{}, fmt.Errorf("sound at %v not found", sc)
 }

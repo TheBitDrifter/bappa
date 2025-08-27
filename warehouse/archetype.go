@@ -5,6 +5,7 @@ import (
 
 	"github.com/TheBitDrifter/bappa/table"
 	"github.com/TheBitDrifter/bark"
+	"github.com/TheBitDrifter/mask"
 )
 
 // archetypeID is a unique identifier for an archetype
@@ -21,6 +22,8 @@ type Archetype interface {
 	Generate(count int, fromComponents ...any) error
 
 	GenerateAndReturnEntity(count int, fromComponents ...any) ([]Entity, error)
+
+	Mask() mask.Mask
 }
 
 // ArchetypeImpl is the concrete implementation of the Archetype interface
@@ -44,6 +47,7 @@ func newArchetype(
 		WithEntryIndex(entryIndex).
 		WithElementTypes(elementTypes...).
 		WithEvents(Config.tableEvents).
+		WithInitialCapacity(MemConfig.DefaultTableCapacity).
 		Build()
 	if err != nil {
 		return ArchetypeImpl{}, err
@@ -127,4 +131,8 @@ func (a ArchetypeImpl) GenerateAndReturnEntity(count int, fromComponents ...any)
 		}
 	}
 	return entities, nil
+}
+
+func (a ArchetypeImpl) Mask() mask.Mask {
+	return a.table.(mask.Maskable).Mask()
 }

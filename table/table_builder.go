@@ -5,14 +5,16 @@ type TableBuilder interface {
 	WithEntryIndex(EntryIndex) TableBuilder
 	WithElementTypes(...ElementType) TableBuilder
 	WithEvents(TableEvents) TableBuilder
+	WithInitialCapacity(int) TableBuilder
 	Build() (Table, error)
 }
 
 type tableBuilder struct {
-	schema       Schema
-	entryIndex   EntryIndex
-	elementTypes []ElementType
-	events       TableEvents
+	schema          Schema
+	entryIndex      EntryIndex
+	elementTypes    []ElementType
+	events          TableEvents
+	initialCapacity int
 }
 
 func NewTableBuilder() TableBuilder {
@@ -47,7 +49,8 @@ func (b *tableBuilder) Build() (Table, error) {
 		b.entryIndex = Factory.NewEntryIndex()
 	}
 
-	table, err := Factory.NewTable(b.schema, b.entryIndex, b.elementTypes...)
+	// Pass the initialCapacity to the table constructor
+	table, err := Factory.NewTable(b.schema, b.entryIndex, b.initialCapacity, b.elementTypes...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,4 +60,9 @@ func (b *tableBuilder) Build() (Table, error) {
 		qTable.events = b.events
 	}
 	return table, nil
+}
+
+func (b *tableBuilder) WithInitialCapacity(cap int) TableBuilder {
+	b.initialCapacity = cap
+	return b
 }

@@ -11,7 +11,7 @@ func TestFactorySafe_Init(t *testing.T) {
 	s := f.NewSchema()
 	ei := f.NewEntryIndex()
 	et := FactoryNewElementType[int]()
-	tbl, err := f.NewTable(s, ei, et)
+	tbl, err := f.NewTable(s, ei, 0, et)
 	if err != nil {
 		t.Fatal(err)
 	}

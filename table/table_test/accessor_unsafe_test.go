@@ -13,7 +13,7 @@ func TestAccessor_Get(t *testing.T) {
 	entryIndex := f.NewEntryIndex()
 	intElementType := table.FactoryNewElementType[int]()
 	intAccessor := table.FactoryNewAccessor[int](intElementType)
-	mockTable, err := f.NewTable(schema, entryIndex, intElementType)
+	mockTable, err := f.NewTable(schema, entryIndex, 0, intElementType)
 	if err != nil {
 		t.Fatal(err)
 	}
