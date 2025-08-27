@@ -47,10 +47,16 @@ func (sys DialogueTextSystem) Run(cli coldbrew.LocalClient, scene coldbrew.Scene
 			convo.AnimationState.RevealStartTick = currentTick
 		}
 
+		tpc := sys.TEXT_REVEAL_DELAY_IN_TICKS
+		slides := dialogue.SlidesRegistry[convo.SlidesID]
+
+		if slides[convo.ActiveSlideIndex].CustomSpeedTicks != 0 {
+			tpc = slides[convo.ActiveSlideIndex].CustomSpeedTicks
+		}
 		finished, count := bptext.CurrentIndexInTextReveal(
 			convo.AnimationState.RevealStartTick,
 			currentTick,
-			sys.TEXT_REVEAL_DELAY_IN_TICKS,
+			tpc,
 			convo.AnimationState.WrappedText,
 		)
 
@@ -65,11 +71,12 @@ func (sys DialogueTextSystem) Run(cli coldbrew.LocalClient, scene coldbrew.Scene
 }
 
 func InitConversation(scene coldbrew.Scene, convo *dialogue.Conversation, fontFace *text.GoTextFace, maxWidth float64) bool {
-	if convo.ActiveSlideIndex >= len(convo.Slides) {
+	slides := dialogue.SlidesRegistry[convo.SlidesID]
+	if convo.ActiveSlideIndex >= len(slides) {
 		return false
 	}
 	convo.AnimationState.IsRevealing = true
-	convo.WrappedText = bptext.WrapText(convo.Slides[convo.ActiveSlideIndex].Text, fontFace, float64(maxWidth))
+	convo.WrappedText = bptext.WrapText(slides[convo.ActiveSlideIndex].Text, fontFace, float64(maxWidth))
 	convo.AnimationState.FinalUpdateTick = 0
 	convo.DisplayedText = ""
 

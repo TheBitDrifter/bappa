@@ -24,12 +24,17 @@ func (sys DialogueSoundSystem) Run(cli coldbrew.LocalClient, scene coldbrew.Scen
 
 	for range cursor.Next() {
 		convo := dialogue.Components.Conversation.GetFromCursor(cursor)
+		slides := dialogue.SlidesRegistry[convo.SlidesID]
+		tpc := sys.TEXT_REVEAL_DELAY_IN_TICKS
+		if slides[convo.ActiveSlideIndex].CustomSpeedTicks != 0 {
+			tpc = slides[convo.ActiveSlideIndex].CustomSpeedTicks
+		}
 
 		var play bool
 		if sys.SoundOnWord {
-			play = text.ShouldPlayRevealSoundForWord(convo.AnimationState.RevealStartTick, currentTick, sys.TEXT_REVEAL_DELAY_IN_TICKS, convo.DisplayedText)
+			play = text.ShouldPlayRevealSoundForWord(convo.AnimationState.RevealStartTick, currentTick, tpc, convo.DisplayedText)
 		} else {
-			play = text.ShouldPlayRevealSound(convo.AnimationState.RevealStartTick, currentTick, sys.TEXT_REVEAL_DELAY_IN_TICKS, convo.DisplayedText)
+			play = text.ShouldPlayRevealSound(convo.AnimationState.RevealStartTick, currentTick, tpc, convo.DisplayedText)
 		}
 
 		if play {

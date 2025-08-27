@@ -8,7 +8,7 @@ import (
 
 func BenchmarkIterArche(b *testing.B) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	world := ecs.NewWorld(1024)
 
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)

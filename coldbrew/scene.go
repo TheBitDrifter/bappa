@@ -62,6 +62,7 @@ type scene struct {
 	}
 
 	preloadedAssetBundle client.PreLoadAssetBundle // Manually specified assets to load
+	cursorCache          map[string]*warehouse.Cursor
 }
 
 // Core information methods
@@ -76,10 +77,10 @@ func (s *scene) Height() int              { return s.height }
 func (s *scene) Name() string             { return s.name }
 func (s *scene) Width() int               { return s.width }
 
-// Storage and query methods
 func (s *scene) NewCursor(query warehouse.QueryNode) *warehouse.Cursor {
 	return warehouse.Factory.NewCursor(query, s.storage)
 }
+
 func (s *scene) Storage() warehouse.Storage { return s.storage }
 
 // Loading state methods

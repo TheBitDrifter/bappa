@@ -45,7 +45,7 @@ func TestTable_NewEntriesAndDeleteEntriesAndRecycledEntries(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := f.NewSchema()
 			ei := f.NewEntryIndex()
-			tbl, err := f.NewTable(s, ei, blankElementType)
+			tbl, err := f.NewTable(s, ei, 0, blankElementType)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -129,7 +129,7 @@ func TestTable_DeleteEntries(t *testing.T) {
 			s := f.NewSchema()
 			ei := f.NewEntryIndex()
 			et := table.FactoryNewElementType[int]()
-			tbl, err := f.NewTable(s, ei, et)
+			tbl, err := f.NewTable(s, ei, 0, et)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -389,7 +389,7 @@ func TestTable_Clear(t *testing.T) {
 	ei := f.NewEntryIndex()
 	intType := table.FactoryNewElementType[int]()
 	stringType := table.FactoryNewElementType[string]()
-	tbl, err := f.NewTable(s, ei, intType, stringType)
+	tbl, err := f.NewTable(s, ei, 0, intType, stringType)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -416,7 +416,7 @@ func TestTable_ElementTypes(t *testing.T) {
 	ei := f.NewEntryIndex()
 	intType := table.FactoryNewElementType[int]()
 	stringType := table.FactoryNewElementType[string]()
-	tbl, err := f.NewTable(s, ei, intType, stringType)
+	tbl, err := f.NewTable(s, ei, 0, intType, stringType)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -435,7 +435,7 @@ func TestTable_Rows(t *testing.T) {
 	ei := f.NewEntryIndex()
 	intType := table.FactoryNewElementType[int]()
 	stringType := table.FactoryNewElementType[string]()
-	tbl, err := f.NewTable(s, ei, intType, stringType)
+	tbl, err := f.NewTable(s, ei, 0, intType, stringType)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -462,7 +462,7 @@ func TestTable_RowCount(t *testing.T) {
 	ei := f.NewEntryIndex()
 	intType := table.FactoryNewElementType[int]()
 	stringType := table.FactoryNewElementType[string]()
-	tbl, err := f.NewTable(s, ei, intType, stringType)
+	tbl, err := f.NewTable(s, ei, 0, intType, stringType)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -470,7 +470,7 @@ func TestTable_RowCount(t *testing.T) {
 		t.Errorf("Expected row count to be 2, got %d", tbl.RowCount())
 	}
 	floatType := table.FactoryNewElementType[float64]()
-	tbl, err = f.NewTable(s, ei, intType, stringType, floatType)
+	tbl, err = f.NewTable(s, ei, 0, intType, stringType, floatType)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -485,7 +485,7 @@ func TestTable_Contains(t *testing.T) {
 	intType := table.FactoryNewElementType[int]()
 	stringType := table.FactoryNewElementType[string]()
 	floatType := table.FactoryNewElementType[float64]()
-	tbl, err := f.NewTable(s, ei, intType, stringType)
+	tbl, err := f.NewTable(s, ei, 0, intType, stringType)
 	if err != nil {
 		t.Fatal(err)
 	}

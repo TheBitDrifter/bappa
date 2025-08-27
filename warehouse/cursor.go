@@ -30,9 +30,10 @@ func (ibl *iterBitLock32) Next() uint32 {
 
 // Cursor provides iteration over filtered entities in storage
 type Cursor struct {
-	bitLock          uint32
-	query            QueryNode
-	storage          Storage
+	bitLock uint32
+	query   QueryNode
+	storage Storage
+
 	currentArchetype ArchetypeImpl
 	storageIndex     int
 	entityIndex      int
@@ -40,6 +41,7 @@ type Cursor struct {
 
 	initialized     bool
 	matchedStorages []ArchetypeImpl
+	Gen             int
 }
 
 // newCursor creates a new cursor for the given query and storage
@@ -98,6 +100,7 @@ func (c *Cursor) Next() iter.Seq[*Cursor] {
 				c.entityIndex++
 				if !yield(c) {
 					c.Reset()
+
 					return
 				}
 			}
@@ -116,9 +119,7 @@ func (c *Cursor) Initialize() {
 		return
 	}
 
-	c.bitLock = iterBitLock.Next()
-	c.storage.AddLock(c.bitLock)
-	c.matchedStorages = make([]ArchetypeImpl, 0)
+	c.matchedStorages = c.matchedStorages[:0]
 
 	// Find all matching archetypes
 	for _, arch := range c.storage.Archetypes() {
@@ -126,6 +127,9 @@ func (c *Cursor) Initialize() {
 			c.matchedStorages = append(c.matchedStorages, arch)
 		}
 	}
+
+	c.bitLock = iterBitLock.Next()
+	c.storage.AddLock(c.bitLock)
 
 	if len(c.matchedStorages) > 0 {
 		c.storageIndex = 0
@@ -141,7 +145,6 @@ func (c *Cursor) Reset() {
 	c.storageIndex = 0
 	c.entityIndex = 0
 	c.remaining = 0
-	c.matchedStorages = nil
 	c.initialized = false
 	c.storage.RemoveLock(c.bitLock)
 	c.bitLock = 0
@@ -179,11 +182,12 @@ func (c *Cursor) RemainingInArchetype() int {
 
 // TotalMatched returns the total number of entities matching the query
 func (c *Cursor) TotalMatched() int {
-	if !c.initialized {
+	if !c.initialized || c.storage.Gen() != c.Gen {
 		c.Initialize()
 	}
 
 	total := 0
+
 	for _, arch := range c.matchedStorages {
 		total += arch.table.Length()
 	}

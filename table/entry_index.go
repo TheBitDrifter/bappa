@@ -12,6 +12,7 @@ type entryIndex struct {
 	currEntryID EntryID
 	entries     []entry
 	recyclable  []entry
+	gen         int
 }
 
 func (ei *entryIndex) NewEntries(n, start int, tbl Table) ([]Entry, error) {
@@ -56,6 +57,7 @@ func (ei *entryIndex) NewEntries(n, start int, tbl Table) ([]Entry, error) {
 		newEntries = append(newEntries, entry)
 	}
 
+	ei.IncGen()
 	return newEntries, nil
 }
 
@@ -117,6 +119,8 @@ func (ei *entryIndex) RecycleEntries(ids ...EntryID) error {
 		ei.entries[index] = zeroEntry
 
 	}
+
+	ei.IncGen()
 	return nil
 }
 
@@ -124,6 +128,7 @@ func (ei *entryIndex) Reset() error {
 	ei.entries = ei.entries[:0]
 	ei.recyclable = ei.recyclable[:0]
 	ei.currEntryID = 0
+	ei.IncGen()
 	return nil
 }
 
@@ -185,5 +190,20 @@ func (ei *entryIndex) ForceNewEntry(id int, recycledValue, tblIndex int, tbl Tab
 		recycled: recycledValue,
 	}
 
+	ei.IncGen()
 	return nil
+}
+
+func (ei *entryIndex) Preallocate(capacity int) {
+	if capacity > 0 && ei.entries == nil {
+		ei.entries = make([]entry, 0, capacity)
+	}
+}
+
+func (ei *entryIndex) Gen() int {
+	return ei.gen
+}
+
+func (ei *entryIndex) IncGen() {
+	ei.gen++
 }

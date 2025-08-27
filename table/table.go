@@ -31,7 +31,7 @@ type quickTable struct {
 }
 
 func newTable(
-	schema Schema, safeTable bool, entryIndex EntryIndex, elementTypes ...ElementType,
+	schema Schema, safeTable bool, entryIndex EntryIndex, initCap int, elementTypes ...ElementType,
 ) (*quickTable, error) {
 	if schema == nil {
 		return nil, TableInstantiationNilSchemaError{}
@@ -42,14 +42,17 @@ func newTable(
 	if Config.AutoElementTypeRegistrationTableCreation && !Config.SchemaLess() {
 		schema.Register(elementTypes...)
 	}
-	tbl := &quickTable{
-		schema:     schema,
-		entryIndex: entryIndex,
-	}
-	tbl.elementTypes = elementTypes
-	rowCount := schema.Registered()
 
-	tbl.rows = make([]Row, rowCount)
+	rowCount := schema.Registered()
+	tbl := &quickTable{
+		schema:       schema,
+		entryIndex:   entryIndex,
+		elementTypes: elementTypes,
+		rows:         make([]Row, rowCount),
+		entryIDs:     make([]EntryID, 0, initCap), // Pre-allocate with initial capacity
+		cap:          initCap,                     // Store initial capacity
+	}
+
 	if safeTable {
 		tbl.rowCache = safeCache(make([]any, rowCount))
 		tbl.safeCache = tbl.rowCache.(safeCache)
@@ -57,13 +60,14 @@ func newTable(
 		tbl.rowCache = unsafeCache(make([]unsafe.Pointer, rowCount))
 		tbl.unsafeCache = tbl.rowCache.(unsafeCache)
 	}
+
 	for _, elementType := range tbl.elementTypes {
 		rowIndex := tbl.schema.RowIndexFor(elementType)
-		tbl.rows[rowIndex] = newRow(elementType)
-
-		bit := rowIndex
-		tbl.mask.Mark(bit)
+		// Pass the initial capacity to the row constructor
+		tbl.rows[rowIndex] = newRow(elementType, initCap)
+		tbl.mask.Mark(rowIndex)
 	}
+
 	return tbl, nil
 }
 
@@ -319,6 +323,7 @@ func (tbl *quickTable) TransferEntries(other Table, indexes ...int) error {
 	tbl.rowCache.cacheRows(tbl)
 	otherTbl.rowCache.cacheRows(other)
 
+	tbl.entryIndex.IncGen()
 	return nil
 }
 

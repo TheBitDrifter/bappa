@@ -15,10 +15,15 @@ type PadLayout interface {
 	RegisterGamepadReleasedButton(ebiten.GamepadButton, input.Action)
 
 	RegisterGamepadAxes(left bool, input input.Action)
+
+	PadActive() bool
+
+	ResetPadButtonMapping()
 }
 
 type padLayout struct {
-	padID int
+	padID  int
+	active bool
 
 	mask            mask.Mask
 	justPressedMask mask.Mask
@@ -36,6 +41,18 @@ type padLayout struct {
 // RegisterPad sets the gamepad identifier
 func (layout *padLayout) RegisterPad(padID int) {
 	layout.padID = padID
+	layout.active = true
+}
+
+func (layout *padLayout) ResetPadButtonMapping() {
+	layout.buttons = []input.Action{}
+	layout.mask = mask.Mask{}
+
+	layout.pressed = []input.Action{}
+	layout.justPressedMask = mask.Mask{}
+
+	layout.released = []input.Action{}
+	layout.releaseMask = mask.Mask{}
 }
 
 // RegisterGamepadButton maps a continuously pressed gamepad button to an input action.
@@ -73,4 +90,9 @@ func (layout *padLayout) RegisterGamepadAxes(left bool, localInput input.Action)
 	}
 	layout.rightAxes = true
 	layout.rightAxesInput = localInput
+}
+
+// RegisterGamepadAxes maps an analog stick to an input action
+func (layout *padLayout) PadActive() bool {
+	return layout.active
 }

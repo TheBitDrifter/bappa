@@ -12,7 +12,7 @@ func BenchmarkIterWarehouseGetWithLockedAccessor(b *testing.B) {
 	b.StopTimer()
 	ei := table.Factory.NewEntryIndex()
 	schema := table.Factory.NewSchema()
-	tbl, err := table.Factory.NewTable(schema, ei, etBool, etVec2, etString, etInt)
+	tbl, err := table.Factory.NewTable(schema, ei, 0, etBool, etVec2, etString, etInt)
 	if err != nil {
 		b.Fatal(err)
 	}

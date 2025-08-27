@@ -29,6 +29,10 @@ type EntryIndex interface {
 	Entries() []Entry
 	Recyclable() []Entry
 	ForceNewEntry(id int, recycled, tblIndex int, table Table) error
+	Preallocate(capacity int)
+	Gen() int
+
+	IncGen()
 }
 
 type Schema interface {

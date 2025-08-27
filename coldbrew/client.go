@@ -29,10 +29,14 @@ type Client interface {
 	LocalClient
 	SceneManager
 	CameraManager
+	PreExecAllPlans() error
+	PreExecSceneByName(string) error
 }
 
 type LocalClient interface {
 	Start() error
+	StartWithEbitenOptions(opts *ebiten.RunGameOptions) error
+
 	RenderUtility
 	TickManager
 	InputManager
@@ -100,6 +104,18 @@ func (cli *clientImpl) Start() error {
 	return nil
 }
 
+func (cli *clientImpl) StartWithEbitenOptions(opts *ebiten.RunGameOptions) error {
+	if len(cli.loadingScenes) == 0 {
+		cli.loadingScenes = append(cli.loadingScenes, defaultLoadingScene)
+	}
+
+	err := ebiten.RunGameWithOptions(cli, opts)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (cli *clientImpl) Update() error {
 	return sharedClientUpdate(cli, true)
 }
@@ -124,18 +140,19 @@ func (cli *clientImpl) run() error {
 		if !cameraReady || !activeScene.Ready() {
 			if len(loadingScenes) > 0 {
 				loadingScene := loadingScenes[0]
-				for _, coreSys := range loadingScene.CoreSystems() {
-					err := coreSys.Run(loadingScene, 1.0/float64(ClientConfig.tps))
-					if err != nil {
-						return err
-					}
-				}
 				for _, clientSys := range loadingScene.ClientSystems() {
 					err := clientSys.Run(cli, loadingScene)
 					if err != nil {
 						return err
 					}
 				}
+				for _, coreSys := range loadingScene.CoreSystems() {
+					err := coreSys.Run(loadingScene, 1.0/float64(ClientConfig.tps))
+					if err != nil {
+						return err
+					}
+				}
+
 			}
 			return nil
 		}
@@ -309,6 +326,41 @@ func (cli *clientImpl) Layout(int, int) (int, int) {
 
 func (cli *clientImpl) Draw(image *ebiten.Image) {
 	sharedDraw(cli, image)
+}
+
+func (cli *clientImpl) PreExecAllPlans() error {
+	for _, s := range cli.Cache().All() {
+		_, err := s.ExecutePlan()
+		if err != nil {
+			return err
+		}
+		if !s.IsLoaded() && !s.IsLoading() {
+			err := cli.loadAssetsForScene(s, globalSpriteCache, globalSoundCache)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func (cli *clientImpl) PreExecSceneByName(sceneName string) error {
+	for _, s := range cli.Cache().All() {
+		if s.Name() != sceneName {
+			continue
+		}
+		_, err := s.ExecutePlan()
+		if err != nil {
+			return err
+		}
+		if !s.IsLoaded() && !s.IsLoading() {
+			err := cli.loadAssetsForScene(s, globalSpriteCache, globalSoundCache)
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func (cli clientImpl) CameraSceneTracker() CameraSceneTracker {

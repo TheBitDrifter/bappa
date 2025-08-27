@@ -38,7 +38,7 @@ type AnimationData struct {
 	Speed int `json:"speed"`
 
 	// StartTick defines when the animation begins
-	StartTick int
+	StartTick int `json:"-"`
 
 	// Freeze indicates whether the animation should stay on the last frame once finished
 	Freeze bool `json:"freeze"`

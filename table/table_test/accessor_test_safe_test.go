@@ -15,15 +15,15 @@ func TestAccessor_Get(t *testing.T) {
 	intElementType := table.FactoryNewElementType[int]()
 	intAccessor := table.FactoryNewAccessor[int](intElementType)
 	stringAccessor := table.FactoryNewAccessor[string](stringElementType)
-	mockTableA, err := f.NewTable(schema, entryIndex, stringElementType, intElementType)
+	mockTableA, err := f.NewTable(schema, entryIndex, 0, stringElementType, intElementType)
 	if err != nil {
 		t.Fatal(err)
 	}
-	mockTableB, err := f.NewTable(schema, entryIndex, intElementType, stringElementType)
+	mockTableB, err := f.NewTable(schema, entryIndex, 0, intElementType, stringElementType)
 	if err != nil {
 		t.Fatal(err)
 	}
-	mockTableC, err := f.NewTable(schema, entryIndex, intElementType)
+	mockTableC, err := f.NewTable(schema, entryIndex, 0, intElementType)
 	if err != nil {
 		t.Fatal(err)
 	}
