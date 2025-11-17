@@ -9,6 +9,16 @@
 
 A code-first 2D game engine/framework for Go, providing an Entity Component System (ECS) architecture to enable developers to build captivating projects.
 
+> ⚠️ **Project Status: (Shelved)**
+>
+> **Bappa** is a game engine, no longer in active development.
+>
+> It was a self-directed project to build a foundational framework for 2D games in Go ([Ebiten](https://ebitengine.org/)), and it was used to create the prototype ["Concrete Echos."](https://github.com/TheBitDrifter/concrete_echos)
+>
+> This project was a massive learning experience and contains many early design decisions that I would architect differently today. The lessons learned while building this engine are the foundation for any future, more robust version.
+>
+> I've left the repository public as a "read-only" example of this design and iteration process.
+
 ## Getting Started
 
 The best way to get started with Bappa is through examples and documentation, or use a `bappacreate` starter template for hands on experience!
